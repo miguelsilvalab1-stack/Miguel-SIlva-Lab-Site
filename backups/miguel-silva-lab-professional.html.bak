@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miguel Silva Lab - Inteligência Artificial em Valor Real</title>
+    <meta name="description" content="Consultoria e formação prática em IA para empresas e profissionais que querem otimizar tempo e desempenho.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #3b82f6;
+            --accent-blue: #60a5fa;
+            --dark-blue: #0f172a;
+            --light-blue: #dbeafe;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary-blue);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary-blue);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        /* Mobile Menu Open State */
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 1.5rem 2rem;
+                gap: 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.875rem 0;
+                border-bottom: 1px solid var(--border-color);
+                font-size: 1.05rem;
+            }
+
+            .nav-links li:last-child a {
+                border-bottom: none;
+            }
+
+            .nav-links a::after {
+                display: none;
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--light-blue) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark-blue);
+        }
+        
+        .hero-content .gradient-text {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(30, 58, 138, 0.4);
+        }
+        
+        .hero-image {
+            position: relative;
+        }
+        
+        .hero-image-wrapper {
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 8px solid white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            margin: 0 auto;
+            position: relative;
+            animation: fadeInScale 1s ease-out;
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .hero-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+            padding: 2rem 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary-blue);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 6rem 2rem;
+        }
+        
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* About Section */
+        #sobre {
+            background: var(--bg-light);
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .about-text h3 {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .about-text p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+        
+        .certification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--secondary-blue);
+            border-radius: 8px;
+            color: var(--secondary-blue);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--secondary-blue);
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--light-blue), var(--accent-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.4rem;
+            color: var(--dark-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .service-card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+        
+        .service-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            transition: gap 0.3s ease;
+        }
+        
+        .service-link:hover {
+            gap: 0.75rem;
+        }
+        
+        /* Portfolio Section */
+        #portfolio {
+            background: var(--bg-light);
+        }
+        
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .portfolio-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .portfolio-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .portfolio-content {
+            padding: 2rem;
+        }
+        
+        .portfolio-tag {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--light-blue);
+            color: var(--primary-blue);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .portfolio-card h3 {
+            font-size: 1.3rem;
+            color: var(--dark-blue);
+            margin-bottom: 0.75rem;
+        }
+        
+        .portfolio-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        
+        /* Testimonials */
+        .testimonials-slider {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .testimonial-text {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            font-style: italic;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--light-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+        
+        .author-info h4 {
+            color: var(--dark-blue);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .author-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Blog/Insights */
+        #blog {
+            background: var(--bg-light);
+        }
+        
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .blog-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            padding-bottom: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .blog-content {
+            padding: 1.5rem;
+        }
+        
+        .blog-card h3 {
+            font-size: 1.3rem;
+            color: var(--dark-blue);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .blog-card p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary-blue);
+            font-weight: 600;
+            text-decoration: none;
+            transition: gap 0.3s ease;
+        }
+        
+        .read-more:hover {
+            gap: 0.75rem;
+        }
+        
+        /* News Feed */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--secondary-blue);
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .news-source {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .news-card h3 {
+            font-size: 1.2rem;
+            color: var(--dark-blue);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .news-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        
+        .news-time {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+        
+        /* FAQ Section */
+        #faq {
+            background: var(--bg-light);
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .faq-question {
+            width: 100%;
+            padding: 1.5rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-blue);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            color: var(--secondary-blue);
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+        
+        .faq-answer-content {
+            padding: 0 1.5rem 1.5rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+        
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+        
+        .contact-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-blue);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(30, 58, 138, 0.4);
+        }
+        
+        .contact-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .contact-option {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-option:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light-blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 1.3rem;
+        }
+        
+        .contact-option h3 {
+            color: var(--dark-blue);
+            font-size: 1.2rem;
+        }
+        
+        .contact-option p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-action:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark-blue);
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-tagline {
+            color: var(--accent-blue);
+            margin-bottom: 2rem;
+        }
+        
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .services-grid,
+            .blog-grid,
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+        
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--secondary-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">MS</div>
+                Miguel Silva Lab
+            </a>
+            <ul class="nav-links">
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#servicos">Serviços</a></li>
+                <li><a href="#portfolio">Portfólio</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#noticias">Notícias</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>
+                    Transformo <span class="gradient-text">Inteligência Artificial</span> em valor real
+                </h1>
+                <p>Consultoria e formação prática em IA para empresas e profissionais que querem otimizar tempo e desempenho.</p>
+                <a href="#contacto" class="cta-button">
+                    Falar comigo <i class="fas fa-arrow-right"></i>
+                </a>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">+25</span>
+                        <span class="stat-label">Acções de Formação</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">+300</span>
+                        <span class="stat-label">pessoas formadas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">+8</span>
+                        <span class="stat-label">PME's apoiadas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">+15</span>
+                        <span class="stat-label">Acções de Mentoria</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="hero-image-wrapper">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop" alt="Miguel Silva">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Sobre mim</h2>
+            </div>
+            
+            <div class="about-content">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop" alt="Miguel Silva" class="about-image">
+                
+                <div class="about-text">
+                    <h3>Miguel Silva</h3>
+                    <p>Formador e consultor em Inteligência Artificial. Ajudo profissionais e empresas a usar IA com propósito — para <strong>inovar, crescer e decidir melhor</strong>.</p>
+                    
+                    <p>Com uma abordagem prática e orientada a resultados, trabalho diretamente com equipas e líderes para implementar soluções de IA que geram impacto real no negócio — desde automação de processos até criação de assistentes inteligentes e estratégias de transformação digital.</p>
+                    
+                    <div class="certification-badge">
+                        <i class="fas fa-certificate"></i>
+                        Certificado CCP - Competências Pedagógicas
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicos">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Serviços</h2>
+                <p class="section-subtitle">Transforme a sua forma de trabalhar com soluções de Inteligência Artificial.</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Formação Aplicada</h3>
+                    <p>Workshops e programas práticos sobre IA, automação e produtividade. Resultados imediatos: mais eficiência, menos tarefas repetitivas, melhor decisão.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Consultoria Estratégica</h3>
+                    <p>Da ideia à implementação. Exploro como a Inteligência Artificial pode impulsionar o seu trabalho ou negócio e transformo esse potencial em resultados concretos.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Mentoria Individual</h3>
+                    <p>Sessões 1:1 para líderes e profissionais que querem aplicar a IA de forma prática — na gestão, no marketing, ou na operação. O foco está em resultados concretos e evolução contínua.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Assistentes de IA</h3>
+                    <p>Criação de assistentes e agentes de IA personalizados para automatizar processos, melhorar atendimento ao cliente e otimizar operações empresariais.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Chatbots Inteligentes</h3>
+                    <p>Desenvolvimento de chatbots avançados com processamento de linguagem natural para atendimento 24/7, qualificação de leads e suporte automatizado.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Soluções IA Personalizadas</h3>
+                    <p>Desenvolvimento de soluções de IA sob medida, incluindo workshops corporativos e aplicações específicas para as necessidades do seu negócio.</p>
+                    <a href="#contacto" class="service-link">
+                        Solicitar proposta <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Portfólio</h2>
+                <p class="section-subtitle">Casos de estudo e projetos implementados</p>
+            </div>
+            
+            <div class="portfolio-grid">
+                <div class="portfolio-card">
+                    <div class="portfolio-content">
+                        <span class="portfolio-tag">Automação</span>
+                        <h3>Sistema de Gestão Documental com IA</h3>
+                        <p>Implementação de sistema inteligente de classificação e pesquisa de documentos para PME do sector jurídico, reduzindo tempo de pesquisa em 70%.</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-card">
+                    <div class="portfolio-content">
+                        <span class="portfolio-tag">Chatbot</span>
+                        <h3>Assistente Virtual para E-commerce</h3>
+                        <p>Desenvolvimento de chatbot inteligente para loja online, com aumento de 45% na taxa de conversão e resposta instantânea a clientes 24/7.</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-card">
+                    <div class="portfolio-content">
+                        <span class="portfolio-tag">Formação</span>
+                        <h3>Workshop Corporativo - Automação com IA</h3>
+                        <p>Formação prática para equipa de 30 profissionais sobre ferramentas de IA para produtividade, com implementação imediata de automações no fluxo de trabalho.</p>
+                    </div>
+                </div>
+                
+                <div class="portfolio-card">
+                    <div class="portfolio-content">
+                        <span class="portfolio-tag">Consultoria</span>
+                        <h3>Estratégia de IA para Startup Tech</h3>
+                        <p>Consultoria estratégica para implementação de IA em produto SaaS, desde conceção até deployment, resultando em funcionalidade diferenciadora no mercado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testemunhos">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Testemunhos</h2>
+                <p class="section-subtitle">O que dizem os clientes e formandos</p>
+            </div>
+            
+            <div class="testimonials-slider">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"A formação com o Miguel mudou completamente a forma como a nossa equipa trabalha. Implementámos automações que nos poupam horas todas as semanas."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AC</div>
+                        <div class="author-info">
+                            <h4>Ana Costa</h4>
+                            <p>Diretora de Operações, TechStart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Insights</h2>
+                <p class="section-subtitle">Conteúdos práticos sobre IA e gestão empresarial</p>
+            </div>
+            
+            <div id="blogContainer" class="blog-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>A carregar artigos...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- News Section -->
+    <section id="noticias">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Notícias de IA em tempo real</h2>
+                <p class="section-subtitle">Mantenha-se atualizado sobre as últimas novidades em Inteligência Artificial</p>
+            </div>
+            
+            <div id="newsContainer" class="news-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>A carregar notícias...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Perguntas Frequentes</h2>
+                <p class="section-subtitle">Respostas às dúvidas mais comuns</p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Que tipo de empresas podem beneficiar dos vossos serviços?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Trabalho com PMEs, startups e profissionais independentes de diversos sectores. Se procura otimizar processos, automatizar tarefas ou implementar soluções de IA práticas, posso ajudar.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Preciso de conhecimentos técnicos para as formações?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Não. As formações são desenhadas para profissionais de todas as áreas, com foco prático e linguagem acessível. O objetivo é que comece a aplicar IA imediatamente no seu trabalho.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Quanto tempo demora a implementar uma solução de IA?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Depende da complexidade do projeto. Soluções simples como chatbots podem estar operacionais em 2-4 semanas. Projetos mais complexos podem levar 2-3 meses. Começamos sempre com uma avaliação detalhada.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Oferecem suporte após a implementação?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Sim. Todos os projetos incluem período de suporte e acompanhamento. Também oferecemos planos de manutenção e evolução contínua das soluções implementadas.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Como funciona a mentoria individual?</span>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            São sessões 1:1 personalizadas onde trabalhamos nos seus desafios específicos. Definimos objetivos claros e criamos um plano de ação prático para aplicar IA no seu contexto profissional.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contacto">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Vamos conversar?</h2>
+                <p class="section-subtitle">Entre em contacto para explorar como a IA pode transformar o seu negócio</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nome</label>
+                            <input type="text" id="name" name="name" required placeholder="O seu nome">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Mensagem</label>
+                            <textarea id="message" name="message" required placeholder="Conte-me sobre o seu projeto ou desafio..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            Enviar mensagem <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="contact-options">
+                    <div class="contact-option">
+                        <div class="contact-option-header">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3>Email</h3>
+                        </div>
+                        <p>miguelsilvalab1@gmail.com</p>
+                    </div>
+                    
+                    <div class="contact-option">
+                        <div class="contact-option-header">
+                            <div class="contact-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <h3>WhatsApp</h3>
+                        </div>
+                        <p>Envie-me uma mensagem direta</p>
+                        <a href="https://wa.me/351914912126" target="_blank" class="contact-action">
+                            Iniciar conversa <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="contact-option">
+                        <div class="contact-option-header">
+                            <div class="contact-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <h3>Agendar reunião</h3>
+                        </div>
+                        <p>Marque uma reunião de 30 minutos gratuita</p>
+                        <a href="#" class="contact-action">
+                            Agendar reunião <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="contact-option">
+                        <div class="contact-option-header">
+                            <div class="contact-icon">
+                                <i class="fab fa-linkedin"></i>
+                            </div>
+                            <h3>LinkedIn</h3>
+                        </div>
+                        <p>Conecte-se comigo no LinkedIn</p>
+                        <a href="https://www.linkedin.com/in/miguelfreiresilva" target="_blank" class="contact-action">
+                            Ver perfil <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">Miguel Silva Lab</div>
+            <p class="footer-tagline">Transformo Inteligência Artificial em valor real</p>
+            <div class="footer-bottom">
+                © 2025 Miguel Silva Lab. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.querySelector('.nav-links');
+        const mobileMenuIcon = mobileMenuBtn.querySelector('i');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            const isOpen = navLinks.classList.toggle('active');
+            mobileMenuBtn.setAttribute('aria-expanded', isOpen);
+            mobileMenuIcon.classList.toggle('fa-bars', !isOpen);
+            mobileMenuIcon.classList.toggle('fa-times', isOpen);
+        });
+
+        // Close mobile menu when clicking a nav link
+        navLinks.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuIcon.classList.add('fa-bars');
+                mobileMenuIcon.classList.remove('fa-times');
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Toggle current item
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+
+        // Contact Form Handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            // Create mailto link
+            const mailtoLink = `mailto:miguelsilvalab1@gmail.com?subject=Contacto de ${encodeURIComponent(name)}&body=${encodeURIComponent(message)}%0A%0ADe: ${encodeURIComponent(email)}`;
+            
+            window.location.href = mailtoLink;
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Load Blog Posts from Substack (simulated - you'll need to integrate with Substack API)
+        function loadBlogPosts() {
+            const blogContainer = document.getElementById('blogContainer');
+            
+            // Simulated blog posts - replace with actual Substack API integration
+            const blogPosts = [
+                {
+                    title: "Blockchain e Energia: O Corpo da Nova Economia Cognitiva",
+                    excerpt: "Sem confiança automática e sem energia, a inteligência artificial não passa de potencial teórico.",
+                    readTime: "3 min de leitura",
+                    link: "#"
+                },
+                {
+                    title: "A Nova Fronteira da Inteligência Artificial",
+                    excerpt: "Da Automação de Tarefas à Automação da Coordenação",
+                    readTime: "3 min de leitura",
+                    link: "#"
+                },
+                {
+                    title: "Quando as LLMs Deixarem de Ser Ferramentas",
+                    excerpt: "O Nascimento dos Sistemas Nervosos Globais",
+                    readTime: "3 min de leitura",
+                    link: "#"
+                }
+            ];
+            
+            blogContainer.innerHTML = blogPosts.map(post => `
+                <div class="blog-card">
+                    <div class="blog-meta">
+                        <i class="far fa-clock"></i>
+                        <span>${post.readTime}</span>
+                    </div>
+                    <div class="blog-content">
+                        <h3>${post.title}</h3>
+                        <p>${post.excerpt}</p>
+                        <a href="${post.link}" class="read-more">
+                            Ler artigo <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load AI News (simulated - replace with actual API integration)
+        function loadAINews() {
+            const newsContainer = document.getElementById('newsContainer');
+            
+            // Simulated news - replace with actual AI news API
+            const news = [
+                {
+                    source: "Wired",
+                    title: "A Lealdade Morreu em Silicon Valley",
+                    excerpt: "Os fundadores costumavam ser fiéis às suas empresas. Atualmente, qualquer um pode ser aliciado pela quantia certa.",
+                    time: "Há 1 dia",
+                    link: "#"
+                },
+                {
+                    source: "Wired",
+                    title: "A aplicação de reconhecimento facial do ICE e do CBP não consegue verificar a identidade das pessoas",
+                    excerpt: "O ICE utilizou o Mobile Fortify para identificar, segundo uma estimativa, mais de 100.000 imigrantes e cidadãos.",
+                    time: "Há 1 dia",
+                    link: "#"
+                },
+                {
+                    source: "GPT Central",
+                    title: "7 Must-Have AI Tools Every Entrepreneur Should Use in 2025",
+                    excerpt: "Running a business is hard work. These 7 simple AI tools help you save time, automate daily tasks, and keep everything organized so you can focus on...",
+                    time: "Há 1 dia",
+                    link: "#"
+                }
+            ];
+            
+            newsContainer.innerHTML = news.map(item => `
+                <div class="news-card">
+                    <div class="news-source">
+                        <i class="far fa-newspaper"></i>
+                        <span>${item.source}</span>
+                    </div>
+                    <h3>${item.title}</h3>
+                    <p>${item.excerpt}</p>
+                    <div class="news-time">${item.time}</div>
+                    <a href="${item.link}" class="read-more" target="_blank">
+                        Ler mais <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // Load content on page load
+        window.addEventListener('load', function() {
+            loadBlogPosts();
+            loadAINews();
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.service-card, .blog-card, .news-card, .portfolio-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

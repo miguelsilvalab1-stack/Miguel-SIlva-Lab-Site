@@ -436,13 +436,13 @@ export async function runOrchestrator(
       if (planData?.lead_id) {
         const { data: lead } = await supabaseAdmin
           .from('leads')
-          .select('email, nome')
+          .select('email')
           .eq('id', planData.lead_id)
           .single()
 
         if (lead?.email) {
           const nomeNegocio = planData.questionnaire_json?.respostas?.['1_nome'] || 'o teu negócio'
-          await sendPlanEmail(planId, lead.email, lead.nome || '', nomeNegocio)
+          await sendPlanEmail(planId, lead.email, '', nomeNegocio)
           console.log(`[Orchestrator] Email enviado para ${lead.email}`)
         }
       }

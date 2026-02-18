@@ -27,9 +27,7 @@ export async function POST(request: NextRequest) {
         .from('leads')
         .insert({
           email: email.toLowerCase().trim(),
-          nome: nome || null,
           source: 'stratego',
-          consent_marketing: consent_marketing || false
         })
         .select('id')
         .single()

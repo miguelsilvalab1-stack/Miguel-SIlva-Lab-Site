@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function ResultadoClient({ markdown, planId, createdAt }: Props) {
-  const [downloading, setDownloading] = useState(false)
+  const [downloading] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const dataFormatada = new Date(createdAt).toLocaleDateString('pt-PT', {
@@ -21,23 +21,9 @@ export default function ResultadoClient({ markdown, planId, createdAt }: Props) 
     year: 'numeric',
   })
 
-  async function handleDownloadPDF() {
-    setDownloading(true)
-    try {
-      const res = await fetch(`/api/pdf/${planId}`)
-      if (!res.ok) throw new Error('Erro ao gerar PDF')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `plano-marketing-stratego-${planId.slice(0, 8)}.pdf`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      alert('Erro ao descarregar o PDF. Tenta novamente.')
-    } finally {
-      setDownloading(false)
-    }
+  function handleDownloadPDF() {
+    // Abre o HTML formatado numa nova tab com auto-print para guardar como PDF
+    window.open(`/api/pdf/${planId}`, '_blank', 'noopener,noreferrer')
   }
 
   async function handleCopyLink() {

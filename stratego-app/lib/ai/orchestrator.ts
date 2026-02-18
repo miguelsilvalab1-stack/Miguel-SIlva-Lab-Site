@@ -270,6 +270,126 @@ async function runFinalizer(
   return finalPlan
 }
 
+// ─── Envio de email via Brevo ─────────────────────────────────────────────────
+
+async function sendPlanEmail(
+  planId: string,
+  email: string,
+  nome: string,
+  nomeNegocio: string
+): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://stratego.miguelsilvalab.pt'
+  const planUrl = `${appUrl}/stratego/resultado/${planId}`
+  const primeiroNome = (nome || 'empreendedor').split(' ')[0]
+
+  const htmlContent = `<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O teu plano de marketing está pronto</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:600px;width:100%;">
+        <!-- Header -->
+        <tr>
+          <td style="background:#0a0a0a;padding:28px 40px;text-align:center;">
+            <span style="font-size:22px;font-weight:bold;color:#c1694f;letter-spacing:-0.5px;">Stratego</span>
+            <span style="font-size:11px;color:#c1694f;border:1px solid #c1694f;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;">AI</span>
+          </td>
+        </tr>
+        <!-- Body -->
+        <tr>
+          <td style="padding:40px 40px 32px;">
+            <p style="font-size:16px;color:#1a1a1a;margin:0 0 8px;">Olá, <strong>${primeiroNome}</strong>! 👋</p>
+            <h1 style="font-size:24px;color:#1a1a1a;margin:0 0 16px;font-weight:700;line-height:1.3;">
+              O teu plano de marketing está pronto 🎯
+            </h1>
+            <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 24px;">
+              Gerámos um plano de marketing estratégico personalizado para <strong>${nomeNegocio}</strong>.
+              Inclui análise de mercado, estratégia de conteúdo, canais prioritários e um plano de ação para os próximos 6 meses.
+            </p>
+            <!-- CTA -->
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 32px;">
+              <tr>
+                <td style="background:#c1694f;border-radius:8px;padding:14px 28px;">
+                  <a href="${planUrl}" style="color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;">
+                    Ver o meu plano de marketing →
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="font-size:13px;color:#888;margin:0 0 8px;">
+              Ou copia este link para o teu browser:<br>
+              <a href="${planUrl}" style="color:#c1694f;word-break:break-all;">${planUrl}</a>
+            </p>
+          </td>
+        </tr>
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 40px;">
+            <hr style="border:none;border-top:1px solid #eee;margin:0;">
+          </td>
+        </tr>
+        <!-- Features -->
+        <tr>
+          <td style="padding:24px 40px;">
+            <p style="font-size:13px;color:#888;margin:0 0 12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">O que encontras no teu plano</p>
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="width:50%;padding-right:12px;vertical-align:top;">
+                  <p style="font-size:14px;color:#333;margin:0 0 8px;">📊 <strong>Análise de mercado</strong></p>
+                  <p style="font-size:13px;color:#777;margin:0 0 16px;">Concorrência, tendências e oportunidades do teu setor.</p>
+                  <p style="font-size:14px;color:#333;margin:0 0 8px;">🎯 <strong>Estratégia de posicionamento</strong></p>
+                  <p style="font-size:13px;color:#777;margin:0;">Diferenciação e proposta de valor única.</p>
+                </td>
+                <td style="width:50%;padding-left:12px;vertical-align:top;">
+                  <p style="font-size:14px;color:#333;margin:0 0 8px;">📱 <strong>Plano de conteúdo</strong></p>
+                  <p style="font-size:13px;color:#777;margin:0 0 16px;">Canais prioritários e ideias concretas de publicações.</p>
+                  <p style="font-size:14px;color:#333;margin:0 0 8px;">🗓️ <strong>Plano de ação 6 meses</strong></p>
+                  <p style="font-size:13px;color:#777;margin:0;">Passos práticos com prioridades claras.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f9f9f9;padding:20px 40px;text-align:center;border-top:1px solid #eee;">
+            <p style="font-size:12px;color:#aaa;margin:0;">
+              Gerado por <strong>Stratego.AI</strong> — Miguel Silva Lab<br>
+              <a href="${appUrl}" style="color:#c1694f;text-decoration:none;">${appUrl.replace('https://', '')}</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
+
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': process.env.BREVO_API_KEY!,
+    },
+    body: JSON.stringify({
+      sender: { name: 'Stratego.AI', email: 'noreply@miguelsilvalab.pt' },
+      to: [{ email, name: nome || primeiroNome }],
+      subject: `O teu plano de marketing para ${nomeNegocio} está pronto! 🎯`,
+      htmlContent,
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(`Brevo API ${response.status}: ${body}`)
+  }
+}
+
 // ─── Orquestrador principal ───────────────────────────────────────────────────
 
 export async function runOrchestrator(
@@ -304,6 +424,31 @@ export async function runOrchestrator(
       custo_total_eur: totalCost,
       final_markdown: finalPlan
     })
+
+    // Enviar email com o plano completo (falha silenciosa — não bloqueia o plano)
+    try {
+      const { data: planData } = await supabaseAdmin
+        .from('plans')
+        .select('lead_id, questionnaire_json')
+        .eq('id', planId)
+        .single()
+
+      if (planData?.lead_id) {
+        const { data: lead } = await supabaseAdmin
+          .from('leads')
+          .select('email, nome')
+          .eq('id', planData.lead_id)
+          .single()
+
+        if (lead?.email) {
+          const nomeNegocio = planData.questionnaire_json?.respostas?.['1_nome'] || 'o teu negócio'
+          await sendPlanEmail(planId, lead.email, lead.nome || '', nomeNegocio)
+          console.log(`[Orchestrator] Email enviado para ${lead.email}`)
+        }
+      }
+    } catch (emailErr) {
+      console.error('[Orchestrator] Erro ao enviar email (não fatal):', emailErr)
+    }
 
   } catch (err: unknown) {
     const error = err as Error

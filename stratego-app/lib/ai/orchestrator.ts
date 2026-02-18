@@ -3,7 +3,7 @@ import OpenAI from 'openai'
 import { supabaseAdmin } from '@/lib/db/supabase'
 import {
   SYSTEM_ANALYST, buildAnalystUserMessage
-} from '@/lib/ai/prompts/analyst'
+} from '@/lib/ai/prompts/analyst
 import {
   SYSTEM_STRATEGIST_PART1, SYSTEM_STRATEGIST_PART2,
   buildStrategistPart1Message, buildStrategistPart2Message
@@ -436,13 +436,13 @@ export async function runOrchestrator(
       if (planData?.lead_id) {
         const { data: lead } = await supabaseAdmin
           .from('leads')
-          .select('email')
+          .select('email, nome')
           .eq('id', planData.lead_id)
           .single()
 
         if (lead?.email) {
           const nomeNegocio = planData.questionnaire_json?.respostas?.['1_nome'] || 'o teu negócio'
-          await sendPlanEmail(planId, lead.email, '', nomeNegocio)
+          await sendPlanEmail(planId, lead.email, lead.nome || '', nomeNegocio)
           console.log(`[Orchestrator] Email enviado para ${lead.email}`)
         }
       }

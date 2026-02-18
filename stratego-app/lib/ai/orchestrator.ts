@@ -12,7 +12,7 @@ import {
   SYSTEM_REVIEWER, buildReviewerUserMessage
 } from '@/lib/ai/prompts/reviewer'
 import {
-  SYSTEM_FINALIZER, buildFinalizerUserMessage
+  SYSTEM_FINALIZER, buildFinalizerUserMessag
 } from '@/lib/ai/prompts/finalizer'
 import type {
   QuestionnairePayload, AnalystBrief, ReviewOutput, PlanStatus
@@ -377,7 +377,7 @@ async function sendPlanEmail(
       'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: 'Stratego.AI <onboarding@resend.dev>',
+      from: 'Stratego.AI <planos@miguelsilvalab.pt>',
       to: [email],
       subject: `O teu plano de marketing para ${nomeNegocio} está pronto! 🎯`,
       html: htmlContent,

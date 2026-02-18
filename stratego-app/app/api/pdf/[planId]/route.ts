@@ -81,23 +81,10 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     @media print {
       body { font-size: 10pt; }
       .cover { min-height: 100vh; }
-      .no-print { display: none !important; }
     }
   </style>
-  <script>
-    window.addEventListener('load', function() {
-      // Auto-trigger o diálogo de impressão/guardar PDF após 600ms
-      setTimeout(function() { window.print(); }, 600);
-    });
-  </script>
 </head>
 <body>
-  <div class="no-print" style="position:fixed;top:0;left:0;right:0;background:#1a1a1a;color:#fff;padding:12px 24px;display:flex;align-items:center;justify-between;font-family:-apple-system,sans-serif;font-size:13px;z-index:999;">
-    <span>💡 Para guardar como PDF: seleciona <strong>Guardar como PDF</strong> no diálogo de impressão</span>
-    <button onclick="window.print()" style="background:#c1694f;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;">Imprimir / Guardar PDF</button>
-  </div>
-  <div style="height:48px" class="no-print"></div>
-
   <div class="cover">
     <div class="cover-logo">Stratego</div>
     <div class="cover-tag">AI</div>
@@ -123,7 +110,71 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
 </html>`
 }
 
+function applyInline(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+}
+
+function convertTables(md: string): string {
+  const lines = md.split('\n')
+  const result: string[] = []
+  let i = 0
+
+  while (i < lines.length) {
+    const line = lines[i]
+    const trimmed = line.trim()
+
+    // Detectar início de tabela: linha que começa e termina com |
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      const nextLine = (lines[i + 1] || '').trim()
+      // Verificar se a linha seguinte é o separador (ex: |---|---|)
+      if (nextLine.match(/^\|[\s\-:| ]+\|$/)) {
+        const headerLine = line
+        const bodyLines: string[] = []
+        let j = i + 2 // saltar cabeçalho e separador
+
+        while (
+          j < lines.length &&
+          lines[j].trim().startsWith('|') &&
+          lines[j].trim().endsWith('|')
+        ) {
+          bodyLines.push(lines[j])
+          j++
+        }
+
+        // Construir HTML da tabela
+        const headers = headerLine.split('|').map(h => h.trim()).filter(h => h !== '')
+        const headerHtml =
+          '<tr>' + headers.map(h => `<th>${applyInline(h)}</th>`).join('') + '</tr>'
+
+        const rowsHtml = bodyLines
+          .map(rowLine => {
+            const cells = rowLine.split('|').map(c => c.trim()).filter(c => c !== '')
+            return '<tr>' + cells.map(c => `<td>${applyInline(c)}</td>`).join('') + '</tr>'
+          })
+          .join('\n')
+
+        result.push(
+          `<table><thead>${headerHtml}</thead><tbody>${rowsHtml}</tbody></table>`
+        )
+        i = j
+        continue
+      }
+    }
+
+    result.push(line)
+    i++
+  }
+
+  return result.join('\n')
+}
+
 function markdownToHtml(md: string): string {
+  // 1. Tabelas (processadas primeiro — são blocos multi-linha)
+  md = convertTables(md)
+
   return md
     // Cabeçalhos
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
@@ -145,5 +196,5 @@ function markdownToHtml(md: string): string {
     .replace(/^---+$/gm, '<hr>')
     // Parágrafos (linhas simples)
     .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[h|u|o|b|l|h])(.+)$/gm, '<p>$1</p>')
+    .replace(/^(?!<[h|u|o|b|l|h|t])(.+)$/gm, '<p>$1</p>')
 }

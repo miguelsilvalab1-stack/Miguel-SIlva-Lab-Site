@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/db/supabase'
-import { runOrchestrator } from '@/lib/ai/orchestrator'
 import type { OrchestratorRequest } from '@/types'
 
 export async function POST(request: NextRequest) {
@@ -59,11 +58,8 @@ export async function POST(request: NextRequest) {
 
     const planId = plan.id
 
-    // Iniciar orquestração em background (sem await para resposta imediata)
-    runOrchestrator(planId, questionario).catch(err => {
-      console.error('[API] Erro no orchestrator:', err)
-    })
-
+    // O orchestrator corre dentro do stream endpoint (/api/stream/[planId])
+    // que mantém a função Vercel viva durante toda a geração.
     return NextResponse.json({
       job_id: planId,
       stream_url: `/api/stream/${planId}`

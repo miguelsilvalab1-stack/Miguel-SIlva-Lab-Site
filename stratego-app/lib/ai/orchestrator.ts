@@ -62,9 +62,9 @@ async function runAnalyst(
       plan_id: planId, etapa: 2, modelo: 'gpt-4o',
       tokens_input: response.usage?.prompt_tokens,
       tokens_output: response.usage?.completion_tokens,
-      custo_estimado: (response.usage?.prompt_tokens || 0) * 0.0000025 +
-                      (response.usage?.completion_tokens || 0) * 0.00001,
-      duracao_ms: durationMs, status: 'success'
+      custo_eur: (response.usage?.prompt_tokens || 0) * 0.0000025 +
+                 (response.usage?.completion_tokens || 0) * 0.00001,
+      duracao_ms: durationMs, fallback: false
     })
 
     await updatePlanStatus(planId, 'analysing', { analyst_brief_json: brief })
@@ -98,7 +98,7 @@ async function runAnalystFallback(
     plan_id: planId, etapa: 2, modelo: 'claude-sonnet-4-5-20250929 (fallback)',
     tokens_input: response.usage.input_tokens,
     tokens_output: response.usage.output_tokens,
-    duracao_ms: Date.now() - start, status: 'fallback'
+    duracao_ms: Date.now() - start, fallback: true
   })
 
   await updatePlanStatus(planId, 'analysing', { analyst_brief_json: brief })
@@ -143,11 +143,11 @@ async function runStrategist(
   await supabaseAdmin.from('api_logs').insert({
     plan_id: planId, etapa: 3, modelo: 'claude-sonnet-4-5-20250929',
     tokens_input: totalInputTokens, tokens_output: totalOutputTokens,
-    custo_estimado: totalInputTokens * 0.000003 + totalOutputTokens * 0.000015,
-    duracao_ms: Date.now() - start, status: 'success'
+    custo_eur: totalInputTokens * 0.000003 + totalOutputTokens * 0.000015,
+    duracao_ms: Date.now() - start, fallback: false
   })
 
-  await updatePlanStatus(planId, 'generating', { plan_markdown: fullPlan })
+  await updatePlanStatus(planId, 'generating')
   return fullPlan
 }
 
@@ -180,12 +180,12 @@ async function runReviewer(
       plan_id: planId, etapa: 4, modelo: 'gpt-4o',
       tokens_input: response.usage?.prompt_tokens,
       tokens_output: response.usage?.completion_tokens,
-      custo_estimado: (response.usage?.prompt_tokens || 0) * 0.0000025 +
-                      (response.usage?.completion_tokens || 0) * 0.00001,
-      duracao_ms: Date.now() - start, status: 'success'
+      custo_eur: (response.usage?.prompt_tokens || 0) * 0.0000025 +
+                 (response.usage?.completion_tokens || 0) * 0.00001,
+      duracao_ms: Date.now() - start, fallback: false
     })
 
-    await updatePlanStatus(planId, 'reviewing', { review_json: review })
+    await updatePlanStatus(planId, 'reviewing')
     return review
 
   } catch (err: unknown) {
@@ -218,10 +218,10 @@ async function runReviewerFallback(
     plan_id: planId, etapa: 4, modelo: 'claude-sonnet-4-5-20250929 (fallback)',
     tokens_input: response.usage.input_tokens,
     tokens_output: response.usage.output_tokens,
-    duracao_ms: Date.now() - start, status: 'fallback'
+    duracao_ms: Date.now() - start, fallback: true
   })
 
-  await updatePlanStatus(planId, 'reviewing', { review_json: review })
+  await updatePlanStatus(planId, 'reviewing')
   return review
 }
 
@@ -262,8 +262,8 @@ async function runFinalizer(
   await supabaseAdmin.from('api_logs').insert({
     plan_id: planId, etapa: 5, modelo: 'claude-sonnet-4-5-20250929',
     tokens_input: totalInputTokens, tokens_output: totalOutputTokens,
-    custo_estimado: totalInputTokens * 0.000003 + totalOutputTokens * 0.000015,
-    duracao_ms: Date.now() - start, status: 'success'
+    custo_eur: totalInputTokens * 0.000003 + totalOutputTokens * 0.000015,
+    duracao_ms: Date.now() - start, fallback: false
   })
 
   await updatePlanStatus(planId, 'finalising', { final_markdown: finalPlan })
@@ -301,9 +301,7 @@ export async function runOrchestrator(
     const totalSeconds = Math.round((Date.now() - startTotal) / 1000)
 
     await updatePlanStatus(planId, 'completed', {
-      completed_at: new Date().toISOString(),
-      cost_total: totalCost,
-      generation_time_seconds: totalSeconds,
+      custo_total_eur: totalCost,
       final_markdown: finalPlan
     })
 
@@ -314,8 +312,7 @@ export async function runOrchestrator(
       .from('plans')
       .update({
         status: 'failed',
-        error_message: error.message,
-        completed_at: new Date().toISOString()
+        error_message: error.message
       })
       .eq('id', planId)
   }

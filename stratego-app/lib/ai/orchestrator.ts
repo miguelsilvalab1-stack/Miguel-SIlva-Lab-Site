@@ -237,15 +237,15 @@ async function runFinalizer(
 
   const [part1Response, part2Response] = await Promise.all([
     anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 8000,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4000,
       temperature: 0.3,
       system: SYSTEM_FINALIZER + '\n\nGera as SECÇÕES 1 a 5 do plano final. Incorpora TODAS as melhorias identificadas na revisão.',
       messages: [{ role: 'user', content: buildFinalizerUserMessage(plan, review) + '\n\nGera apenas as Secções 1-5.' }]
     }),
     anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 8000,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 4000,
       temperature: 0.3,
       system: SYSTEM_FINALIZER + '\n\nGera as SECÇÕES 6 a 10 do plano final. Começa directamente em ## SECÇÃO 6.',
       messages: [{ role: 'user', content: buildFinalizerUserMessage(plan, review) + '\n\nGera apenas as Secções 6-10. Começa em ## SECÇÃO 6.' }]
@@ -260,9 +260,9 @@ async function runFinalizer(
   const totalOutputTokens = part1Response.usage.output_tokens + part2Response.usage.output_tokens
 
   await supabaseAdmin.from('api_logs').insert({
-    plan_id: planId, etapa: 5, modelo: 'claude-sonnet-4-5-20250929',
+    plan_id: planId, etapa: 5, modelo: 'claude-haiku-4-5-20251001',
     tokens_input: totalInputTokens, tokens_output: totalOutputTokens,
-    custo_eur: totalInputTokens * 0.000003 + totalOutputTokens * 0.000015,
+    custo_eur: totalInputTokens * 0.0000008 + totalOutputTokens * 0.000004,
     duracao_ms: Date.now() - start, fallback: false
   })
 
@@ -294,10 +294,10 @@ export async function runOrchestrator(
     // Calcular custo total
     const { data: logs } = await supabaseAdmin
       .from('api_logs')
-      .select('custo_estimado')
+      .select('custo_eur')
       .eq('plan_id', planId)
 
-    const totalCost = logs?.reduce((sum, l) => sum + (l.custo_estimado || 0), 0) ?? 0
+    const totalCost = logs?.reduce((sum, l) => sum + (l.custo_eur || 0), 0) ?? 0
     const totalSeconds = Math.round((Date.now() - startTotal) / 1000)
 
     await updatePlanStatus(planId, 'completed', {

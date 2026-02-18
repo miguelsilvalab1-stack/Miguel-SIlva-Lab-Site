@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --brand: #c1694f;
+  --brand-light: #d4856e;
+  --brand-dark: #a0563f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Prose (plano de marketing renderizado em Markdown) */
+.prose-dark {
+  color: #e4e4e7;
+}
+.prose-dark h1, .prose-dark h2 { color: #f4f4f5; border-bottom: 1px solid #27272a; padding-bottom: 0.5rem; margin-top: 2rem; }
+.prose-dark h3 { color: #d4d4d8; }
+.prose-dark table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+.prose-dark th { background: #18181b; color: #a1a1aa; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #27272a; font-weight: 600; }
+.prose-dark td { padding: 0.5rem 0.75rem; border: 1px solid #27272a; vertical-align: top; }
+.prose-dark tr:nth-child(even) td { background: #0f0f0f; }
+.prose-dark blockquote { border-left: 3px solid #c1694f; padding-left: 1rem; color: #a1a1aa; }
+.prose-dark code { background: #18181b; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.875em; color: #c1694f; }
+.prose-dark pre { background: #18181b; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #27272a; }
+.prose-dark strong { color: #f4f4f5; }
+.prose-dark a { color: #c1694f; }
+.prose-dark ul li::marker { color: #c1694f; }
+
+/* Animações */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse-slow { animation: pulse-slow 2s ease-in-out infinite; }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.4s ease-out; }

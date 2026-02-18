@@ -270,7 +270,7 @@ async function runFinalizer(
   return finalPlan
 }
 
-// ─── Envio de email via Brevo ─────────────────────────────────────────────────
+// ─── Envio de email via Resend ───────────────────────────────────────────────
 
 async function sendPlanEmail(
   planId: string,
@@ -370,23 +370,23 @@ async function sendPlanEmail(
 </body>
 </html>`
 
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+  const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'api-key': process.env.BREVO_API_KEY!,
+      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      sender: { name: 'Stratego.AI', email: 'noreply@miguelsilvalab.pt' },
-      to: [{ email, name: nome || primeiroNome }],
+      from: 'Stratego.AI <onboarding@resend.dev>',
+      to: [email],
       subject: `O teu plano de marketing para ${nomeNegocio} está pronto! 🎯`,
-      htmlContent,
+      html: htmlContent,
     }),
   })
 
   if (!response.ok) {
     const body = await response.text()
-    throw new Error(`Brevo API ${response.status}: ${body}`)
+    throw new Error(`Resend API ${response.status}: ${body}`)
   }
 }
 

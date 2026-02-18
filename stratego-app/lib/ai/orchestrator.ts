@@ -12,7 +12,7 @@ import {
   SYSTEM_REVIEWER, buildReviewerUserMessage
 } from '@/lib/ai/prompts/reviewer'
 import {
-  SYSTEM_FINALIZER, buildFinalizerUserMessag
+  SYSTEM_FINALIZER, buildFinalizerUserMessage
 } from '@/lib/ai/prompts/finalizer'
 import type {
   QuestionnairePayload, AnalystBrief, ReviewOutput, PlanStatus

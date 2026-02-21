@@ -17,7 +17,6 @@ export async function GET(
     return NextResponse.json({ error: 'Plano não encontrado ou ainda não concluído.' }, { status: 404 })
   }
 
-  // Gerar HTML do PDF
   const nomeNegocio = plan.questionnaire_json?.respostas?.['1_nome'] || 'Negócio'
   const dataFormatada = new Date(plan.created_at).toLocaleDateString('pt-PT', {
     day: 'numeric', month: 'long', year: 'numeric',
@@ -25,8 +24,6 @@ export async function GET(
 
   const html = buildPDFHTML(plan.final_markdown, nomeNegocio, dataFormatada, planId)
 
-  // Retornar HTML com Content-Disposition para impressão/PDF via browser
-  // (a geração de PDF real será feita no Sprint 3 com puppeteer/wkhtmltopdf)
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
@@ -35,8 +32,6 @@ export async function GET(
 }
 
 function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planId: string): string {
-  // Converte markdown básico para HTML (simplificado para PDF)
-  // O Sprint 3 usa biblioteca dedicada (ex: marked + puppeteer)
   const conteudo = markdownToHtml(markdown)
 
   return `<!DOCTYPE html>
@@ -67,9 +62,11 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     ul, ol { margin-left: 24px; margin-bottom: 10px; }
     li { margin-bottom: 4px; }
 
-    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 9.5pt; }
-    th { background: #f5f5f5; color: #333; padding: 8px 12px; border: 1px solid #ddd; font-weight: bold; text-align: left; }
-    td { padding: 7px 12px; border: 1px solid #ddd; vertical-align: top; }
+    /* Tabelas — optimizadas para não sair da folha */
+    .table-wrapper { width: 100%; overflow-x: auto; margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 9pt; word-wrap: break-word; overflow-wrap: break-word; }
+    th { background: #f5f5f5; color: #333; padding: 6px 8px; border: 1px solid #ddd; font-weight: bold; text-align: left; word-break: break-word; }
+    td { padding: 5px 8px; border: 1px solid #ddd; vertical-align: top; word-break: break-word; }
     tr:nth-child(even) td { background: #fafafa; }
 
     blockquote { border-left: 3px solid #c1694f; padding-left: 16px; color: #555; margin: 16px 0; font-style: italic; }
@@ -81,6 +78,13 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     @media print {
       body { font-size: 10pt; }
       .cover { min-height: 100vh; }
+      .content { max-width: 100%; padding: 30px 20px; }
+      table { font-size: 8pt; page-break-inside: avoid; }
+      th { padding: 4px 6px; }
+      td { padding: 3px 6px; }
+      .table-wrapper { overflow-x: hidden; }
+      h1, h2, h3 { page-break-after: avoid; }
+      p { orphans: 3; widows: 3; }
     }
   </style>
 </head>
@@ -110,12 +114,16 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
 </html>`
 }
 
+// ─── Formatação inline (bold, italic, code) ─────────────────────────────────
+
 function applyInline(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
     .replace(/`(.+?)`/g, '<code>$1</code>')
 }
+
+// ─── Conversão de tabelas markdown para HTML ─────────────────────────────────
 
 function convertTables(md: string): string {
   const lines = md.split('\n')
@@ -123,78 +131,169 @@ function convertTables(md: string): string {
   let i = 0
 
   while (i < lines.length) {
-    const line = lines[i]
-    const trimmed = line.trim()
+    const trimmed = lines[i].trim()
 
-    // Detectar início de tabela: linha que começa e termina com |
-    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
-      const nextLine = (lines[i + 1] || '').trim()
-      // Verificar se a linha seguinte é o separador (ex: |---|---|)
-      if (nextLine.match(/^\|[\s\-:| ]+\|$/)) {
-        const headerLine = line
-        const bodyLines: string[] = []
-        let j = i + 2 // saltar cabeçalho e separador
+    // Detectar início de tabela: linha que contém | e parece ter colunas
+    if (trimmed.includes('|') && trimmed.startsWith('|')) {
+      const nextTrimmed = (lines[i + 1] || '').trim()
 
-        while (
-          j < lines.length &&
-          lines[j].trim().startsWith('|') &&
-          lines[j].trim().endsWith('|')
-        ) {
-          bodyLines.push(lines[j])
+      // Separador: contém | e - (com possíveis : para alinhamento)
+      const isSeparator = nextTrimmed.startsWith('|') &&
+        nextTrimmed.includes('-') &&
+        /^[\s|:\-]+$/.test(nextTrimmed)
+
+      if (isSeparator) {
+        // Recolher cabeçalho
+        const headerCells = parseCells(trimmed)
+
+        // Recolher linhas do corpo
+        const bodyRows: string[][] = []
+        let j = i + 2
+
+        while (j < lines.length) {
+          const rowTrimmed = lines[j].trim()
+          if (!rowTrimmed.includes('|') || !rowTrimmed.startsWith('|')) break
+          bodyRows.push(parseCells(rowTrimmed))
           j++
         }
 
-        // Construir HTML da tabela
-        const headers = headerLine.split('|').map(h => h.trim()).filter(h => h !== '')
-        const headerHtml =
-          '<tr>' + headers.map(h => `<th>${applyInline(h)}</th>`).join('') + '</tr>'
+        // Construir HTML da tabela com wrapper
+        const numCols = headerCells.length
+        const colWidth = numCols > 0 ? Math.floor(100 / numCols) : 100
 
-        const rowsHtml = bodyLines
-          .map(rowLine => {
-            const cells = rowLine.split('|').map(c => c.trim()).filter(c => c !== '')
-            return '<tr>' + cells.map(c => `<td>${applyInline(c)}</td>`).join('') + '</tr>'
+        const headerHtml = '<tr>' +
+          headerCells.map(h => `<th style="width:${colWidth}%">${applyInline(h)}</th>`).join('') +
+          '</tr>'
+
+        const rowsHtml = bodyRows
+          .map(cells => {
+            // Preencher células em falta para alinhar com cabeçalho
+            while (cells.length < numCols) cells.push('')
+            return '<tr>' + cells.slice(0, numCols).map(c => `<td>${applyInline(c)}</td>`).join('') + '</tr>'
           })
           .join('\n')
 
         result.push(
-          `<table><thead>${headerHtml}</thead><tbody>${rowsHtml}</tbody></table>`
+          `<div class="table-wrapper"><table><thead>${headerHtml}</thead><tbody>${rowsHtml}</tbody></table></div>`
         )
         i = j
         continue
       }
     }
 
-    result.push(line)
+    result.push(lines[i])
     i++
   }
 
   return result.join('\n')
 }
 
+// Extrair células de uma linha de tabela markdown, preservando células vazias
+function parseCells(line: string): string[] {
+  let trimmed = line.trim()
+  // Remover | inicial e final
+  if (trimmed.startsWith('|')) trimmed = trimmed.slice(1)
+  if (trimmed.endsWith('|')) trimmed = trimmed.slice(0, -1)
+  // Dividir e manter células vazias (trim cada uma)
+  return trimmed.split('|').map(c => c.trim())
+}
+
+// ─── Conversão de markdown para HTML ─────────────────────────────────────────
+
 function markdownToHtml(md: string): string {
-  // 1. Tabelas (processadas primeiro — são blocos multi-linha)
+  // 1. Tabelas (blocos multi-linha — processar primeiro)
   md = convertTables(md)
 
-  return md
+  // 2. Separar em linhas para processar bloco a bloco
+  const lines = md.split('\n')
+  const htmlLines: string[] = []
+  let inList: 'ul' | 'ol' | null = null
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const trimmed = line.trim()
+
+    // Linhas vazias — fechar lista se aberta
+    if (trimmed === '' || trimmed === '</p><p>') {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      continue
+    }
+
+    // Já é HTML (tabelas, etc.) — passar directamente
+    if (trimmed.startsWith('<div') || trimmed.startsWith('<table') ||
+        trimmed.startsWith('<thead') || trimmed.startsWith('<tbody') ||
+        trimmed.startsWith('<tr') || trimmed.startsWith('</')) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(line)
+      continue
+    }
+
     // Cabeçalhos
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    // Bold e italic
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // Blockquotes
-    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-    // Listas não ordenadas
-    .replace(/^\- (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-    // Listas ordenadas
-    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-    // Código inline
-    .replace(/`(.+?)`/g, '<code>$1</code>')
-    // Separadores
-    .replace(/^---+$/gm, '<hr>')
-    // Parágrafos (linhas simples)
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/^(?!<[h|u|o|b|l|h|t])(.+)$/gm, '<p>$1</p>')
+    const h3 = trimmed.match(/^### (.+)$/)
+    if (h3) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(`<h3>${applyInline(h3[1])}</h3>`)
+      continue
+    }
+    const h2 = trimmed.match(/^## (.+)$/)
+    if (h2) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(`<h2>${applyInline(h2[1])}</h2>`)
+      continue
+    }
+    const h1 = trimmed.match(/^# (.+)$/)
+    if (h1) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(`<h1>${applyInline(h1[1])}</h1>`)
+      continue
+    }
+
+    // Separador
+    if (/^---+$/.test(trimmed)) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push('<hr>')
+      continue
+    }
+
+    // Blockquote
+    const bq = trimmed.match(/^> (.+)$/)
+    if (bq) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(`<blockquote>${applyInline(bq[1])}</blockquote>`)
+      continue
+    }
+
+    // Lista não ordenada
+    const ul = trimmed.match(/^[-*] (.+)$/)
+    if (ul) {
+      if (inList !== 'ul') {
+        if (inList) htmlLines.push('</ol>')
+        htmlLines.push('<ul>')
+        inList = 'ul'
+      }
+      htmlLines.push(`<li>${applyInline(ul[1])}</li>`)
+      continue
+    }
+
+    // Lista ordenada
+    const ol = trimmed.match(/^\d+\. (.+)$/)
+    if (ol) {
+      if (inList !== 'ol') {
+        if (inList) htmlLines.push('</ul>')
+        htmlLines.push('<ol>')
+        inList = 'ol'
+      }
+      htmlLines.push(`<li>${applyInline(ol[1])}</li>`)
+      continue
+    }
+
+    // Parágrafo (tudo o resto)
+    if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+    htmlLines.push(`<p>${applyInline(trimmed)}</p>`)
+  }
+
+  // Fechar lista pendente
+  if (inList) htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>')
+
+  return htmlLines.join('\n')
 }

@@ -3,7 +3,7 @@ import OpenAI from 'openai'
 import { supabaseAdmin } from '@/lib/db/supabase'
 import {
   SYSTEM_ANALYST, buildAnalystUserMessage
-} from '@/lib/ai/prompts/analyst
+} from '@/lib/ai/prompts/analyst'
 import {
   SYSTEM_STRATEGIST_PART1, SYSTEM_STRATEGIST_PART2,
   buildStrategistPart1Message, buildStrategistPart2Message
@@ -44,6 +44,7 @@ async function runAnalyst(
   await updatePlanStatus(planId, 'analysing')
 
   try {
+    // Timeout de 60s para evitar bloqueio indefinido no Vercel
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       temperature: 0.3,
@@ -53,7 +54,7 @@ async function runAnalyst(
         { role: 'system', content: SYSTEM_ANALYST },
         { role: 'user', content: buildAnalystUserMessage(questionario) }
       ]
-    })
+    }, { timeout: 60_000 })
 
     const brief = JSON.parse(response.choices[0].message.content!) as AnalystBrief
     const durationMs = Date.now() - start
@@ -83,12 +84,13 @@ async function runAnalystFallback(
 ): Promise<AnalystBrief> {
   const start = Date.now()
 
+  // Timeout de 90s para o fallback (consistente com outras chamadas Anthropic)
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 4000,
     system: SYSTEM_ANALYST + '\n\nIMPORTANTE: Responde APENAS com JSON válido.',
     messages: [{ role: 'user', content: buildAnalystUserMessage(questionario) }]
-  })
+  }, { timeout: 90_000 })
 
   const text = (response.content[0] as { text: string }).text
   const jsonMatch = text.match(/\{[\s\S]*\}/)
@@ -116,6 +118,7 @@ async function runStrategist(
   await updatePlanStatus(planId, 'generating')
 
   // Gerar em duas partes para evitar truncamento por limite de tokens
+  // Timeout de 120s por chamada para evitar bloqueio indefinido no Vercel
   const [part1Response, part2Response] = await Promise.all([
     anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
@@ -123,14 +126,14 @@ async function runStrategist(
       temperature: 0.5,
       system: SYSTEM_STRATEGIST_PART1,
       messages: [{ role: 'user', content: buildStrategistPart1Message(questionario, brief) }]
-    }),
+    }, { timeout: 120_000 }),
     anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 8000,
       temperature: 0.5,
       system: SYSTEM_STRATEGIST_PART2,
       messages: [{ role: 'user', content: buildStrategistPart2Message(questionario, brief) }]
-    })
+    }, { timeout: 120_000 })
   ])
 
   const part1 = (part1Response.content[0] as { text: string }).text
@@ -163,6 +166,7 @@ async function runReviewer(
   await updatePlanStatus(planId, 'reviewing')
 
   try {
+    // Timeout de 60s para evitar bloqueio indefinido no Vercel
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       temperature: 0.4,
@@ -172,7 +176,7 @@ async function runReviewer(
         { role: 'system', content: SYSTEM_REVIEWER },
         { role: 'user', content: buildReviewerUserMessage(questionario, brief, plan) }
       ]
-    })
+    }, { timeout: 60_000 })
 
     const review = JSON.parse(response.choices[0].message.content!) as ReviewOutput
 
@@ -203,12 +207,13 @@ async function runReviewerFallback(
 ): Promise<ReviewOutput> {
   const start = Date.now()
 
+  // Timeout de 90s para o fallback (consistente com outras chamadas Anthropic)
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 4000,
     system: SYSTEM_REVIEWER + '\n\nIMPORTANTE: Responde APENAS com JSON válido.',
     messages: [{ role: 'user', content: buildReviewerUserMessage(questionario, brief, plan) }]
-  })
+  }, { timeout: 90_000 })
 
   const text = (response.content[0] as { text: string }).text
   const jsonMatch = text.match(/\{[\s\S]*\}/)
@@ -235,6 +240,7 @@ async function runFinalizer(
   const start = Date.now()
   await updatePlanStatus(planId, 'finalising')
 
+  // Timeout de 90s por chamada para evitar bloqueio indefinido no Vercel
   const [part1Response, part2Response] = await Promise.all([
     anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -242,14 +248,14 @@ async function runFinalizer(
       temperature: 0.3,
       system: SYSTEM_FINALIZER + '\n\nGera as SECÇÕES 1 a 5 do plano final. Incorpora TODAS as melhorias identificadas na revisão.',
       messages: [{ role: 'user', content: buildFinalizerUserMessage(plan, review) + '\n\nGera apenas as Secções 1-5.' }]
-    }),
+    }, { timeout: 90_000 }),
     anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 4000,
       temperature: 0.3,
       system: SYSTEM_FINALIZER + '\n\nGera as SECÇÕES 6 a 10 do plano final. Começa directamente em ## SECÇÃO 6.',
       messages: [{ role: 'user', content: buildFinalizerUserMessage(plan, review) + '\n\nGera apenas as Secções 6-10. Começa em ## SECÇÃO 6.' }]
-    })
+    }, { timeout: 90_000 })
   ])
 
   const finalPart1 = (part1Response.content[0] as { text: string }).text
@@ -270,7 +276,7 @@ async function runFinalizer(
   return finalPlan
 }
 
-// ─── Envio de email via Resend ───────────────────────────────────────────────
+// ─── Envio de email via Resend ────────────────────────────────────────────────
 
 async function sendPlanEmail(
   planId: string,
@@ -418,7 +424,6 @@ export async function runOrchestrator(
       .eq('plan_id', planId)
 
     const totalCost = logs?.reduce((sum, l) => sum + (l.custo_eur || 0), 0) ?? 0
-    const totalSeconds = Math.round((Date.now() - startTotal) / 1000)
 
     await updatePlanStatus(planId, 'completed', {
       custo_total_eur: totalCost,

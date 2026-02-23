@@ -1587,24 +1587,6 @@ footer {
     border-left: 3px solid #16a34a;
 }
 
-/* Testimonial Stars */
-.testimonial-stars {
-    color: #fbbf24;
-    font-size: 1.1rem;
-    margin-bottom: 1.25rem;
-    display: flex;
-    justify-content: center;
-    gap: 0.25rem;
-}
-
-/* Testimonials Slider - 3 cards */
-.testimonials-slider {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 100%;
-}
-
 /* FAQ CTA */
 .faq-cta {
     text-align: center;

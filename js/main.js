@@ -637,7 +637,7 @@ if (serviceNotifyForm) {
 
     function startAuto() {
         clearInterval(autoTimer);
-        autoTimer = setInterval(next, 6000);
+        autoTimer = setInterval(next, 10000);
     }
 
     show(index);
@@ -705,7 +705,7 @@ if (leadMagnetForm) {
         .then(function(response) {
             if (response.ok) {
                 // Open the PDF guide in a new tab
-                window.open('guia-5-formas-ia.html', '_blank');
+                var a = document.createElement('a'); a.href = 'guia-5-formas-ia.pdf'; a.download = 'Guia-5-Formas-IA-Miguel-Silva-Lab.pdf'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 submitBtn.innerHTML = 'Guia aberto! <i class="fas fa-check" aria-hidden="true"></i>';
                 submitBtn.style.background = '#16a34a';
                 submitBtn.style.color = 'white';
@@ -964,5 +964,108 @@ if (leadMagnetForm) {
         if (e.key === 'Escape' && isOpen) {
             closeChat();
         }
+    });
+})();
+
+// ===========================================
+// Orientation Agent
+// ===========================================
+(function() {
+    var trigger = document.getElementById('orientTrigger');
+    var widget  = document.getElementById('orientWidget');
+    var closeBtn= document.getElementById('orientClose');
+    var body    = document.getElementById('orientBody');
+    if (!trigger || !widget) return;
+
+    var results = {
+        'formacao-empresas': {
+            title: 'Formação para Empresas',
+            desc: 'Formação prática em IA para equipas, desenhada à medida do seu negócio. Elegível para financiamento europeu.',
+            primary: { text: 'Saber mais', href: 'formacao-empresas.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'formacao-empresas-dir': {
+            title: 'Formação para Direção',
+            desc: 'Formação estratégica em IA para decisores — para liderar a transformação com conhecimento e confiança.',
+            primary: { text: 'Saber mais', href: 'formacao-empresas.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'formacao-inst': {
+            title: 'Formação para Instituições',
+            desc: 'Colaboro como formador certificado (CCP) em entidades acreditadas. Módulos prontos a integrar em programas co-financiados.',
+            primary: { text: 'Saber mais', href: 'formacao-instituicoes.html' },
+            secondary: { text: 'Entrar em contacto', href: '#contacto' }
+        },
+        'mentoria': {
+            title: 'Mentoria Individual',
+            desc: 'Acompanhamento personalizado para decisores que querem aplicar IA com método e resultados concretos.',
+            primary: { text: 'Ver planos de mentoria', href: 'mentoria.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'cursos': {
+            title: 'Cursos Curtos Online',
+            desc: 'Formações intensivas em ferramentas específicas de IA generativa. Brevemente disponíveis.',
+            primary: { text: 'Ver cursos em preparação', href: 'formacoes-curtas.html' },
+            secondary: { text: 'Entrar em contacto', href: '#contacto' }
+        },
+        'consultoria': {
+            title: 'Consultoria Estratégica',
+            desc: 'Diagnóstico e plano de ação personalizado para o seu negócio. A conversa inicial de 30 minutos é gratuita.',
+            primary: { text: 'Pedir diagnóstico gratuito', href: '#contacto' },
+            secondary: { text: 'Como funciona', href: 'consultoria-estrategica.html' }
+        }
+    };
+
+    function showStep(id) {
+        var steps = body.querySelectorAll('.orient-step');
+        steps.forEach(function(s) { s.classList.remove('active'); });
+        var el = document.getElementById('orientStep' + id);
+        if (el) el.classList.add('active');
+    }
+
+    function showResult(key) {
+        var r = results[key];
+        if (!r) return;
+        var steps = body.querySelectorAll('.orient-step');
+        steps.forEach(function(s) { s.classList.remove('active'); });
+        var resultEl = document.getElementById('orientResult');
+        resultEl.style.display = 'block';
+        resultEl.innerHTML =
+            '<h4>A nossa recomendação</h4>' +
+            '<p>' + r.desc + '</p>' +
+            '<div class="orient-result-btns">' +
+            '<a href="' + r.primary.href + '" class="orient-result-btn">' + r.primary.text + '</a>' +
+            '<a href="' + r.secondary.href + '" class="orient-result-btn secondary">' + r.secondary.text + '</a>' +
+            '</div>' +
+            '<button class="orient-restart" id="orientRestart">← Recomeçar</button>';
+        document.getElementById('orientRestart').addEventListener('click', function() {
+            resultEl.style.display = 'none';
+            showStep('0');
+        });
+    }
+
+    function open() {
+        widget.classList.add('open');
+        widget.setAttribute('aria-hidden', 'false');
+        showStep('0');
+    }
+
+    function close() {
+        widget.classList.remove('open');
+        widget.setAttribute('aria-hidden', 'true');
+    }
+
+    trigger.addEventListener('click', function() {
+        if (widget.classList.contains('open')) { close(); } else { open(); }
+    });
+    closeBtn.addEventListener('click', close);
+
+    body.addEventListener('click', function(e) {
+        var btn = e.target.closest('.orient-btn');
+        if (!btn) return;
+        var next   = btn.getAttribute('data-next');
+        var result = btn.getAttribute('data-result');
+        if (result) { showResult(result); }
+        else if (next) { showStep(next); }
     });
 })();

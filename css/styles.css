@@ -519,6 +519,7 @@ section {
     height: 100%;
     box-sizing: border-box;
     min-width: 0;
+    border-left: 4px solid var(--secondary-blue);
 }
 
 #formacoes .service-notify-form {

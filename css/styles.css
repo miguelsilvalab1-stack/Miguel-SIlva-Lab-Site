@@ -516,6 +516,8 @@ section {
 
 #formacoes .service-card {
     padding: 1.75rem;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 #formacoes .service-card h3 {

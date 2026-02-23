@@ -949,13 +949,166 @@ if (leadMagnetForm) {
         });
     }
 
+    // --- Orientation flow within chat ---
+    var orientSteps = {
+        '0': {
+            q: 'Em que situação se encontra?',
+            opts: [
+                { text: 'Represento uma empresa e quero formar a minha equipa', next: '1a' },
+                { text: 'Represento uma instituição de ensino ou centro de formação', next: '1b' },
+                { text: 'Sou profissional e quero desenvolver as minhas competências em IA', next: '1c' },
+                { text: 'Quero perceber como a IA pode melhorar o meu negócio', next: '1d' }
+            ]
+        },
+        '1a': {
+            q: 'Qual é o principal objetivo da formação?',
+            opts: [
+                { text: 'Aumentar a produtividade e eficiência da equipa com ferramentas de IA', result: 'formacao-empresas' },
+                { text: 'Capacitar a direção para liderar a transformação com IA', result: 'formacao-empresas-dir' }
+            ]
+        },
+        '1b': {
+            q: 'O que está a procurar?',
+            opts: [
+                { text: 'Incluir módulos de IA no meu catálogo de formação', result: 'formacao-inst' },
+                { text: 'Contratar um formador certificado para programas co-financiados', result: 'formacao-inst' }
+            ]
+        },
+        '1c': {
+            q: 'O que prefere?',
+            opts: [
+                { text: 'Acompanhamento personalizado ao longo do tempo', result: 'mentoria' },
+                { text: 'Curso curto e intensivo sobre uma ferramenta específica', result: 'cursos' }
+            ]
+        },
+        '1d': {
+            q: 'Qual é o seu ponto de partida?',
+            opts: [
+                { text: 'Ainda não sei bem por onde começar — preciso de um diagnóstico', result: 'consultoria' },
+                { text: 'Já tenho algumas ideias e quero orientação para as executar', result: 'mentoria' }
+            ]
+        }
+    };
+
+    var orientResults = {
+        'formacao-empresas': {
+            title: 'Formação para Empresas',
+            desc: 'Formação prática em IA para equipas, desenhada à medida do seu negócio. Elegível para financiamento europeu.',
+            primary: { text: 'Saber mais', href: 'formacao-empresas.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'formacao-empresas-dir': {
+            title: 'Formação para Direção',
+            desc: 'Formação estratégica em IA para decisores — para liderar a transformação com conhecimento e confiança.',
+            primary: { text: 'Saber mais', href: 'formacao-empresas.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'formacao-inst': {
+            title: 'Formação para Instituições',
+            desc: 'Colaboro como formador certificado (CCP) em entidades acreditadas. Módulos prontos a integrar em programas co-financiados.',
+            primary: { text: 'Saber mais', href: 'formacao-instituicoes.html' },
+            secondary: { text: 'Entrar em contacto', href: '#contacto' }
+        },
+        'mentoria': {
+            title: 'Mentoria Individual',
+            desc: 'Acompanhamento personalizado para decisores que querem aplicar IA com método e resultados concretos.',
+            primary: { text: 'Ver planos de mentoria', href: 'mentoria.html' },
+            secondary: { text: 'Agendar conversa gratuita', href: '#contacto' }
+        },
+        'cursos': {
+            title: 'Cursos Curtos Online',
+            desc: 'Formações intensivas em ferramentas específicas de IA generativa. Brevemente disponíveis.',
+            primary: { text: 'Ver cursos em preparação', href: 'formacoes-curtas.html' },
+            secondary: { text: 'Entrar em contacto', href: '#contacto' }
+        },
+        'consultoria': {
+            title: 'Consultoria Estratégica',
+            desc: 'Diagnóstico e plano de ação personalizado para o seu negócio. A conversa inicial de 30 minutos é gratuita.',
+            primary: { text: 'Pedir diagnóstico gratuito', href: '#contacto' },
+            secondary: { text: 'Como funciona', href: 'consultoria-estrategica.html' }
+        }
+    };
+
+    function showOrientStep(stepId) {
+        var step = orientSteps[stepId];
+        if (!step) return;
+
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message chat-message-bot';
+
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+
+        var qEl = document.createElement('p');
+        qEl.style.marginBottom = '10px';
+        qEl.style.fontWeight = '600';
+        qEl.textContent = step.q;
+        bubble.appendChild(qEl);
+
+        var optsDiv = document.createElement('div');
+        optsDiv.className = 'chat-orient-opts';
+
+        step.opts.forEach(function(opt) {
+            var btn = document.createElement('button');
+            btn.className = 'chat-orient-btn';
+            btn.textContent = opt.text;
+            btn.addEventListener('click', function() {
+                appendMessage('user', opt.text);
+                optsDiv.querySelectorAll('.chat-orient-btn').forEach(function(b) {
+                    b.disabled = true;
+                    b.style.opacity = '0.45';
+                });
+                setTimeout(function() {
+                    if (opt.next) { showOrientStep(opt.next); }
+                    else if (opt.result) { showOrientResult(opt.result); }
+                }, 300);
+            });
+            optsDiv.appendChild(btn);
+        });
+
+        bubble.appendChild(optsDiv);
+        msgDiv.appendChild(bubble);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showOrientResult(key) {
+        var r = orientResults[key];
+        if (!r) return;
+
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'chat-message chat-message-bot';
+
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.innerHTML =
+            '<p style="font-weight:700;margin-bottom:6px;">A nossa recomendação: ' + escapeHtml(r.title) + '</p>' +
+            '<p style="margin-bottom:12px;">' + escapeHtml(r.desc) + '</p>' +
+            '<div class="chat-orient-result-btns">' +
+            '<a href="' + escapeHtml(r.primary.href) + '" class="chat-orient-result-btn">' + escapeHtml(r.primary.text) + '</a>' +
+            '<a href="' + escapeHtml(r.secondary.href) + '" class="chat-orient-result-btn chat-orient-result-btn-sec">' + escapeHtml(r.secondary.text) + '</a>' +
+            '</div>';
+
+        msgDiv.appendChild(bubble);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
     // Quick action buttons
     document.querySelectorAll('.chat-quick-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            var msg = btn.getAttribute('data-message');
-            if (msg) {
-                sendMessage(msg);
+            var type = btn.getAttribute('data-type');
+            if (type === 'orient') {
+                if (chatQuickActions) chatQuickActions.style.display = 'none';
+                if (!hasShownWelcome) {
+                    appendMessage('bot', welcomeMessage);
+                    hasShownWelcome = true;
+                }
+                showOrientStep('0');
+                return;
             }
+            var msg = btn.getAttribute('data-message');
+            if (msg) sendMessage(msg);
         });
     });
 
@@ -968,13 +1121,11 @@ if (leadMagnetForm) {
 })();
 
 // ===========================================
-// Orientation Agent
+// (Orientation Agent integrado no chat acima)
 // ===========================================
 (function() {
-    var trigger = document.getElementById('orientTrigger');
-    var widget  = document.getElementById('orientWidget');
-    var closeBtn= document.getElementById('orientClose');
-    var body    = document.getElementById('orientBody');
+    var trigger = null;
+    var widget  = null;
     if (!trigger || !widget) return;
 
     var results = {

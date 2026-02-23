@@ -955,74 +955,7 @@
         <span class="whatsapp-tooltip">Precisa de ajuda?</span>
     </a>
 
-    <!-- Orientation Agent Widget -->
-    <div class="orient-widget" id="orientWidget" role="dialog" aria-label="Assistente de orientação" aria-hidden="true">
-        <div class="orient-header">
-            <div class="orient-header-info">
-                <div class="orient-avatar"><i class="fas fa-compass" aria-hidden="true"></i></div>
-                <div>
-                    <h4>Encontre o serviço certo</h4>
-                    <span class="orient-status"><span class="chat-status-dot"></span> Online</span>
-                </div>
-            </div>
-            <button class="orient-close" id="orientClose" aria-label="Fechar">
-                <i class="fas fa-times" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div class="orient-body" id="orientBody">
-            <div class="orient-step active" id="orientStep0">
-                <p class="orient-question">Olá! Em que situação se encontra?</p>
-                <div class="orient-options">
-                    <button class="orient-btn" data-next="1a">Represento uma empresa e quero formar a minha equipa</button>
-                    <button class="orient-btn" data-next="1b">Represento uma instituição de ensino ou centro de formação</button>
-                    <button class="orient-btn" data-next="1c">Sou profissional e quero desenvolver as minhas competências em IA</button>
-                    <button class="orient-btn" data-next="1d">Quero perceber como a IA pode melhorar o meu negócio</button>
-                </div>
-            </div>
-
-            <div class="orient-step" id="orientStep1a">
-                <p class="orient-question">Qual é o principal objetivo da formação?</p>
-                <div class="orient-options">
-                    <button class="orient-btn" data-result="formacao-empresas">Aumentar a produtividade e eficiência da equipa com ferramentas de IA</button>
-                    <button class="orient-btn" data-result="formacao-empresas-dir">Capacitar a direção para liderar a transformação com IA</button>
-                </div>
-            </div>
-
-            <div class="orient-step" id="orientStep1b">
-                <p class="orient-question">O que está a procurar?</p>
-                <div class="orient-options">
-                    <button class="orient-btn" data-result="formacao-inst">Incluir módulos de IA no meu catálogo de formação</button>
-                    <button class="orient-btn" data-result="formacao-inst">Contratar um formador certificado para programas co-financiados</button>
-                </div>
-            </div>
-
-            <div class="orient-step" id="orientStep1c">
-                <p class="orient-question">O que prefere?</p>
-                <div class="orient-options">
-                    <button class="orient-btn" data-result="mentoria">Acompanhamento personalizado ao longo do tempo</button>
-                    <button class="orient-btn" data-result="cursos">Curso curto e intensivo sobre uma ferramenta específica</button>
-                </div>
-            </div>
-
-            <div class="orient-step" id="orientStep1d">
-                <p class="orient-question">Qual é o seu ponto de partida?</p>
-                <div class="orient-options">
-                    <button class="orient-btn" data-result="consultoria">Ainda não sei bem por onde começar — preciso de um diagnóstico</button>
-                    <button class="orient-btn" data-result="mentoria">Já tenho algumas ideias e quero orientação para as executar</button>
-                </div>
-            </div>
-
-            <div class="orient-result" id="orientResult" style="display:none;"></div>
-        </div>
-    </div>
-
-    <!-- Orientation Agent Trigger Button -->
-    <button class="orient-trigger" id="orientTrigger" aria-label="Precisa de ajuda a escolher?">
-        <i class="fas fa-compass" aria-hidden="true"></i>
-        <span>Qual serviço é para mim?</span>
-    </button>
-
-        <!-- AI Chat Widget -->
+    <!-- AI Chat Widget -->
     <div class="chat-widget" id="chatWidget" role="dialog" aria-label="Assistente IA" aria-hidden="true">
         <div class="chat-header">
             <div class="chat-header-info">
@@ -1041,8 +974,8 @@
         <div class="chat-messages" id="chatMessages" role="log" aria-live="polite">
         </div>
         <div class="chat-quick-actions" id="chatQuickActions">
-            <button class="chat-quick-btn" data-message="Quais são os serviços disponíveis?">
-                <i class="fas fa-briefcase" aria-hidden="true"></i> Ver serviços
+            <button class="chat-quick-btn" data-type="orient">
+                <i class="fas fa-compass" aria-hidden="true"></i> Qual serviço é para mim?
             </button>
             <button class="chat-quick-btn" data-message="Como posso agendar uma reunião gratuita?">
                 <i class="fas fa-calendar" aria-hidden="true"></i> Agendar reunião

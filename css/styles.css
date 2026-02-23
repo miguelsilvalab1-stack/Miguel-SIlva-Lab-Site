@@ -508,17 +508,21 @@ section {
     gap: 2rem;
 }
 
-#formacoes .services-grid {
+#servicos .services-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
 }
 
-#formacoes .service-card {
+#servicos .service-card-featured {
+    grid-column: 1 / -1;
+}
+
+#servicos .service-card {
     padding: 1.75rem;
 }
 
-#formacoes .service-card h3 {
-    font-size: 1.2rem;
+#servicos .service-card h3 {
+    font-size: 1.15rem;
 }
 
 .service-card {
@@ -1178,8 +1182,12 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    #formacoes .services-grid {
+    #servicos .services-grid {
         grid-template-columns: 1fr;
+    }
+
+    #servicos .service-card-featured {
+        grid-column: auto;
     }
 
     .portfolio-grid {

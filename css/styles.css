@@ -518,6 +518,23 @@ section {
     padding: 1.75rem;
     height: 100%;
     box-sizing: border-box;
+    min-width: 0;
+}
+
+#formacoes .service-notify-form {
+    min-width: 0;
+    width: 100%;
+}
+
+#formacoes .service-notify-group {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#formacoes .service-notify-group input,
+#formacoes .service-notify-group button {
+    min-width: 0;
+    flex: 1 1 100%;
 }
 
 #formacoes .service-card h3 {

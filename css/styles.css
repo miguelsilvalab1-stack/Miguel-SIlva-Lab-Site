@@ -508,6 +508,19 @@ section {
     gap: 2rem;
 }
 
+#formacoes .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+#formacoes .service-card {
+    padding: 1.75rem;
+}
+
+#formacoes .service-card h3 {
+    font-size: 1.2rem;
+}
+
 .service-card {
     background: white;
     padding: 2.5rem;
@@ -1162,6 +1175,10 @@ footer {
     .services-grid,
     .blog-grid,
     .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #formacoes .services-grid {
         grid-template-columns: 1fr;
     }
 

@@ -1,17 +1,15 @@
 /**
  * Stratego.AI — Orchestrator v2
  * Pipeline multi-agente para planos de negócio estruturados.
- * Sprint 2 — email via dynamic import (opcional, não bloqueia build)
  */
 
 import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-const openai   = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const openai    = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-const supabase = createClient(
+const supabase  = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
 )
@@ -40,13 +38,15 @@ export interface BusinessPlanOutput {
 }
 
 function buildContexto(input: BusinessPlanInput): string {
-  return `IDEIA: ${input.ideia}
-SECTOR: ${input.sector}
-CLIENTE: ${input.publico}
-LOCALIZAÇÃO: ${input.localizacao}
-INVESTIMENTO: ${input.investimento}
-DIFERENCIAL: ${input.diferencial}
-OBJECTIVO: ${input.objetivo}`.trim()
+  return [
+    'IDEIA: ' + input.ideia,
+    'SECTOR: ' + input.sector,
+    'CLIENTE: ' + input.publico,
+    'LOCALIZAÇÃO: ' + input.localizacao,
+    'INVESTIMENTO: ' + input.investimento,
+    'DIFERENCIAL: ' + input.diferencial,
+    'OBJECTIVO: ' + input.objetivo,
+  ].join('\n')
 }
 
 async function updatePlanStatus(job_id: string, status: string, content?: string) {
@@ -63,24 +63,11 @@ async function runAnalista(contexto: string): Promise<string> {
     messages: [
       {
         role: 'system',
-        content: `És um analista de negócios experiente especializado no mercado português.
-Respondes sempre em Português de Portugal, com linguagem clara e profissional.`,
+        content: 'És um analista de negócios especializado no mercado português. Respondes em Português de Portugal com linguagem clara e profissional.',
       },
       {
         role: 'user',
-        content: `Analisa esta ideia de negócio para o mercado português:
-
-${contexto}
-
-Fornece:
-1. Panorama do mercado em Portugal (dimensão, tendências)
-2. Principais concorrentes directos e indirectos
-3. Perfil do cliente-alvo (comportamento, necessidades, poder de compra)
-4. Oportunidades não exploradas neste sector
-5. Principais riscos e barreiras à entrada
-6. Benchmarks financeiros típicos (margens, ticket médio, break-even típico)
-
-Sê específico e inclui dados concretos onde possível.`,
+        content: 'Analisa esta ideia de negócio:\n\n' + contexto + '\n\nFornece:\n1. Panorama do mercado em Portugal\n2. Principais concorrentes directos e indirectos\n3. Perfil do cliente-alvo\n4. Oportunidades não exploradas\n5. Riscos e barreiras à entrada\n6. Benchmarks financeiros típicos do sector',
       },
     ],
   })
@@ -94,28 +81,7 @@ async function runEstrategaA(contexto: string, analise: string): Promise<string>
     temperature: 0.6 as never,
     messages: [{
       role: 'user',
-      content: `Com base na análise de mercado abaixo, desenvolve a ESTRATÉGIA COMERCIAL e o PLANO FINANCEIRO.
-
-ANÁLISE DE MERCADO:
-${analise}
-
-CONTEXTO:
-${contexto}
-
-## ESTRATÉGIA COMERCIAL
-- Posicionamento e proposta de valor única
-- Modelo de receita (fontes de receita, estrutura de preços)
-- Estratégia para captar os primeiros 100 clientes
-- Canais de distribuição e parcerias
-
-## PLANO FINANCEIRO
-- Investimento inicial discriminado
-- Estrutura de custos fixos e variáveis mensais
-- Projecção de receitas para 12 meses (conservador / realista / optimista)
-- Break-even estimado em meses
-- Fontes de financiamento sugeridas (capital próprio, BPI, IAPMEI, etc.)
-
-Usa tabelas em markdown onde ajude. Sê conservador nas projecções.`,
+      content: 'Com base na análise abaixo, desenvolve a ESTRATÉGIA COMERCIAL e o PLANO FINANCEIRO.\n\nANÁLISE:\n' + analise + '\n\nCONTEXTO:\n' + contexto + '\n\n## ESTRATÉGIA COMERCIAL\n- Posicionamento e proposta de valor\n- Modelo de receita e preços\n- Estratégia para os primeiros 100 clientes\n- Canais de distribuição\n\n## PLANO FINANCEIRO\n- Investimento inicial discriminado\n- Custos fixos e variáveis mensais\n- Projecção de receitas 12 meses (conservador/realista/optimista)\n- Break-even estimado\n- Fontes de financiamento (capital próprio, BPI, IAPMEI)',
     }],
   })
   const block = msg.content[0]
@@ -129,38 +95,14 @@ async function runEstrategaB(contexto: string, analise: string): Promise<string>
     temperature: 0.6 as never,
     messages: [{
       role: 'user',
-      content: `Com base na análise de mercado abaixo, desenvolve o PLANO OPERACIONAL e o PLANO DE MARKETING.
-
-ANÁLISE DE MERCADO:
-${analise}
-
-CONTEXTO:
-${contexto}
-
-## PLANO OPERACIONAL
-- Estrutura organizacional inicial
-- Processos-chave do negócio
-- Tecnologia e ferramentas necessárias
-- KPIs operacionais semanais
-
-## MARKETING E COMUNICAÇÃO
-- Identidade de marca e mensagem central
-- Mix de marketing para os primeiros 6 meses
-- Presença digital (website, redes sociais, SEO)
-- Acções de lançamento para os primeiros 30 dias
-- Budget de marketing sugerido
-
-Sê prático e accionável com recursos limitados.`,
+      content: 'Com base na análise abaixo, desenvolve o PLANO OPERACIONAL e o PLANO DE MARKETING.\n\nANÁLISE:\n' + analise + '\n\nCONTEXTO:\n' + contexto + '\n\n## PLANO OPERACIONAL\n- Estrutura organizacional inicial\n- Processos-chave do negócio\n- Tecnologia e ferramentas necessárias\n- KPIs operacionais\n\n## MARKETING E COMUNICAÇÃO\n- Identidade de marca e mensagem central\n- Mix de marketing para os primeiros 6 meses\n- Presença digital (website, redes sociais, SEO)\n- Acções de lançamento nos primeiros 30 dias\n- Budget de marketing sugerido',
     }],
   })
   const block = msg.content[0]
   return block.type === 'text' ? block.text : ''
 }
 
-async function runRevisor(
-  contexto: string, analise: string,
-  estrategiaA: string, estrategiaB: string
-): Promise<string> {
+async function runRevisor(contexto: string, analise: string, a: string, b: string): Promise<string> {
   const res = await openai.chat.completions.create({
     model: 'gpt-4o',
     temperature: 0.3,
@@ -168,27 +110,11 @@ async function runRevisor(
     messages: [
       {
         role: 'system',
-        content: `És um revisor sénior de planos de negócio. Sintetizas contributos de estrategas,
-eliminando contradições e reforçando os pontos mais fortes. Respondes em Português de Portugal.`,
+        content: 'És um revisor sénior de planos de negócio. Sintetizas contributos eliminando contradições. Respondes em Português de Portugal.',
       },
       {
         role: 'user',
-        content: `Sintetiza os dois contributos num plano de negócio coerente.
-
-CONTEXTO: ${contexto}
-
-ANÁLISE: ${analise}
-
-ESTRATEGA A (Comercial + Financeiro): ${estrategiaA}
-
-ESTRATEGA B (Operacional + Marketing): ${estrategiaB}
-
-Produz uma síntese que:
-1. Mantém os melhores elementos de cada estratega
-2. Resolve contradições (usa sempre o cenário mais conservador para finanças)
-3. Inclui RESUMO EXECUTIVO de 3-4 parágrafos no início
-4. Inclui PRÓXIMOS PASSOS com 10 acções para os próximos 90 dias
-5. Estrutura com secções claras em markdown`,
+        content: 'Sintetiza os dois contributos num plano coerente.\n\nCONTEXTO:\n' + contexto + '\n\nANÁLISE:\n' + analise + '\n\nESTRATEGA A:\n' + a + '\n\nESTRATEGA B:\n' + b + '\n\nProduz:\n1. RESUMO EXECUTIVO (3-4 parágrafos)\n2. Síntese coerente de todas as secções\n3. PRÓXIMOS PASSOS com 10 acções concretas para 90 dias\n\nUsa secções claras em markdown.',
       },
     ],
   })
@@ -201,20 +127,7 @@ async function runFinalizador1(sintese: string): Promise<Record<string, string>>
     max_tokens: 2500,
     messages: [{
       role: 'user',
-      content: `Da seguinte síntese de plano de negócio, extrai e melhora estas 4 secções:
-"resumo_executivo", "analise_mercado", "estrategia_comercial", "plano_financeiro"
-
-SÍNTESE:
-${sintese}
-
-Para cada secção:
-- Mantém toda a informação substantiva
-- Melhora fluidez em Português de Portugal
-- Usa markdown correctamente
-- Tom profissional mas acessível
-
-Devolve APENAS um JSON válido com exactamente estas chaves:
-{"resumo_executivo": "...", "analise_mercado": "...", "estrategia_comercial": "...", "plano_financeiro": "..."}`,
+      content: 'Da síntese abaixo, extrai e melhora 4 secções.\n\nSÍNTESE:\n' + sintese + '\n\nMelhora a fluidez e clareza em Português de Portugal. Usa markdown correctamente.\n\nDevolve APENAS JSON com estas chaves exactas:\n{"resumo_executivo": "...", "analise_mercado": "...", "estrategia_comercial": "...", "plano_financeiro": "..."}',
     }],
   })
   const block = msg.content[0]
@@ -231,16 +144,7 @@ async function runFinalizador2(sintese: string): Promise<Record<string, string>>
     max_tokens: 2500,
     messages: [{
       role: 'user',
-      content: `Da seguinte síntese de plano de negócio, extrai e melhora estas 3 secções:
-"plano_operacional", "marketing_comunicacao", "proximos_passos"
-
-SÍNTESE:
-${sintese}
-
-Para "proximos_passos": lista numerada de 10 acções com prazo (Semana 1, Mês 1, Mês 2-3, etc.)
-
-Devolve APENAS um JSON válido com exactamente estas chaves:
-{"plano_operacional": "...", "marketing_comunicacao": "...", "proximos_passos": "..."}`,
+      content: 'Da síntese abaixo, extrai e melhora 3 secções.\n\nSÍNTESE:\n' + sintese + '\n\nPara "proximos_passos": lista numerada de 10 acções com prazo (Semana 1, Mês 1, Mês 2-3).\n\nDevolve APENAS JSON com estas chaves exactas:\n{"plano_operacional": "...", "marketing_comunicacao": "...", "proximos_passos": "..."}',
     }],
   })
   const block = msg.content[0]
@@ -253,27 +157,26 @@ Devolve APENAS um JSON válido com exactamente estas chaves:
 
 async function sendPlanEmail(email: string, nome: string, ideia: string, job_id: string) {
   try {
-    // Dynamic import — não falha o build se resend não estiver instalado
     const resendPkg = await import('resend').catch(() => null)
     if (!resendPkg || !process.env.RESEND_API_KEY) return
     const { Resend } = resendPkg
     const resend = new Resend(process.env.RESEND_API_KEY)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://stratego.miguelsilvalab.pt'
+    const greeting = nome ? ('Ola ' + nome + ',') : 'Ola,'
+    const planUrl = appUrl + '/stratego/resultado/' + job_id
     await resend.emails.send({
       from: 'Stratego.AI <noreply@stratego-ai.com>',
       to: email,
-      subject: `O teu plano de negócio está pronto — ${ideia.slice(0, 50)}`,
-      html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px">
-        <h1 style="color:#e8432d">O teu plano de negócio está pronto 🚀</h1>
-        <p>Olá${nome ? \` ${nome}\` : ''},</p>
-        <p>O teu plano para <strong>${ideia}</strong> foi gerado com sucesso.</p>
-        <a href="${appUrl}/stratego/resultado/${job_id}"
-           style="display:inline-block;background:#e8432d;color:white;padding:14px 28px;
-                  border-radius:12px;text-decoration:none;font-weight:600;margin:24px 0">
-          Ver o meu plano →
-        </a>
-        <p style="color:#999;font-size:13px">Stratego.AI — De ideia a negócio em 2 minutos</p>
-      </div>`,
+      subject: 'O teu plano de negocio esta pronto — ' + ideia.slice(0, 50),
+      html: '<div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:32px">'
+        + '<h1 style="color:#e8432d">O teu plano de negocio esta pronto</h1>'
+        + '<p>' + greeting + '</p>'
+        + '<p>O teu plano para <strong>' + ideia + '</strong> foi gerado.</p>'
+        + '<a href="' + planUrl + '" style="display:inline-block;background:#e8432d;color:white;'
+        + 'padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:600;margin:24px 0">'
+        + 'Ver o meu plano</a>'
+        + '<p style="color:#999;font-size:13px">Stratego.AI</p>'
+        + '</div>',
     })
   } catch (err) {
     console.error('[orchestrator-v2] Email error:', err)
@@ -304,13 +207,13 @@ export async function generateBusinessPlan(input: BusinessPlanInput): Promise<Bu
     ])
 
     const output: BusinessPlanOutput = {
-      resumo_executivo:     g1.resumo_executivo     || extrairSeccao(sintese, 'resumo'),
-      analise_mercado:      g1.analise_mercado      || analise,
-      estrategia_comercial: g1.estrategia_comercial || estrategiaA,
-      plano_financeiro:     g1.plano_financeiro     || '',
-      plano_operacional:    g2.plano_operacional    || estrategiaB,
-      marketing_comunicacao:g2.marketing_comunicacao|| '',
-      proximos_passos:      g2.proximos_passos      || '',
+      resumo_executivo:      g1.resumo_executivo      ?? extrairSeccao(sintese, 'resumo'),
+      analise_mercado:       g1.analise_mercado       ?? analise,
+      estrategia_comercial:  g1.estrategia_comercial  ?? estrategiaA,
+      plano_financeiro:      g1.plano_financeiro      ?? '',
+      plano_operacional:     g2.plano_operacional     ?? estrategiaB,
+      marketing_comunicacao: g2.marketing_comunicacao ?? '',
+      proximos_passos:       g2.proximos_passos       ?? '',
     }
 
     await updatePlanStatus(job_id, 'done', JSON.stringify(output))

@@ -1,7 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ═══════════════════════════════════════════════
+   STRATEGO.AI — Design System v2.5
+   MANTÉM as vars originais + adiciona v2.5
+═══════════════════════════════════════════════ */
 :root {
+  /* — Originais (mantidas para compatibilidade) — */
   --background: #0a0a0a;
   --foreground: #f5f5f5;
   --muted: #1a1a1a;
@@ -10,6 +15,21 @@
   --brand: #c1694f;
   --brand-light: #d4856e;
   --brand-dark: #a0563f;
+
+  /* — v2.5: Stratego dark theme — */
+  --dark:    #050810;
+  --navy:    #0a0f1e;
+  --accent:  #e8432d;
+  --accent2: #ff6b4a;
+  --white:   #ffffff;
+  --w80:     rgba(255,255,255,0.8);
+  --w50:     rgba(255,255,255,0.5);
+  --w30:     rgba(255,255,255,0.3);
+  --w15:     rgba(255,255,255,0.15);
+  --w08:     rgba(255,255,255,0.08);
+  --w05:     rgba(255,255,255,0.05);
+  --glow:    rgba(232,67,45,0.3);
+  --r-accent: rgba(232,67,45,0.12);
 }
 
 @theme inline {
@@ -18,6 +38,11 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-brand: var(--brand);
+  /* v2.5 tokens */
+  --color-dark:    var(--dark);
+  --color-navy:    var(--navy);
+  --color-accent:  var(--accent);
+  --color-accent2: var(--accent2);
 }
 
 * {
@@ -31,15 +56,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
+/* ── Scrollbar ────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--background); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* Prose (plano de marketing renderizado em Markdown) */
-.prose-dark {
-  color: #e4e4e7;
-}
+/* ── Prose (plano renderizado em Markdown) ── */
+.prose-dark { color: #e4e4e7; }
 .prose-dark h1, .prose-dark h2 { color: #f4f4f5; border-bottom: 1px solid #27272a; padding-bottom: 0.5rem; margin-top: 2rem; }
 .prose-dark h3 { color: #d4d4d8; }
 .prose-dark table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
@@ -53,7 +76,7 @@ body {
 .prose-dark a { color: #c1694f; }
 .prose-dark ul li::marker { color: #c1694f; }
 
-/* Animações */
+/* ── v2.5 Animações ───────────────────── */
 @keyframes pulse-slow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -62,6 +85,128 @@ body {
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-slide-up { animation: slide-up 0.4s ease-out; }
+
+@keyframes screen-enter {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-screen-enter { animation: screen-enter 0.32s ease forwards; }
+
+@keyframes screen-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-28px); }
+}
+.animate-screen-exit { animation: screen-exit 0.25s ease forwards; }
+
+/* ── v2.5 Progress bar ────────────────── */
+@keyframes progress-fill {
+  from { width: 0%; }
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── v2.5 Input pill ─────────────────── */
+.input-pill {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--w15);
+  border-radius: 100px;
+  padding: 0.35rem 0.35rem 0.35rem 1.4rem;
+  backdrop-filter: blur(16px);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-pill:focus-within {
+  border-color: var(--w30);
+  box-shadow: 0 0 0 4px rgba(232,67,45,0.1);
+}
+
+/* ── v2.5 Chips ──────────────────────── */
+.chip {
+  padding: 0.3rem 0.85rem;
+  border-radius: 100px;
+  background: var(--w05);
+  border: 1px solid var(--w08);
+  font-size: 0.76rem;
+  color: var(--w30);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover {
+  background: var(--w15);
+  color: var(--w80);
+  border-color: var(--w30);
+}
+
+/* ── v2.5 Q option ───────────────────── */
+.q-opt {
+  padding: 0.85rem 1.2rem;
+  border-radius: 14px;
+  background: var(--w05);
+  border: 1px solid var(--w08);
+  color: var(--w80);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.q-opt:hover { background: var(--w08); border-color: var(--w30); color: white; }
+.q-opt.sel   { background: var(--r-accent); border-color: var(--accent); color: white; }
+
+/* ── v2.5 Loading dots ───────────────── */
+@keyframes loading-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1.0); opacity: 1.0; }
+}
+.loading-dot { animation: loading-dot 1.4s ease-in-out infinite; }
+.loading-dot:nth-child(1) { animation-delay: 0s; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── v2.5 Dashboard tabs ─────────────── */
+.pro-tab {
+  padding: 0.55rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--w50);
+  background: transparent;
+  border: 1px solid transparent;
+}
+.pro-tab:hover  { color: var(--w80); }
+.pro-tab.active { background: var(--r-accent); border-color: var(--accent); color: white; }
+
+/* ── v2.5 Pro block cards ────────────── */
+.pro-block {
+  border-radius: 20px;
+  background: var(--w05);
+  border: 1px solid var(--w08);
+  padding: 1.25rem;
+  transition: border-color 0.2s;
+}
+.pro-block:hover { border-color: var(--w15); }
+
+/* ── v2.5 Premium banner ─────────────── */
+.premium-banner {
+  background: linear-gradient(135deg, rgba(232,67,45,0.15), rgba(255,107,74,0.08));
+  border: 1px solid rgba(232,67,45,0.3);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+/* ── Starfield body override (hero page only) ── */
+body.stratego-hero {
+  background: var(--dark);
+  overflow: hidden;
+}

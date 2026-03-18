@@ -1,32 +1,35 @@
 /**
  * Stratego.AI — Orchestrator v2
  * Pipeline multi-agente para geracao de planos de NEGOCIO estruturados.
- * Substitui o orchestrator v1 (planos de marketing).
  *
  * Pipeline:
  *   Etapa 1 - Preparacao do contexto
- *   Etapa 2 - GPT-4o: Analista (pesquisa de mercado + benchmarks)
- *   Etapa 3 - Claude Sonnet x2 paralelo: Estratega A + Estratega B
- *   Etapa 4 - GPT-4o: Revisor (sintese critica dos dois estrategas)
- *   Etapa 5 - Claude Haiku x2 paralelo: Finalizador (linguagem + formatacao)
+ *   Etapa 2 - GPT-4o: Analista
+ *   Etapa 3 - Claude Sonnet x2 paralelo: Estrategas A + B
+ *   Etapa 4 - GPT-4o: Revisor
+ *   Etapa 5 - Claude Haiku x2 paralelo: Finalizadores
  *   Etapa 6 - Composicao do JSON final com 7 seccoes
  *
- * Sprint 2: sem envio de email (previsto para Sprint 3).
+ * Sprint 2: sem envio de email. Sprint 3: adicionar Resend.
  */
 
 import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-/* -- Clientes ------------------------------------------------------- */
+/* -- Clientes AI (nao lancam erro em build time sem chaves) ---------- */
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-)
+/* -- Supabase: lazy, so instanciado quando necessario --------------- */
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY!
+  )
+}
 
 /* -- Tipos ----------------------------------------------------------- */
 
@@ -72,6 +75,7 @@ async function updatePlanStatus(
   status: string,
   content?: string
 ) {
+  const supabase = getSupabase()
   const update: Record<string, unknown> = { status }
   if (content) update.content = content
   await supabase.from('plans').update(update).eq('job_id', job_id)
@@ -103,8 +107,7 @@ async function runAnalista(contexto: string): Promise<string> {
           '4. Oportunidades nao exploradas neste sector\n' +
           '5. Principais riscos e barreiras a entrada\n' +
           '6. Benchmarks financeiros tipicos do sector (margens, ticket medio, break-even tipico)\n\n' +
-          'CONTEXTO DO NEGOCIO:\n' +
-          contexto + '\n\n' +
+          'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
           'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
       },
     ],
@@ -114,10 +117,7 @@ async function runAnalista(contexto: string): Promise<string> {
 
 /* -- Etapa 3: Estrategas (Claude Sonnet x2) ------------------------- */
 
-async function runEstrategaA(
-  contexto: string,
-  analise: string
-): Promise<string> {
+async function runEstrategaA(contexto: string, analise: string): Promise<string> {
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 2000,
@@ -127,23 +127,22 @@ async function runEstrategaA(
         role: 'user',
         content:
           'Es um estratega de negocios focado em crescimento sustentavel e rentabilidade.\n\n' +
-          'Com base na analise de mercado abaixo, desenvolve a ESTRATEGIA COMERCIAL e o PLANO FINANCEIRO para este negocio.\n\n' +
+          'Com base na analise de mercado abaixo, desenvolve a ESTRATEGIA COMERCIAL e o PLANO FINANCEIRO.\n\n' +
           'ANALISE DE MERCADO:\n' + analise + '\n\n' +
           'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
-          'Desenvolve:\n\n' +
           '## ESTRATEGIA COMERCIAL\n' +
           '- Posicionamento e proposta de valor unica\n' +
-          '- Modelo de receita detalhado (fontes de receita, estrutura de precos)\n' +
+          '- Modelo de receita detalhado\n' +
           '- Estrategia de captacao dos primeiros 100 clientes\n' +
           '- Canais de distribuicao e parcerias estrategicas\n' +
           '- Vantagem competitiva sustentavel\n\n' +
           '## PLANO FINANCEIRO\n' +
-          '- Investimento inicial discriminado por categoria\n' +
+          '- Investimento inicial discriminado\n' +
           '- Estrutura de custos fixos e variaveis mensais\n' +
-          '- Proieccao de receitas (cenario conservador / realista / optimista) para 12 meses\n' +
-          '- Ponto de equilibrio (break-even) em meses\n' +
-          '- Necessidades de financiamento e fontes sugeridas (capital proprio, BPI, IAPMEI, etc.)\n\n' +
-          'Usa tabelas em markdown quando ajudar a clareza. Se conservador nas proieccoes financeiras.',
+          '- Proieccao de receitas para 12 meses (conservador / realista / optimista)\n' +
+          '- Ponto de equilibrio em meses\n' +
+          '- Necessidades de financiamento (capital proprio, BPI, IAPMEI, etc.)\n\n' +
+          'Usa tabelas em markdown quando ajudar. Se conservador nas proieccoes.',
       },
     ],
   })
@@ -151,10 +150,7 @@ async function runEstrategaA(
   return block.type === 'text' ? block.text : ''
 }
 
-async function runEstrategaB(
-  contexto: string,
-  analise: string
-): Promise<string> {
+async function runEstrategaB(contexto: string, analise: string): Promise<string> {
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 2000,
@@ -164,24 +160,22 @@ async function runEstrategaB(
         role: 'user',
         content:
           'Es um estratega de negocios especializado em operacoes e marketing digital.\n\n' +
-          'Com base na analise de mercado abaixo, desenvolve o PLANO OPERACIONAL e o PLANO DE MARKETING para este negocio.\n\n' +
+          'Com base na analise de mercado abaixo, desenvolve o PLANO OPERACIONAL e o PLANO DE MARKETING.\n\n' +
           'ANALISE DE MERCADO:\n' + analise + '\n\n' +
           'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
-          'Desenvolve:\n\n' +
           '## PLANO OPERACIONAL\n' +
-          '- Estrutura organizacional inicial (funcoes, responsabilidades)\n' +
-          '- Processos-chave do negocio (do lead ao cliente fidelizado)\n' +
+          '- Estrutura organizacional inicial\n' +
+          '- Processos-chave do negocio\n' +
           '- Tecnologia e ferramentas necessarias\n' +
           '- Fornecedores e parcerias operacionais\n' +
-          '- Metricas de operacao (KPIs) para acompanhar semanalmente\n\n' +
+          '- KPIs para acompanhar semanalmente\n\n' +
           '## MARKETING E COMUNICACAO\n' +
           '- Identidade de marca e mensagem central\n' +
           '- Mix de marketing para os primeiros 6 meses\n' +
           '- Presenca digital (website, redes sociais, SEO)\n' +
-          '- Estrategia de conteudo e calendario editorial\n' +
-          '- Budget de marketing sugerido (percentagem da receita prevista)\n' +
+          '- Budget de marketing sugerido\n' +
           '- Accoes de lancamento para os primeiros 30 dias\n\n' +
-          'Se pratico e accionavel. Foca-te no que pode ser feito com recursos limitados.',
+          'Se pratico e accionavel. Foca-te em recursos limitados.',
       },
     ],
   })
@@ -206,25 +200,22 @@ async function runRevisor(
         role: 'system',
         content:
           'Es um revisor senior de planos de negocio com 20 anos de experiencia.\n' +
-          'Recebes dois contributos de estrategas diferentes e sintetizas o melhor de cada um,\n' +
-          'eliminando contradicoes, reforcando os pontos mais fortes e identificando lacunas.\n' +
-          'O resultado final deve ser coerente, profissional e imediatamente accionavel.\n' +
+          'Sintetizas dois contributos de estrategas, eliminando contradicoes e reforçando os melhores pontos.\n' +
           'Respondes sempre em Portugues de Portugal.',
       },
       {
         role: 'user',
         content:
-          'Sintetiza os dois contributos dos estrategas num plano de negocio coerente.\n\n' +
-          'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
-          'ANALISE DE MERCADO (Etapa 2):\n' + analise + '\n\n' +
-          'ESTRATEGA A - Estrategia Comercial + Financeiro:\n' + estrategiaA + '\n\n' +
-          'ESTRATEGA B - Operacional + Marketing:\n' + estrategiaB + '\n\n' +
-          'Produz uma sintese coerente que:\n' +
+          'Sintetiza os dois contributos num plano coerente.\n\n' +
+          'CONTEXTO:\n' + contexto + '\n\n' +
+          'ANALISE (Etapa 2):\n' + analise + '\n\n' +
+          'ESTRATEGA A:\n' + estrategiaA + '\n\n' +
+          'ESTRATEGA B:\n' + estrategiaB + '\n\n' +
           '1. Mantem os melhores elementos de cada estratega\n' +
-          '2. Resolve contradicoes (ex: se os financeiros sao diferentes, usa o mais conservador)\n' +
-          '3. Assegura consistencia entre a estrategia comercial, financeira, operacional e de marketing\n' +
-          '4. Adiciona um RESUMO EXECUTIVO de 3-4 paragrafos no inicio\n' +
-          '5. Adiciona PROXIMOS PASSOS com as 10 accoes concretas para os proximos 90 dias\n\n' +
+          '2. Resolve contradicoes (usa o mais conservador nos financeiros)\n' +
+          '3. Assegura consistencia entre todas as areas\n' +
+          '4. Adiciona RESUMO EXECUTIVO de 3-4 paragrafos no inicio\n' +
+          '5. Adiciona PROXIMOS PASSOS com 10 accoes concretas para os proximos 90 dias\n\n' +
           'Estrutura o output com seccoes claras em markdown.',
       },
     ],
@@ -253,15 +244,14 @@ async function runFinalizadorSecoes(
         role: 'user',
         content:
           'Refina e formata as seguintes seccoes do plano de negocio.\n\n' +
-          'SINTESE COMPLETA:\n' + sintese + '\n\n' +
-          'Extrai e melhora estas seccoes: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
-          'Para cada seccao:\n' +
+          'SINTESE:\n' + sintese + '\n\n' +
+          'Seccoes a extrair e melhorar: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
           '- Mantem toda a informacao substantiva\n' +
           '- Melhora a fluidez e clareza do portugues\n' +
-          '- Garante que usa markdown correctamente (headers ##, listas, tabelas)\n' +
-          '- Remove repeticoes e contradicoes\n' +
-          '- Mantem um tom profissional mas acessivel\n\n' +
-          'Devolve um JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
+          '- Usa markdown correctamente (headers ##, listas, tabelas)\n' +
+          '- Remove repeticoes\n' +
+          '- Tom profissional mas acessivel\n\n' +
+          'Devolve JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
           'Apenas o JSON, sem mais nada.',
       },
     ],
@@ -295,16 +285,14 @@ async function runFinalizadorSecoes2(
         role: 'user',
         content:
           'Refina e formata as seguintes seccoes do plano de negocio.\n\n' +
-          'SINTESE COMPLETA:\n' + sintese + '\n\n' +
-          'Extrai e melhora estas seccoes: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
-          'Para cada seccao:\n' +
+          'SINTESE:\n' + sintese + '\n\n' +
+          'Seccoes a extrair e melhorar: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
           '- Mantem toda a informacao substantiva\n' +
           '- Melhora a fluidez e clareza do portugues\n' +
-          '- Garante que usa markdown correctamente (headers ##, listas, tabelas)\n' +
-          '- Remove repeticoes e contradicoes\n' +
-          '- Mantem um tom profissional mas acessivel\n\n' +
-          'Para "proximos" cria uma lista numerada de 10 accoes concretas com prazo (ex: "Semana 1", "Mes 1", "Mes 2-3").\n\n' +
-          'Devolve um JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
+          '- Usa markdown correctamente\n' +
+          '- Remove repeticoes\n' +
+          '- Para "proximos": lista numerada de 10 accoes concretas com prazo\n\n' +
+          'Devolve JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
           'Apenas o JSON, sem mais nada.',
       },
     ],
@@ -329,43 +317,35 @@ export async function generateBusinessPlan(
   const contexto = buildContexto(input)
 
   try {
-    // Etapa 2 - Analise
     await updatePlanStatus(job_id, 'analysing')
     const analise = await runAnalista(contexto)
 
-    // Etapa 3 - Estrategas em paralelo
     await updatePlanStatus(job_id, 'strategising')
     const [estrategiaA, estrategiaB] = await Promise.all([
       runEstrategaA(contexto, analise),
       runEstrategaB(contexto, analise),
     ])
 
-    // Etapa 4 - Revisao e sintese
     await updatePlanStatus(job_id, 'reviewing')
     const sintese = await runRevisor(contexto, analise, estrategiaA, estrategiaB)
 
-    // Etapa 5 - Finalizacao em paralelo (2 grupos de seccoes)
     await updatePlanStatus(job_id, 'finalising')
     const [grupo1, grupo2] = await Promise.all([
       runFinalizadorSecoes(sintese, ['resumo', 'mercado', 'comercial', 'financeiro']),
       runFinalizadorSecoes2(sintese, ['operacional', 'marketing', 'proximos']),
     ])
 
-    // Etapa 6 - Composicao do output final
     const output: BusinessPlanOutput = {
-      resumo_executivo:      grupo1.resumo      ?? extrairSeccao(sintese, 'resumo'),
-      analise_mercado:       grupo1.mercado     ?? analise,
-      estrategia_comercial:  grupo1.comercial   ?? estrategiaA,
-      plano_financeiro:      grupo1.financeiro  ?? '',
-      plano_operacional:     grupo2.operacional ?? estrategiaB,
-      marketing_comunicacao: grupo2.marketing   ?? '',
-      proximos_passos:       grupo2.proximos    ?? '',
+      resumo_executivo:      grupo1['resumo']      || extrairSeccao(sintese, 'resumo'),
+      analise_mercado:       grupo1['mercado']     || analise,
+      estrategia_comercial:  grupo1['comercial']   || estrategiaA,
+      plano_financeiro:      grupo1['financeiro']  || '',
+      plano_operacional:     grupo2['operacional'] || estrategiaB,
+      marketing_comunicacao: grupo2['marketing']   || '',
+      proximos_passos:       grupo2['proximos']    || '',
     }
 
-    // Guarda em Supabase
-    const content = JSON.stringify(output)
-    await updatePlanStatus(job_id, 'done', content)
-
+    await updatePlanStatus(job_id, 'done', JSON.stringify(output))
     return output
   } catch (err) {
     console.error('[orchestrator-v2] Erro no pipeline:', err)

@@ -2,24 +2,24 @@
  * POST /api/lead
  * Associa email/nome a um job_id existente no Supabase.
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-)
-
 export async function POST(req: NextRequest) {
+  // Supabase instanciado dentro da funcao (evita erro em build time)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY!
+  )
+
   try {
     const { email, nome, job_id } = await req.json()
 
     if (!email?.trim()) {
-      return NextResponse.json({ error: 'Email obrigatório' }, { status: 400 })
+      return NextResponse.json({ error: 'Email obrigatorio' }, { status: 400 })
     }
 
-    // Upsert lead
+    /* Upsert lead */
     await supabase.from('leads').upsert(
       {
         email: email.trim(),
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       { onConflict: 'email' }
     )
 
-    // Associa ao plano
+    /* Associa ao plano */
     if (job_id) {
       await supabase
         .from('plans')

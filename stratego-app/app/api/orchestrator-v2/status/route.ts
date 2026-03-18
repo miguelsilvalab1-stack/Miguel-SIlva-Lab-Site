@@ -1,22 +1,22 @@
 /**
  * Stratego.AI — Status do job v2
  * GET /api/orchestrator-v2/status?job_id=xxx
- * Devolve { state, content? } para polling do écran de loading.
+ * Devolve { state, content? } para polling do ecran de loading.
  */
-
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-)
-
 export async function GET(req: NextRequest) {
-  const job_id = req.nextUrl.searchParams.get('job_id')
+  // Instanciado dentro da funcao para evitar erro de build
+  // (SUPABASE_SERVICE_KEY so esta disponivel em runtime, nao em build time)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY!
+  )
 
+  const job_id = req.nextUrl.searchParams.get('job_id')
   if (!job_id) {
-    return NextResponse.json({ error: 'job_id obrigatório' }, { status: 400 })
+    return NextResponse.json({ error: 'job_id obrigatorio' }, { status: 400 })
   }
 
   const { data, error } = await supabase
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     .single()
 
   if (error || !data) {
-    return NextResponse.json({ error: 'Plano não encontrado' }, { status: 404 })
+    return NextResponse.json({ error: 'Plano nao encontrado' }, { status: 404 })
   }
 
   return NextResponse.json({

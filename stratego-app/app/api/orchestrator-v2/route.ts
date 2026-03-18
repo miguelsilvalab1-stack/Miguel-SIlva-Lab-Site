@@ -1,7 +1,6 @@
 /**
- * Stratego.AI — API Route v2
+ * Stratego.AI — API Route v2 (hotfix: sem lead_email no plans insert)
  * POST /api/orchestrator-v2
- * Lança o pipeline de plano de negócio em background e devolve job_id.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -15,7 +14,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 )
 
-/* Rate limit: 3 planos por dia por email / IP */
 let ratelimit: Ratelimit | null = null
 if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
   ratelimit = new Ratelimit({
@@ -41,45 +39,48 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ideia é obrigatória.' }, { status: 400 })
     }
 
-    /* ── Rate limiting ── */
+    /* Rate limiting */
     const identifier = email?.trim() || req.headers.get('x-forwarded-for') || 'anon'
     if (ratelimit) {
-      const { success, remaining } = await ratelimit.limit(`orchestrator-v2:${identifier}`)
+      const { success } = await ratelimit.limit(`orchestrator-v2:${identifier}`)
       if (!success) {
         return NextResponse.json(
           { error: 'Limite de planos atingido. Tenta novamente amanhã.' },
           { status: 429 }
         )
       }
-      console.log(`[orchestrator-v2] Rate limit OK — ${remaining} restantes para ${identifier}`)
     }
 
-    /* ── Criar/actualizar lead ── */
+    /* Upsert lead (tabela separada) */
     if (email?.trim()) {
       await supabase.from('leads').upsert(
         { email: email.trim(), name: nome?.trim() ?? null, updated_at: new Date().toISOString() },
         { onConflict: 'email' }
-      )
+      ).then(({ error }) => {
+        if (error) console.warn('[orchestrator-v2] leads upsert warning:', error.message)
+      })
     }
 
-    /* ── Criar registo do plano ── */
+    /* Criar registo do plano — apenas colunas garantidas do schema v1 */
     const job_id = crypto.randomUUID()
-    await supabase.from('plans').insert({
+    const { error: insertError } = await supabase.from('plans').insert({
       job_id,
-      lead_email: email?.trim() ?? null,
       status: 'pending',
       content: null,
-      created_at: new Date().toISOString(),
     })
 
-    /* ── Lançar pipeline em background ── */
+    if (insertError) {
+      console.error('[orchestrator-v2] Erro ao criar plano:', insertError)
+      return NextResponse.json({ error: 'Erro ao criar plano: ' + insertError.message }, { status: 500 })
+    }
+
+    /* Lançar pipeline em background */
     const input: BusinessPlanInput = {
       job_id, ideia, sector, publico,
       localizacao, investimento, diferencial,
       objetivo, email, nome,
     }
 
-    // Não aguarda — corre em background
     generateBusinessPlan(input).catch(err =>
       console.error('[orchestrator-v2] Pipeline error:', err)
     )
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ job_id })
 
   } catch (err) {
-    console.error('[orchestrator-v2] Erro na route POST:', err)
-    return NextResponse.json({ error: 'Erro interno. Tenta novamente.' }, { status: 500 })
+    console.error('[orchestrator-v2] Erro:', err)
+    return NextResponse.json({ error: 'Erro interno.' }, { status: 500 })
   }
 }

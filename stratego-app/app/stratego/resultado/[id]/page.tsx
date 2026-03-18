@@ -1,7 +1,6 @@
 /**
  * Stratego.AI — Página de resultado v2.5 (RSC)
- * Carrega o plano do Supabase e passa para ResultadoClientV2.
- * Substitui a página anterior (guardada em page.v1.tsx).
+ * hotfix: não lê lead_email (coluna pode não existir no schema v1)
  */
 
 import { notFound } from 'next/navigation'
@@ -23,33 +22,23 @@ export default async function ResultadoPage({ params }: PageProps) {
 
   const { data, error } = await supabase
     .from('plans')
-    .select('content, status, lead_email')
+    .select('content, status')
     .eq('job_id', jobId)
     .single()
 
-  if (error || !data || data.status !== 'done' || !data.content) {
-    // Se o plano ainda não está pronto ou não existe
-    if (data?.status && data.status !== 'done' && data.status !== 'error') {
-      // Redireciona para o loading
+  if (error || !data) return notFound()
+
+  if (data.status !== 'done' || !data.content) {
+    if (data.status && data.status !== 'error') {
       return (
-        <main
-          className="stratego-hero flex items-center justify-center min-h-screen"
-          style={{ background: 'var(--dark)' }}
-        >
+        <main className="stratego-hero flex items-center justify-center min-h-screen"
+          style={{ background: 'var(--dark)' }}>
           <div className="text-center px-5">
-            <p
-              style={{
-                fontFamily: 'var(--font-syne)',
-                fontSize: '1.2rem',
-                color: 'var(--white)',
-              }}
-            >
+            <p style={{ fontFamily: 'var(--font-syne)', fontSize: '1.2rem', color: 'var(--white)' }}>
               O teu plano ainda está a ser gerado…
             </p>
-            <p
-              className="mt-2 text-sm"
-              style={{ color: 'var(--w50)', fontFamily: 'var(--font-dm-sans)' }}
-            >
+            <p className="mt-2 text-sm"
+              style={{ color: 'var(--w50)', fontFamily: 'var(--font-dm-sans)' }}>
               Aguarda um momento e actualiza a página.
             </p>
           </div>
@@ -59,23 +48,18 @@ export default async function ResultadoPage({ params }: PageProps) {
     return notFound()
   }
 
-  // Tenta parsear como BusinessPlanOutput (JSON estruturado do orchestrator-v2)
-  // Se falhar, trata como markdown antigo (orchestrator-v1)
   let plan: BusinessPlanOutput
   try {
     const parsed = JSON.parse(data.content)
-    // Verifica se tem a estrutura esperada do v2
     if (parsed.resumo_executivo) {
       plan = parsed as BusinessPlanOutput
     } else {
-      // Plano v1 (markdown puro) — converte para formato v2
       plan = convertV1ToV2(data.content)
     }
   } catch {
     plan = convertV1ToV2(data.content)
   }
 
-  // Extrai a ideia do resumo (campo não guardado separadamente no v1)
   const ideia = extractIdeia(plan.resumo_executivo)
 
   return (
@@ -83,12 +67,10 @@ export default async function ResultadoPage({ params }: PageProps) {
       plan={plan}
       jobId={jobId}
       ideia={ideia}
-      leadEmail={data.lead_email ?? null}
+      leadEmail={null}
     />
   )
 }
-
-/* ── Compatibilidade com planos v1 (markdown puro) ─────── */
 
 function convertV1ToV2(markdown: string): BusinessPlanOutput {
   return {
@@ -98,7 +80,7 @@ function convertV1ToV2(markdown: string): BusinessPlanOutput {
     plano_financeiro:      extractSection(markdown, ['financeiro', 'finanças']),
     plano_operacional:     extractSection(markdown, ['operacional', 'operações']),
     marketing_comunicacao: extractSection(markdown, ['marketing', 'comunicação']),
-    proximos_passos:       extractSection(markdown, ['próximos passos', 'acções', 'plano de acção']),
+    proximos_passos:       extractSection(markdown, ['próximos passos', 'acções']),
   }
 }
 
@@ -112,10 +94,8 @@ function extractSection(text: string, keywords: string[]): string {
 }
 
 function extractIdeia(resumo: string): string {
-  // Tenta extrair a ideia do resumo executivo
   const lines = resumo.split('\n').filter(l => l.trim())
   if (lines.length > 0) {
-    // Primeira frase significativa
     const first = lines[0].replace(/^#+\s*/, '').replace(/\*\*/g, '').trim()
     return first.length > 80 ? first.slice(0, 80) + '…' : first
   }
@@ -126,7 +106,6 @@ export async function generateMetadata({ params }: PageProps) {
   const { id: jobId } = await params
   return {
     title: `Plano de negócio — Stratego.AI`,
-    description: `Plano de negócio gerado por IA. Job: ${jobId}`,
     robots: { index: false },
   }
 }

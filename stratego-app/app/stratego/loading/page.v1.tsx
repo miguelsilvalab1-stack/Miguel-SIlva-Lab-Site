@@ -1,9 +1,9 @@
 'use client'
 
 /**
- * Stratego.AI — Écran de loading v2 (Sprint 2)
- * Chama /api/orchestrator-v2 e faz polling em /api/orchestrator-v2/status.
- * Substitui a versão Sprint 1 (guardada em page.v1.tsx).
+ * Stratego.AI — Écran de loading/geração v2.5
+ * Lê os parâmetros do questionário via searchParams,
+ * chama POST /api/orchestrator e mostra progresso real.
  */
 
 import { Suspense, useEffect, useState, useRef } from 'react'
@@ -12,15 +12,9 @@ import StarfieldCanvas from '@/components/ui/StarfieldCanvas'
 import LoadingV1 from '@/components/stratego/LoadingV1'
 import LoadingV2 from '@/components/stratego/LoadingV2'
 
+/* Fase 1: análise (antes de ter job_id) */
+/* Fase 2: geração (pipeline a correr) */
 type Phase = 'analysing' | 'generating'
-
-const STEP_THRESHOLDS = [
-  { at: 12, step: 1 },
-  { at: 28, step: 2 },
-  { at: 48, step: 3 },
-  { at: 70, step: 4 },
-  { at: 88, step: 5 },
-]
 
 function LoadingInner() {
   const router = useRouter()
@@ -31,9 +25,19 @@ function LoadingInner() {
   const [currentStep, setCurrentStep] = useState(1)
   const [error, setError] = useState<string | null>(null)
   const called = useRef(false)
-  const jobIdRef = useRef<string | null>(null)
 
-  const ideia = searchParams.get('ideia') ?? ''
+  // Constrói o payload a partir dos searchParams do questionário
+  function buildPayload() {
+    return {
+      ideia:        searchParams.get('ideia')        ?? '',
+      sector:       searchParams.get('sector')       ?? '',
+      publico:      searchParams.get('publico')      ?? '',
+      localizacao:  searchParams.get('localizacao')  ?? '',
+      investimento: searchParams.get('investimento') ?? '',
+      diferencial:  searchParams.get('diferencial')  ?? '',
+      objetivo:     searchParams.get('objetivo')     ?? '',
+    }
+  }
 
   useEffect(() => {
     if (called.current) return
@@ -41,20 +45,12 @@ function LoadingInner() {
 
     async function generate() {
       try {
-        // Fase 1: mostrar análise por 1.5s antes de chamar a API
+        const payload = buildPayload()
+
+        // Mostra a fase de análise por ~1.5s antes de chamar a API
         await new Promise(r => setTimeout(r, 1500))
 
-        const payload = {
-          ideia:        searchParams.get('ideia')        ?? '',
-          sector:       searchParams.get('sector')       ?? '',
-          publico:      searchParams.get('publico')      ?? '',
-          localizacao:  searchParams.get('localizacao')  ?? '',
-          investimento: searchParams.get('investimento') ?? '',
-          diferencial:  searchParams.get('diferencial')  ?? '',
-          objetivo:     searchParams.get('objetivo')     ?? '',
-        }
-
-        const res = await fetch('/api/orchestrator-v2', {
+        const res = await fetch('/api/orchestrator', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -66,61 +62,53 @@ function LoadingInner() {
         }
 
         const { job_id } = await res.json()
-        jobIdRef.current = job_id
 
-        // Fase 2: mostrar progresso enquanto o pipeline corre
+        // Muda para a fase de geração
         setPhase('generating')
 
+        // Simula progresso enquanto o job corre
+        // O resultado real é buscado por polling ao resultado
         let prog = 5
+        const steps = [
+          { at: 10, step: 1 },
+          { at: 30, step: 2 },
+          { at: 50, step: 3 },
+          { at: 70, step: 4 },
+          { at: 88, step: 5 },
+        ]
+
         const interval = setInterval(async () => {
-          // Incremento mais lento e realista
-          const increment = prog < 50 ? Math.random() * 3 + 1 : Math.random() * 1.5 + 0.5
-          prog = Math.min(prog + increment, 95)
+          prog = Math.min(prog + Math.random() * 4 + 1, 95)
           setProgress(Math.round(prog))
 
-          // Avança a etapa conforme a percentagem
-          for (const { at, step } of STEP_THRESHOLDS) {
-            if (prog >= at) setCurrentStep(step)
+          // Avança etapa conforme percentagem
+          for (const s of steps) {
+            if (prog >= s.at) setCurrentStep(s.step)
           }
 
-          // Polling quando está próximo do fim
-          if (prog >= 80 && jobIdRef.current) {
+          // Verifica se o job terminou
+          if (prog >= 88) {
             try {
-              const check = await fetch(
-                `/api/orchestrator-v2/status?job_id=${jobIdRef.current}`
-              )
+              const check = await fetch(`/api/orchestrator/status?job_id=${job_id}`)
               if (check.ok) {
-                const { ready } = await check.json()
-                if (ready) {
+                const status = await check.json()
+                if (status.state === 'done') {
                   clearInterval(interval)
                   setProgress(100)
-                  setCurrentStep(5)
-                  await new Promise(r => setTimeout(r, 800))
-                  router.push(`/stratego/resultado/${jobIdRef.current}`)
+                  await new Promise(r => setTimeout(r, 600))
+                  router.push(`/stratego/resultado/${job_id}`)
                 }
               }
             } catch {
-              // Ignora erros de polling — continua
+              // ignora erros de polling — continua a tentar
             }
           }
-        }, 1400)
+        }, 1200)
 
-        // Timeout de segurança: 3 minutos
-        setTimeout(async () => {
+        // Timeout de segurança: redireciona após 3 min
+        setTimeout(() => {
           clearInterval(interval)
-          if (jobIdRef.current) {
-            // Tenta uma última vez antes de redirigir
-            try {
-              const check = await fetch(
-                `/api/orchestrator-v2/status?job_id=${jobIdRef.current}`
-              )
-              if (check.ok) {
-                router.push(`/stratego/resultado/${jobIdRef.current}`)
-                return
-              }
-            } catch { /* ignora */ }
-            router.push(`/stratego/resultado/${jobIdRef.current}`)
-          }
+          router.push(`/stratego/resultado/${job_id}`)
         }, 180_000)
 
       } catch (err: unknown) {
@@ -172,9 +160,13 @@ function LoadingInner() {
   }
 
   return phase === 'analysing' ? (
-    <LoadingV1 ideia={ideia} />
+    <LoadingV1 ideia={searchParams.get('ideia') ?? ''} />
   ) : (
-    <LoadingV2 progress={progress} currentStep={currentStep} ideia={ideia} />
+    <LoadingV2
+      progress={progress}
+      currentStep={currentStep}
+      ideia={searchParams.get('ideia') ?? ''}
+    />
   )
 }
 

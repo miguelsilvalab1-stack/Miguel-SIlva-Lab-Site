@@ -1,12 +1,13 @@
 /**
  * POST /api/lead
  * Associa email/nome a um job_id existente no Supabase.
+ * Envia email com link para o plano após captura de lead.
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { sendPlanEmail } from '@/lib/email/send-plan'
 
 export async function POST(req: NextRequest) {
-  // Supabase instanciado dentro da funcao (evita erro em build time)
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -35,6 +36,32 @@ export async function POST(req: NextRequest) {
         .from('plans')
         .update({ lead_email: email.trim() })
         .eq('job_id', job_id)
+    }
+
+    /* Envia email com link para o plano */
+    if (job_id && email?.trim()) {
+      const { data: plan } = await supabase
+        .from('plans')
+        .select('content')
+        .eq('job_id', job_id)
+        .single()
+
+      let resumo: string | null = null
+      if (plan?.content) {
+        try {
+          const parsed = JSON.parse(plan.content)
+          resumo = parsed?.resumo_executivo ?? null
+        } catch {
+          resumo = null
+        }
+      }
+
+      await sendPlanEmail({
+        to: email.trim(),
+        nome: nome?.trim() ?? null,
+        job_id,
+        resumo,
+      })
     }
 
     return NextResponse.json({ ok: true })

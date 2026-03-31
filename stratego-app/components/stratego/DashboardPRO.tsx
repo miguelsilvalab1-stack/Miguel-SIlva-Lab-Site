@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { BusinessPlanOutput } from '@/lib/ai/orchestrator-v2'
@@ -30,7 +30,7 @@ const TABS: Tab[] = [
   { id: 'estrategia_comercial',  label: 'Estratégia Comercial',   shortLabel: 'Estratégia', icon: '🎯' },
   { id: 'plano_financeiro',      label: 'Plano Financeiro',       shortLabel: 'Finanças',   icon: '💰' },
   { id: 'plano_operacional',     label: 'Plano Operacional',      shortLabel: 'Operações',  icon: '⚙️' },
-  { id: 'marketing_comunicacao', label: 'Marketing & Comunicação',shortLabel: 'Marketing',  icon: '📣' },
+  { id: 'marketing_comunicacao', label: 'Marketing & Comunicação', shortLabel: 'Marketing',  icon: '📣' },
   { id: 'proximos_passos',       label: 'Próximos Passos',        shortLabel: 'Acções',     icon: '🚀' },
 ]
 
@@ -51,9 +51,51 @@ export default function DashboardPRO({
 }: Props) {
   const [activeTab, setActiveTab] = useState<keyof BusinessPlanOutput>('resumo_executivo')
   const [copied, setCopied] = useState(false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const tabsRef = useRef<HTMLDivElement>(null)
 
   const currentTab = TABS.find(t => t.id === activeTab)!
   const content = plan[activeTab] ?? ''
+
+  /* -- Detectar se existem setas de scroll -- */
+  const checkScroll = useCallback(() => {
+    const el = tabsRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 4)
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+  }, [])
+
+  useEffect(() => {
+    checkScroll()
+    const el = tabsRef.current
+    if (!el) return
+    el.addEventListener('scroll', checkScroll, { passive: true })
+    window.addEventListener('resize', checkScroll)
+    return () => {
+      el.removeEventListener('scroll', checkScroll)
+      window.removeEventListener('resize', checkScroll)
+    }
+  }, [checkScroll])
+
+  /* -- Scroll ao clicar na tab activa -- */
+  useEffect(() => {
+    const el = tabsRef.current
+    if (!el) return
+    const activeBtn = el.querySelector('[data-active="true"]') as HTMLElement | null
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+      setTimeout(checkScroll, 350)
+    }
+  }, [activeTab, checkScroll])
+
+  function scrollTabs(direction: 'left' | 'right') {
+    const el = tabsRef.current
+    if (!el) return
+    const amount = el.clientWidth * 0.6
+    el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' })
+    setTimeout(checkScroll, 350)
+  }
 
   async function handleShare() {
     if (onShare) { onShare(); return }
@@ -137,32 +179,86 @@ export default function DashboardPRO({
         </div>
       </div>
 
-      {/* Separadores — scroll horizontal em mobile */}
-      <div
-        className="flex gap-1 mb-6 overflow-x-auto pb-1"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {TABS.map(tab => {
-          const isActive = tab.id === activeTab
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="pro-tab flex-shrink-0"
-              data-active={isActive}
-              style={isActive ? {
-                background: 'var(--r-accent)',
-                border: '1px solid rgba(232,67,45,0.4)',
-                color: 'var(--white)',
-              } : {}}
+      {/* Separadores — scroll horizontal com setas */}
+      <div className="relative mb-6">
+        {/* Seta esquerda */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scrollTabs('left')}
+            className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-1"
+            style={{
+              background: 'linear-gradient(to right, var(--bg, #0a0a0a) 60%, transparent)',
+            }}
+            aria-label="Scroll para a esquerda"
+          >
+            <span
+              className="flex items-center justify-center w-7 h-7 rounded-full"
+              style={{
+                background: 'var(--w08)',
+                border: '1px solid var(--w15)',
+                color: 'var(--w80)',
+              }}
             >
-              <span className="hidden sm:inline">{tab.icon} </span>
-              <span className="sm:hidden">{tab.icon}</span>
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden text-xs">{tab.shortLabel}</span>
-            </button>
-          )
-        })}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M7.5 2.5L4 6l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        )}
+
+        {/* Seta direita */}
+        {canScrollRight && (
+          <button
+            onClick={() => scrollTabs('right')}
+            className="absolute right-0 top-0 bottom-0 z-10 flex items-center px-1"
+            style={{
+              background: 'linear-gradient(to left, var(--bg, #0a0a0a) 60%, transparent)',
+            }}
+            aria-label="Scroll para a direita"
+          >
+            <span
+              className="flex items-center justify-center w-7 h-7 rounded-full"
+              style={{
+                background: 'var(--w08)',
+                border: '1px solid var(--w15)',
+                color: 'var(--w80)',
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        )}
+
+        {/* Container das tabs */}
+        <div
+          ref={tabsRef}
+          className="flex gap-1 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none', scrollBehavior: 'smooth' }}
+        >
+          {TABS.map(tab => {
+            const isActive = tab.id === activeTab
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="pro-tab flex-shrink-0"
+                data-active={isActive}
+                style={isActive ? {
+                  background: 'var(--r-accent)',
+                  border: '1px solid rgba(232,67,45,0.4)',
+                  color: 'var(--white)',
+                } : {}}
+              >
+                <span className="hidden sm:inline">{tab.icon} </span>
+                <span className="sm:hidden">{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden text-xs">{tab.shortLabel}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Conteúdo da tab activa */}

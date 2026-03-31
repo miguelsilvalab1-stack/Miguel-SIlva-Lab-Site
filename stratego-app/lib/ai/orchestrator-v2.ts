@@ -232,27 +232,33 @@ async function runFinalizadorSecoes(
   const secaoLabels: Record<string, string> = {
     resumo: 'Resumo Executivo',
     mercado: 'Analise de Mercado',
-    comercial: 'Estrategia Comercial e Plano Financeiro',
-    financeiro: 'Plano Financeiro detalhado',
+    comercial: 'Estrategia Comercial (apenas a parte comercial, SEM incluir o plano financeiro)',
+    financeiro: 'Plano Financeiro (investimento, custos, projecoes de receita, break-even, financiamento)',
   }
 
   const msg = await anthropic.messages.create({
     model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2000,
+    max_tokens: 3000,
     messages: [
       {
         role: 'user',
         content:
           'Refina e formata as seguintes seccoes do plano de negocio.\n\n' +
           'SINTESE:\n' + sintese + '\n\n' +
-          'Seccoes a extrair e melhorar: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
+          'Seccoes a extrair e melhorar:\n' +
+          secoes.map(function(s) { return '- "' + s + '": ' + secaoLabels[s] }).join('\n') + '\n\n' +
+          'REGRAS IMPORTANTES:\n' +
+          '- Cada chave JSON deve ter conteudo SEPARADO e DISTINTO\n' +
+          '- A chave "comercial" deve conter APENAS a estrategia comercial (posicionamento, modelo de receita, captacao de clientes, canais)\n' +
+          '- A chave "financeiro" deve conter APENAS o plano financeiro (investimento inicial, custos fixos/variaveis, projecoes de receita 12 meses, break-even, financiamento)\n' +
+          '- NAO juntes conteudo financeiro na chave "comercial" e vice-versa\n' +
           '- Mantem toda a informacao substantiva\n' +
           '- Melhora a fluidez e clareza do portugues\n' +
           '- Usa markdown correctamente (headers ##, listas, tabelas)\n' +
           '- Remove repeticoes\n' +
           '- Tom profissional mas acessivel\n\n' +
           'Devolve JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
-          'Apenas o JSON, sem mais nada.',
+          'TODAS as chaves devem ter conteudo substantivo. Apenas o JSON, sem mais nada.',
       },
     ],
   })
@@ -337,12 +343,12 @@ export async function generateBusinessPlan(
 
     const output: BusinessPlanOutput = {
       resumo_executivo:      grupo1['resumo']      || extrairSeccao(sintese, 'resumo'),
-      analise_mercado:       grupo1['mercado']     || analise,
-      estrategia_comercial:  grupo1['comercial']   || estrategiaA,
-      plano_financeiro:      grupo1['financeiro']  || '',
-      plano_operacional:     grupo2['operacional'] || estrategiaB,
-      marketing_comunicacao: grupo2['marketing']   || '',
-      proximos_passos:       grupo2['proximos']    || '',
+      analise_mercado:       grupo1['mercado']      || analise,
+      estrategia_comercial:  grupo1['comercial']    || extrairSeccao(sintese, 'comercial'),
+      plano_financeiro:      grupo1['financeiro']   || extrairSeccao(sintese, 'financeiro') || extrairSeccao(estrategiaA, 'financeiro'),
+      plano_operacional:     grupo2['operacional']  || extrairSeccao(sintese, 'operacional') || estrategiaB,
+      marketing_comunicacao: grupo2['marketing']    || extrairSeccao(sintese, 'marketing'),
+      proximos_passos:       grupo2['proximos']     || extrairSeccao(sintese, 'proximos'),
     }
 
     await updatePlanStatus(job_id, 'done', JSON.stringify(output))
@@ -361,7 +367,7 @@ function extrairSeccao(texto: string, chave: string): string {
     resumo:      [/##\s*resumo executivo([\s\S]*?)(?=##|$)/i],
     mercado:     [/##\s*an[aá]lise de mercado([\s\S]*?)(?=##|$)/i],
     comercial:   [/##\s*estrat[eé]gia comercial([\s\S]*?)(?=##|$)/i],
-    financeiro:  [/##\s*plano financeiro([\s\S]*?)(?=##|$)/i],
+    financeiro:  [/##\s*plano financeiro([\s\S]*?)(?=##|$)/i, /##\s*proje[cç][oõ]es financeiras([\s\S]*?)(?=##|$)/i],
     operacional: [/##\s*plano operacional([\s\S]*?)(?=##|$)/i],
     marketing:   [/##\s*marketing([\s\S]*?)(?=##|$)/i],
     proximos:    [/##\s*pr[oó]ximos passos([\s\S]*?)(?=##|$)/i],
@@ -370,7 +376,7 @@ function extrairSeccao(texto: string, chave: string): string {
   const pats = patterns[chave] ?? []
   for (const pat of pats) {
     const match = texto.match(pat)
-    if (match?.[1]) return match[1].trim()
+    if (match?.[1]?.trim()) return match[1].trim()
   }
-  return texto
+  return ''
 }

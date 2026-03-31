@@ -2,14 +2,15 @@
  * Stratego.AI — API Route v2
  * POST /api/orchestrator-v2
  */
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { generateBusinessPlan, type BusinessPlanInput } from '@/lib/ai/orchestrator-v2'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
-  // Supabase instanciado dentro da funcao (evita erro em build time)
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ideia e obrigatoria.' }, { status: 400 })
     }
 
-    /* Rate limiting — apenas se as variaveis Upstash estiverem definidas */
+    /* Rate limiting */
     let ratelimit: Ratelimit | null = null
     if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
       ratelimit = new Ratelimit({
@@ -76,14 +77,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    /* Lanca pipeline em background */
+    /* Lanca pipeline em background com after() — mantém a funcao viva */
     const input: BusinessPlanInput = {
       job_id, ideia, sector, publico, localizacao,
       investimento, diferencial, objetivo, email, nome,
     }
-    generateBusinessPlan(input).catch(err =>
-      console.error('[orchestrator-v2] Pipeline error:', err)
-    )
+
+    after(async () => {
+      try {
+        await generateBusinessPlan(input)
+      } catch (err) {
+        console.error('[orchestrator-v2] Pipeline error:', err)
+      }
+    })
 
     return NextResponse.json({ job_id })
   } catch (err) {

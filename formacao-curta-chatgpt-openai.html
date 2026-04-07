@@ -39,11 +39,7 @@
         },
         "inLanguage": "pt-PT",
         "url": "https://miguelsilvalab.pt/formacao-curta-chatgpt-openai.html",
-        "offers": {
-            "@type": "Offer",
-            "price": "250",
-            "priceCurrency": "EUR"
-        }
+        "offers": { "@type": "Offer", "price": "250", "priceCurrency": "EUR" }
     }
     </script>
 
@@ -54,245 +50,63 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
-        .course-meta-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-            margin-top: 2rem;
-            justify-content: center;
-        }
-        .course-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            font-size: 0.92rem;
-            font-weight: 500;
-            color: white;
-        }
-        .course-meta-item i { font-size: 0.85rem; opacity: 0.85; }
-        .course-meta-item strong { font-weight: 700; }
+        .course-meta-bar { display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem; justify-content:center; }
+        .course-meta-item { display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:0.6rem 1rem; font-size:0.92rem; font-weight:500; color:white; }
+        .course-meta-item i { font-size:0.85rem; opacity:0.85; }
+        .spots-warning { display:inline-flex; align-items:center; gap:0.4rem; background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.4); border-radius:20px; padding:0.35rem 0.85rem; font-size:0.82rem; font-weight:600; color:#fbbf24; margin-top:1.5rem; }
+        .course-hero-cta { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:2.5rem; }
+        .course-hero-cta .cta-button { font-size:1rem; padding:0.9rem 2rem; }
+        .cta-outline { background:transparent; border:2px solid rgba(255,255,255,0.6); color:white; border-radius:8px; padding:0.9rem 2rem; font-size:1rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.2s; }
+        .cta-outline:hover { background:rgba(255,255,255,0.1); border-color:white; }
 
-        .course-hero-cta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2.5rem;
-        }
-        .course-hero-cta .cta-button {
-            font-size: 1rem;
-            padding: 0.9rem 2rem;
-        }
-        .course-hero-cta .cta-secondary {
-            background: transparent;
-            border: 2px solid rgba(255,255,255,0.6);
-            color: white;
-            border-radius: 8px;
-            padding: 0.9rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-        .course-hero-cta .cta-secondary:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: white;
-        }
+        .learn-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:1.5rem; }
+        @media(max-width:640px){ .learn-grid{ grid-template-columns:1fr; } }
+        .learn-item { display:flex; align-items:flex-start; gap:0.75rem; background:var(--light-blue); border-radius:10px; padding:1rem 1.1rem; }
+        .learn-item i { color:var(--secondary-blue); margin-top:2px; flex-shrink:0; }
+        .learn-item span { font-size:0.92rem; color:var(--text-dark); line-height:1.5; }
 
-        .spots-warning {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: rgba(251, 191, 36, 0.15);
-            border: 1px solid rgba(251, 191, 36, 0.4);
-            border-radius: 20px;
-            padding: 0.35rem 0.85rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #fbbf24;
-            margin-top: 1.5rem;
-        }
+        .dates-row { display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; margin-top:1.5rem; }
+        .date-pill { display:flex; flex-direction:column; align-items:center; background:white; border:1px solid var(--border-color); border-top:3px solid var(--secondary-blue); border-radius:10px; padding:1rem 1.5rem; min-width:140px; }
+        .date-pill .dp-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-light); }
+        .date-pill .dp-date { font-size:1.05rem; font-weight:700; color:var(--primary-blue); margin-top:0.2rem; }
+        .date-pill .dp-time { font-size:0.8rem; color:var(--text-light); margin-top:0.15rem; }
 
-        .learn-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        @media (max-width: 640px) { .learn-grid { grid-template-columns: 1fr; } }
-        .learn-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            background: var(--light-blue);
-            border-radius: 10px;
-            padding: 1rem 1.1rem;
-        }
-        .learn-item i {
-            color: var(--secondary-blue);
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        .learn-item span { font-size: 0.92rem; color: var(--text-dark); line-height: 1.5; }
+        .program-sessions { display:flex; flex-direction:column; gap:1.5rem; margin-top:1.5rem; }
+        .program-session { border:1px solid var(--border-color); border-radius:12px; overflow:hidden; }
+        .session-header { display:flex; align-items:center; gap:1rem; padding:1.2rem 1.5rem; background:var(--primary-blue); cursor:pointer; user-select:none; }
+        .session-number { background:rgba(255,255,255,0.2); color:white; font-weight:700; font-size:0.85rem; border-radius:6px; padding:0.25rem 0.6rem; flex-shrink:0; }
+        .session-title { color:white; font-weight:600; font-size:0.95rem; flex:1; line-height:1.4; }
+        .session-date { color:rgba(255,255,255,0.8); font-size:0.85rem; font-weight:500; white-space:nowrap; }
+        .session-toggle { color:rgba(255,255,255,0.8); transition:transform 0.25s; flex-shrink:0; }
+        .session-header.open .session-toggle { transform:rotate(180deg); }
+        .session-body { padding:1.5rem; background:white; }
+        .session-subtopic { margin-bottom:1.25rem; }
+        .session-subtopic h4 { font-size:0.9rem; font-weight:600; color:var(--primary-blue); margin-bottom:0.4rem; }
+        .session-subtopic ul { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.25rem; }
+        .session-subtopic li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.88rem; color:var(--text-dark); }
+        .session-subtopic li::before { content:"—"; color:var(--secondary-blue); flex-shrink:0; font-weight:700; }
+        .session-result { background:#f0f9ff; border-left:3px solid var(--secondary-blue); border-radius:0 8px 8px 0; padding:0.85rem 1.1rem; margin-top:1rem; font-size:0.88rem; color:var(--primary-blue); font-style:italic; }
 
-        .program-sessions { display: flex; flex-direction: column; gap: 2rem; margin-top: 1.5rem; }
-        .program-session {
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .session-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.25rem 1.5rem;
-            background: var(--primary-blue);
-            cursor: pointer;
-            user-select: none;
-        }
-        .session-number {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            padding: 0.25rem 0.6rem;
-            flex-shrink: 0;
-        }
-        .session-title { color: white; font-weight: 600; font-size: 1rem; flex: 1; }
-        .session-date { color: rgba(255,255,255,0.8); font-size: 0.85rem; font-weight: 500; }
-        .session-toggle { color: rgba(255,255,255,0.8); transition: transform 0.25s; }
-        .session-header.open .session-toggle { transform: rotate(180deg); }
+        .info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:1.5rem; }
+        @media(max-width:768px){ .info-grid{ grid-template-columns:1fr; } }
+        .info-card { background:white; border:1px solid var(--border-color); border-top:3px solid var(--secondary-blue); border-radius:10px; padding:1.5rem; }
+        .info-card h4 { font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-light); margin-bottom:0.75rem; }
+        .info-card ul { list-style:none; padding:0; margin:0; }
+        .info-card li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.88rem; color:var(--text-dark); padding:0.3rem 0; border-bottom:1px solid var(--border-color); }
+        .info-card li:last-child { border-bottom:none; }
+        .info-card li i { color:var(--secondary-blue); margin-top:3px; flex-shrink:0; font-size:0.78rem; }
 
-        .session-body { padding: 1.5rem; background: white; }
-        .session-result {
-            background: #f0f9ff;
-            border-left: 3px solid var(--secondary-blue);
-            border-radius: 0 8px 8px 0;
-            padding: 0.85rem 1.1rem;
-            margin-top: 1.25rem;
-            font-size: 0.9rem;
-            color: var(--primary-blue);
-            font-style: italic;
-        }
-        .session-topics { margin-top: 1rem; }
-        .session-topics h4 {
-            font-size: 0.88rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-light);
-            margin-bottom: 0.6rem;
-        }
-        .session-topics ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.35rem; }
-        .session-topics li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-        }
-        .session-topics li::before { content: "—"; color: var(--secondary-blue); flex-shrink: 0; font-weight: 700; }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        @media (max-width: 768px) { .info-grid { grid-template-columns: 1fr; } }
-        .info-card {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-top: 3px solid var(--secondary-blue);
-            border-radius: 10px;
-            padding: 1.5rem;
-        }
-        .info-card h4 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-light);
-            margin-bottom: 0.75rem;
-        }
-        .info-card ul { list-style: none; padding: 0; margin: 0; }
-        .info-card li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            padding: 0.3rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-card li:last-child { border-bottom: none; }
-        .info-card li i { color: var(--secondary-blue); margin-top: 2px; flex-shrink: 0; font-size: 0.8rem; }
-
-        .price-block {
-            background: var(--primary-blue);
-            border-radius: 16px;
-            padding: 3rem;
-            text-align: center;
-            color: white;
-        }
-        .price-amount { font-size: 3.5rem; font-weight: 800; line-height: 1; }
-        .price-amount span { font-size: 1.5rem; font-weight: 500; vertical-align: top; margin-top: 0.5rem; display: inline-block; }
-        .price-label { font-size: 0.9rem; opacity: 0.75; margin-top: 0.25rem; }
-        .price-includes { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .price-includes li {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .price-includes li i { color: #86efac; }
-        .price-cta { margin-top: 2rem; }
-        .price-cta .cta-button {
-            background: white;
-            color: var(--primary-blue);
-            font-size: 1rem;
-            padding: 0.9rem 2.5rem;
-        }
-        .price-cta .cta-button:hover { background: #f0f9ff; }
-        .price-spots {
-            margin-top: 1rem;
-            font-size: 0.82rem;
-            opacity: 0.7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-        }
-
-        .dates-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        .date-pill {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.9rem 1.5rem;
-            min-width: 130px;
-        }
-        .date-pill .dp-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); }
-        .date-pill .dp-date { font-size: 1.05rem; font-weight: 700; color: var(--primary-blue); margin-top: 0.2rem; }
-        .date-pill .dp-time { font-size: 0.8rem; color: var(--text-light); margin-top: 0.15rem; }
+        .price-block { background:var(--primary-blue); border-radius:16px; padding:3rem; text-align:center; color:white; }
+        .price-amount { font-size:3.5rem; font-weight:800; line-height:1; }
+        .price-amount sup { font-size:1.5rem; font-weight:500; vertical-align:top; margin-top:0.5rem; display:inline-block; }
+        .price-label { font-size:0.88rem; opacity:0.75; margin-top:0.25rem; }
+        .price-includes { margin-top:1.5rem; list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem; }
+        .price-includes li { display:flex; align-items:center; justify-content:center; gap:0.5rem; font-size:0.9rem; opacity:0.9; }
+        .price-includes li i { color:#86efac; }
+        .price-cta { margin-top:2rem; }
+        .price-cta a.cta-button { background:white; color:var(--primary-blue); font-size:1rem; padding:0.9rem 2.5rem; }
+        .price-cta a.cta-button:hover { background:#f0f9ff; }
+        .price-spots { margin-top:1rem; font-size:0.82rem; opacity:0.7; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
     </style>
 </head>
 <body>
@@ -326,27 +140,15 @@
                 <a href="formacoes-curtas.html" class="lp-breadcrumb">
                     <i class="fas fa-arrow-left" aria-hidden="true"></i> Cursos Curtos Online
                 </a>
-                <span class="service-badge" style="background: #16a34a; color: white;">Inscrições abertas</span>
+                <span class="service-badge" style="background:#16a34a;color:white;">Inscrições abertas</span>
                 <h1>ChatGPT para Negócios e Produtividade</h1>
-                <p class="lp-hero-subtitle">Aprenda a utilizar o ChatGPT de forma prática, crítica e orientada a resultados. Em 9 horas, compreende os fundamentos da inteligência artificial, explora as funcionalidades do ChatGPT e aplica estas ferramentas em tarefas concretas do dia a dia profissional — com enquadramento legal e exemplos reais.</p>
+                <p class="lp-hero-subtitle">Aprenda a utilizar o ChatGPT de forma prática, crítica e orientada a resultados. Em 9 horas, compreende os fundamentos da inteligência artificial, explora as funcionalidades do ChatGPT e aplica estas ferramentas em tarefas concretas do dia a dia profissional — com enquadramento legal essencial e exemplos reais.</p>
 
                 <div class="course-meta-bar">
-                    <div class="course-meta-item">
-                        <i class="fas fa-clock"></i>
-                        <span><strong>9 horas</strong> · 3 sessões de 3h</span>
-                    </div>
-                    <div class="course-meta-item">
-                        <i class="fas fa-laptop"></i>
-                        <span><strong>100% Online</strong> · ao vivo</span>
-                    </div>
-                    <div class="course-meta-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>5, 12 e 19 de Maio</span>
-                    </div>
-                    <div class="course-meta-item">
-                        <i class="fas fa-euro-sign"></i>
-                        <span><strong>250 €</strong></span>
-                    </div>
+                    <div class="course-meta-item"><i class="fas fa-clock"></i> <strong>9 horas</strong> &nbsp;· 3 sessões de 3h</div>
+                    <div class="course-meta-item"><i class="fas fa-laptop"></i> <strong>100% Online</strong> &nbsp;· ao vivo</div>
+                    <div class="course-meta-item"><i class="fas fa-calendar-alt"></i> 5, 12 e 19 de Maio</div>
+                    <div class="course-meta-item"><i class="fas fa-euro-sign"></i> <strong>250 €</strong></div>
                 </div>
 
                 <div class="spots-warning">
@@ -354,12 +156,8 @@
                 </div>
 
                 <div class="course-hero-cta">
-                    <a href="#inscricao" class="cta-button">
-                        Reservar o meu lugar <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                    </a>
-                    <a href="#programa" class="cta-secondary">
-                        Ver programa completo <i class="fas fa-list-ul" aria-hidden="true"></i>
-                    </a>
+                    <a href="#inscricao" class="cta-button">Reservar o meu lugar <i class="fas fa-arrow-right"></i></a>
+                    <a href="#programa" class="cta-outline">Ver programa completo <i class="fas fa-list-ul"></i></a>
                 </div>
             </div>
         </section>
@@ -372,36 +170,18 @@
                     <p>Competências práticas e imediatamente aplicáveis no seu contexto profissional.</p>
                 </div>
                 <div class="learn-grid">
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Compreender o que é a IA e quais os seus limites reais</span>
-                    </div>
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Conhecer riscos, boas práticas e enquadramento legal (RGPD e EU AI Act)</span>
-                    </div>
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Configurar e utilizar o ChatGPT de forma eficiente e estruturada</span>
-                    </div>
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Criar conteúdos, imagens e estruturas de trabalho com apoio da ferramenta</span>
-                    </div>
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Aplicar o ChatGPT em tarefas reais do dia a dia profissional</span>
-                    </div>
-                    <div class="learn-item">
-                        <i class="fas fa-check-circle"></i>
-                        <span>Identificar oportunidades concretas de produtividade e melhoria operacional</span>
-                    </div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Compreender o que é a IA e distinguir o seu potencial real das expectativas excessivas</span></div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Conhecer riscos, boas práticas e enquadramento legal (RGPD e EU AI Act)</span></div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Configurar e utilizar o ChatGPT de forma eficiente e estruturada</span></div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Criar conteúdos, imagens e estruturas de trabalho com apoio da ferramenta</span></div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Aplicar o ChatGPT em tarefas reais do dia a dia profissional</span></div>
+                    <div class="learn-item"><i class="fas fa-check-circle"></i><span>Identificar oportunidades concretas de produtividade e melhoria operacional</span></div>
                 </div>
             </div>
         </section>
 
         <!-- DATAS -->
-        <section class="lp-section lp-section-alt" id="datas">
+        <section class="lp-section lp-section-alt">
             <div class="section-container">
                 <div class="lp-section-header">
                     <h2>Datas e Formato</h2>
@@ -431,7 +211,7 @@
         <section class="lp-section" id="programa">
             <div class="section-container">
                 <div class="lp-section-header">
-                    <h2>Programa da Formação</h2>
+                    <h2>Programa Detalhado</h2>
                     <p>Conteúdo estruturado em 3 sessões progressivas, da teoria à aplicação imediata.</p>
                 </div>
 
@@ -446,20 +226,39 @@
                             <i class="fas fa-chevron-down session-toggle"></i>
                         </div>
                         <div class="session-body">
-                            <div class="session-topics">
-                                <h4>Tópicos</h4>
+                            <div class="session-subtopic">
+                                <h4>1. O que é a Inteligência Artificial</h4>
                                 <ul>
-                                    <li>O que é a inteligência artificial: IA tradicional vs. IA generativa, modelos de linguagem e popularidade actual</li>
-                                    <li>O que a IA não é: ideias erradas, diferença entre automatização e decisão humana, riscos de expectativas desajustadas</li>
-                                    <li>Potencialidades: produtividade, escrita, síntese, planeamento e criação de conteúdos</li>
-                                    <li>Limites e riscos: alucinações, informação imprecisa, viés, dependência e confidencialidade</li>
-                                    <li>RGPD e EU AI Act: cuidados com dados pessoais, princípios de utilização responsável e enquadramento europeu</li>
+                                    <li>Conceito de inteligência artificial e diferença entre IA tradicional e IA generativa</li>
+                                    <li>Como funcionam, em termos simples, os modelos de linguagem</li>
+                                    <li>O que explica a popularidade actual da IA generativa</li>
+                                    <li>Principais áreas de aplicação em contexto profissional</li>
                                 </ul>
                             </div>
-                            <div class="session-result">
-                                <i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>
-                                Resultado: Visão clara, realista e estratégica da inteligência artificial — potencial, limites e principais cuidados legais e operacionais.
+                            <div class="session-subtopic">
+                                <h4>2. O que a IA não é</h4>
+                                <ul>
+                                    <li>Ideias erradas mais comuns sobre inteligência artificial</li>
+                                    <li>Diferença entre automatização, inteligência e decisão humana</li>
+                                    <li>O risco de expectativas desajustadas e dependência excessiva</li>
+                                </ul>
                             </div>
+                            <div class="session-subtopic">
+                                <h4>3. Potencialidades e limites</h4>
+                                <ul>
+                                    <li>Aumento de produtividade, escrita, síntese e criação de conteúdos</li>
+                                    <li>Alucinações, informação imprecisa, viés e confidencialidade</li>
+                                </ul>
+                            </div>
+                            <div class="session-subtopic">
+                                <h4>4. RGPD e EU AI Act</h4>
+                                <ul>
+                                    <li>Cuidados no tratamento de dados pessoais com ferramentas de IA</li>
+                                    <li>Princípios de utilização responsável e enquadramento europeu</li>
+                                    <li>Impacto crescente da regulação no uso empresarial da inteligência artificial</li>
+                                </ul>
+                            </div>
+                            <div class="session-result"><i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>Resultado: Visão clara, realista e estratégica da IA — potencial, limites e principais cuidados legais e operacionais.</div>
                         </div>
                     </div>
 
@@ -472,21 +271,38 @@
                             <i class="fas fa-chevron-down session-toggle"></i>
                         </div>
                         <div class="session-body" style="display:none;">
-                            <div class="session-topics">
-                                <h4>Tópicos</h4>
+                            <div class="session-subtopic">
+                                <h4>1. Introdução ao ChatGPT</h4>
                                 <ul>
-                                    <li>Introdução ao ChatGPT: para que serve, diferença entre uso básico e profissional, exemplos por área</li>
-                                    <li>Configuração e organização: primeiros passos, boas práticas e erros comuns na utilização inicial</li>
-                                    <li>Funcionalidades principais: geração de texto, reescrita, resumo, emails, relatórios e propostas</li>
-                                    <li>Geração de imagens e conteúdos: marketing, comunicação e limites da geração automática</li>
-                                    <li>Assistentes e projectos: organizar fluxos de trabalho e adaptar a ferramenta ao contexto profissional</li>
-                                    <li>Boas práticas de prompting: contexto, objectivo, formato e critérios — construção de pedidos reutilizáveis</li>
+                                    <li>Para que serve e em que tipo de tarefas pode gerar valor</li>
+                                    <li>Diferenças entre usos básicos e usos profissionais</li>
+                                    <li>Exemplos de aplicação em diferentes áreas de actividade</li>
                                 </ul>
                             </div>
-                            <div class="session-result">
-                                <i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>
-                                Resultado: Utilização do ChatGPT com maior estrutura, clareza e produtividade — explorando funcionalidades relevantes para o contexto profissional.
+                            <div class="session-subtopic">
+                                <h4>2. Configuração e organização</h4>
+                                <ul>
+                                    <li>Primeiros passos, boas práticas de configuração e erros comuns</li>
+                                    <li>Organização do trabalho e estruturação de pedidos</li>
+                                </ul>
                             </div>
+                            <div class="session-subtopic">
+                                <h4>3. Funcionalidades principais</h4>
+                                <ul>
+                                    <li>Geração de texto, reescrita, resumo e adaptação de conteúdos</li>
+                                    <li>Emails, relatórios, propostas, listas, planos e argumentos</li>
+                                    <li>Criação de imagens e conteúdos visuais — limites e revisão humana</li>
+                                </ul>
+                            </div>
+                            <div class="session-subtopic">
+                                <h4>4. Assistentes, projectos e prompting</h4>
+                                <ul>
+                                    <li>Assistentes e projectos para organizar fluxos de trabalho recorrentes</li>
+                                    <li>Contexto, objectivo, formato e critérios — construção de pedidos reutilizáveis</li>
+                                    <li>Exemplos de prompts aplicados a tarefas profissionais</li>
+                                </ul>
+                            </div>
+                            <div class="session-result"><i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>Resultado: Utilização do ChatGPT com maior estrutura, clareza e produtividade — funcionalidades exploradas no contexto profissional.</div>
                         </div>
                     </div>
 
@@ -499,20 +315,31 @@
                             <i class="fas fa-chevron-down session-toggle"></i>
                         </div>
                         <div class="session-body" style="display:none;">
-                            <div class="session-topics">
-                                <h4>Tópicos</h4>
+                            <div class="session-subtopic">
+                                <h4>1. Aplicações individuais e empresariais</h4>
                                 <ul>
-                                    <li>Aplicações individuais: emails, preparação de reuniões, resumos, planeamento e organização de ideias</li>
-                                    <li>Aplicações empresariais: conteúdos, marketing, propostas, análise de informação e geração de ideias</li>
-                                    <li>Casos práticos: email profissional, plano de conteúdos, relatório e prompts aplicados a situações reais</li>
-                                    <li>Aplicação crítica: como rever respostas, o que validar, quando confiar e quando reformular</li>
-                                    <li>Integração no dia a dia: identificar tarefas com retorno imediato e construir uma rotina prática de utilização</li>
+                                    <li>Emails, reuniões, resumos, planeamento e organização de ideias</li>
+                                    <li>Conteúdos, marketing, propostas, análise de informação e campanhas</li>
                                 </ul>
                             </div>
-                            <div class="session-result">
-                                <i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>
-                                Resultado: Exemplos concretos de aplicação, maior autonomia e visão prática de como integrar o ChatGPT no trabalho diário.
+                            <div class="session-subtopic">
+                                <h4>2. Casos práticos orientados à realidade profissional</h4>
+                                <ul>
+                                    <li>Produção de um email profissional com apoio do ChatGPT</li>
+                                    <li>Criação de um plano simples de conteúdos</li>
+                                    <li>Estruturação de um relatório ou documento</li>
+                                    <li>Desenvolvimento de prompts aplicados a situações reais</li>
+                                </ul>
                             </div>
+                            <div class="session-subtopic">
+                                <h4>3. Aplicação crítica e integração no dia a dia</h4>
+                                <ul>
+                                    <li>Como rever respostas — quando confiar, questionar e reformular</li>
+                                    <li>Identificar tarefas com retorno imediato e construir uma rotina de utilização</li>
+                                    <li>Critérios para adopção progressiva no trabalho e na empresa</li>
+                                </ul>
+                            </div>
+                            <div class="session-result"><i class="fas fa-flag-checkered" style="margin-right:0.4rem;"></i>Resultado: Exemplos concretos de aplicação, maior autonomia e visão prática de integração do ChatGPT no trabalho diário.</div>
                         </div>
                     </div>
 
@@ -520,97 +347,64 @@
             </div>
         </section>
 
-        <!-- INFO GRID: Destinatários, Materiais, Requisitos -->
+        <!-- INFO: Destinatários, Incluído, Requisitos -->
         <section class="lp-section lp-section-alt">
             <div class="section-container">
                 <div class="info-grid">
                     <div class="info-card">
-                        <h4><i class="fas fa-users" style="margin-right:0.4rem;color:var(--secondary-blue);"></i> Destinatários</h4>
+                        <h4><i class="fas fa-users" style="margin-right:0.4rem;"></i>Destinatários</h4>
                         <ul>
-                            <li><i class="fas fa-check"></i> Empresários e gestores</li>
-                            <li><i class="fas fa-check"></i> Quadros técnicos</li>
-                            <li><i class="fas fa-check"></i> Profissionais liberais</li>
-                            <li><i class="fas fa-check"></i> Consultores</li>
-                            <li><i class="fas fa-check"></i> Técnicos de marketing e comunicação</li>
-                            <li><i class="fas fa-check"></i> Sem experiência técnica prévia</li>
+                            <li><i class="fas fa-check"></i>Empresários e gestores</li>
+                            <li><i class="fas fa-check"></i>Quadros técnicos</li>
+                            <li><i class="fas fa-check"></i>Profissionais liberais e consultores</li>
+                            <li><i class="fas fa-check"></i>Técnicos de marketing e comunicação</li>
+                            <li><i class="fas fa-check"></i>Sem experiência técnica prévia</li>
                         </ul>
                     </div>
                     <div class="info-card">
-                        <h4><i class="fas fa-box-open" style="margin-right:0.4rem;color:var(--secondary-blue);"></i> Incluído</h4>
+                        <h4><i class="fas fa-box-open" style="margin-right:0.4rem;"></i>Incluído</h4>
                         <ul>
-                            <li><i class="fas fa-check"></i> Documentação de apoio</li>
-                            <li><i class="fas fa-check"></i> Exemplos práticos e exercícios</li>
-                            <li><i class="fas fa-check"></i> Templates base de prompts</li>
-                            <li><i class="fas fa-check"></i> Certificado de participação</li>
-                            <li><i class="fas fa-check"></i> Acesso à gravação das sessões</li>
+                            <li><i class="fas fa-check"></i>Documentação de apoio</li>
+                            <li><i class="fas fa-check"></i>Exemplos práticos e exercícios</li>
+                            <li><i class="fas fa-check"></i>Templates base de prompts</li>
+                            <li><i class="fas fa-check"></i>Certificado de participação</li>
                         </ul>
                     </div>
                     <div class="info-card">
-                        <h4><i class="fas fa-clipboard-list" style="margin-right:0.4rem;color:var(--secondary-blue);"></i> Requisitos</h4>
+                        <h4><i class="fas fa-clipboard-list" style="margin-right:0.4rem;"></i>Requisitos</h4>
                         <ul>
-                            <li><i class="fas fa-check"></i> Computador portátil</li>
-                            <li><i class="fas fa-check"></i> Acesso à internet</li>
-                            <li><i class="fas fa-check"></i> Conta ChatGPT (recomendada)</li>
-                            <li><i class="fas fa-check"></i> Sem conhecimentos técnicos necessários</li>
+                            <li><i class="fas fa-check"></i>Computador portátil</li>
+                            <li><i class="fas fa-check"></i>Acesso à internet</li>
+                            <li><i class="fas fa-check"></i>Conta ChatGPT (recomendada)</li>
+                            <li><i class="fas fa-check"></i>Sem conhecimentos técnicos necessários</li>
                         </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- METODOLOGIA -->
-        <section class="lp-section">
-            <div class="section-container">
-                <div style="max-width: 720px; margin: 0 auto; text-align: center;">
-                    <h2>Metodologia</h2>
-                    <p style="color: var(--text-light); margin-top: 0.75rem; margin-bottom: 2rem;">A formação combina exposição teórica essencial, demonstração prática, exemplos reais de utilização, exercícios aplicados e discussão de casos. A abordagem privilegia a aplicabilidade imediata — os participantes compreendem os conceitos e testam, desde logo, formas concretas de utilização.</p>
-                    <div class="learn-grid">
-                        <div class="learn-item">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                            <span>Exposição teórica essencial e fundamentada</span>
-                        </div>
-                        <div class="learn-item">
-                            <i class="fas fa-laptop-code"></i>
-                            <span>Demonstração prática em tempo real</span>
-                        </div>
-                        <div class="learn-item">
-                            <i class="fas fa-pencil-alt"></i>
-                            <span>Exercícios aplicados ao contexto profissional</span>
-                        </div>
-                        <div class="learn-item">
-                            <i class="fas fa-comments"></i>
-                            <span>Discussão de casos e boas práticas</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- PREÇO E INSCRIÇÃO -->
-        <section class="lp-section lp-section-alt" id="inscricao">
+        <section class="lp-section" id="inscricao">
             <div class="section-container">
-                <div style="max-width: 520px; margin: 0 auto;">
+                <div style="max-width:500px;margin:0 auto;">
                     <div class="price-block">
-                        <div class="price-amount"><span>€</span>250</div>
+                        <div class="price-amount"><sup>€</sup>250</div>
                         <div class="price-label">por participante · IVA incluído</div>
                         <ul class="price-includes">
-                            <li><i class="fas fa-check-circle"></i> 9 horas de formação ao vivo (3 sessões)</li>
-                            <li><i class="fas fa-check-circle"></i> Templates e materiais de apoio</li>
-                            <li><i class="fas fa-check-circle"></i> Certificado de participação</li>
-                            <li><i class="fas fa-check-circle"></i> Gravação das sessões</li>
+                            <li><i class="fas fa-check-circle"></i>9 horas de formação ao vivo (3 sessões)</li>
+                            <li><i class="fas fa-check-circle"></i>Templates e materiais de apoio</li>
+                            <li><i class="fas fa-check-circle"></i>Certificado de participação</li>
+                            <li><i class="fas fa-check-circle"></i>Formação prática orientada a resultados</li>
                         </ul>
                         <div class="price-cta">
                             <a href="https://calendly.com/miguelsilvalab1/30min" target="_blank" rel="noopener noreferrer" class="cta-button">
-                                Reservar o meu lugar <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                                Reservar o meu lugar <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
-                        <div class="price-spots">
-                            <i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida
-                        </div>
+                        <div class="price-spots"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
                     </div>
-
-                    <p style="text-align:center; margin-top:1.5rem; font-size:0.88rem; color:var(--text-light);">
-                        Tem dúvidas ou quer inscrever uma equipa? <a href="mailto:miguelsilvalab1@gmail.com" style="color:var(--secondary-blue); font-weight:600;">Contacte directamente.</a>
+                    <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-light);">
+                        Dúvidas ou inscrição de equipa? <a href="mailto:miguelsilvalab1@gmail.com" style="color:var(--secondary-blue);font-weight:600;">Contacte directamente.</a>
                     </p>
                 </div>
             </div>
@@ -624,7 +418,7 @@
             <p class="footer-tagline">Transformo Inteligência Artificial em valor real</p>
             <p class="footer-email"><a href="mailto:miguelsilvalab1@gmail.com" class="footer-email-link">miguelsilvalab1@gmail.com</a></p>
             <div class="footer-bottom">
-                &copy; <span id="currentYear">2026</span> Miguel Silva Lab. Todos os direitos reservados.
+                &copy; <span id="currentYear">2025</span> Miguel Silva Lab. Todos os direitos reservados.
                 <span class="footer-privacy"><a href="privacidade.html" class="footer-privacy-link">Política de Privacidade</a></span>
             </div>
         </div>
@@ -637,12 +431,8 @@
         header.classList.toggle('open', !isOpen);
         body.style.display = isOpen ? 'none' : 'block';
     }
-
-    // Current year
     var yearEl = document.getElementById('currentYear');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-    // Mobile menu
     var mobileBtn = document.getElementById('mobileMenuBtn');
     var navLinks = document.getElementById('navLinks');
     if (mobileBtn && navLinks) {

@@ -108,6 +108,19 @@
         .price-cta a.cta-button { background:white; color:var(--primary-blue); font-size:1rem; padding:0.9rem 2.5rem; }
         .price-cta a.cta-button:hover { background:#f0f9ff; }
         .price-spots { margin-top:1rem; font-size:0.82rem; opacity:0.7; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
+
+        /* Formulário de inscrição inline */
+        .insc-form { display:flex; flex-direction:column; gap:0.65rem; margin-top:1.5rem; }
+        .insc-form input { width:100%; box-sizing:border-box; background:#ffffff; border:none; border-radius:8px; padding:0.75rem 1rem; font-size:0.92rem; color:#1e293b; font-family:inherit; outline:none; }
+        .insc-form input::placeholder { color:#94a3b8; }
+        .insc-form input:focus { box-shadow:0 0 0 3px rgba(255,255,255,0.4); }
+        .insc-btn-submit { background:white; color:var(--primary-blue); border:none; border-radius:8px; padding:0.85rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:background 0.2s; width:100%; }
+        .insc-btn-submit:hover { background:#f0f9ff; }
+        .insc-btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
+        .insc-sucesso { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:1.25rem 1.5rem; text-align:center; display:none; }
+        .insc-sucesso i { font-size:2rem; color:#86efac; display:block; margin-bottom:0.5rem; }
+        .insc-sucesso p { font-size:0.92rem; opacity:0.95; margin:0; }
+        .insc-nota { margin-top:0.85rem; font-size:0.8rem; opacity:0.72; line-height:1.5; }
     </style>
 </head>
 <body>
@@ -398,18 +411,25 @@
                             <li><i class="fas fa-check-circle"></i>Certificado de participação</li>
                             <li><i class="fas fa-check-circle"></i>Formação prática orientada a resultados</li>
                         </ul>
-                        <div class="price-cta">
-                            <a href="https://calendly.com/miguelsilvalab1/30min" target="_blank" rel="noopener noreferrer" class="cta-button">
+                        <form id="formInscricao" class="insc-form" novalidate>
+                            <input type="text" id="insc-nome" placeholder="Nome completo *" required autocomplete="name">
+                            <input type="email" id="insc-email" placeholder="Email *" required autocomplete="email">
+                            <input type="tel" id="insc-tel" placeholder="Telefone (opcional)" autocomplete="tel">
+                            <button type="submit" id="btnSubmitInscricao" class="insc-btn-submit">
                                 Reservar o meu lugar <i class="fas fa-arrow-right"></i>
-                            </a>
+                            </button>
+                        </form>
+                        <div id="inscricaoSucesso" class="insc-sucesso">
+                            <i class="fas fa-check-circle"></i>
+                            <p><strong>Inscrição recebida!</strong><br>Receberá em breve um email com os dados para confirmação e pagamento.</p>
                         </div>
-                        <p style="margin-top:1rem;font-size:0.83rem;opacity:0.8;line-height:1.5;">
-                            <i class="fas fa-envelope" style="margin-right:0.3rem;"></i> Após a reserva receberá um email com todos os dados para confirmação e pagamento.
+                        <p class="insc-nota">
+                            <i class="fas fa-lock" style="margin-right:0.3rem;"></i> Os seus dados são usados apenas para processar a inscrição.
                         </p>
                         <div class="price-spots"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
                     </div>
                     <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-light);">
-                        Dúvidas ou inscrição de equipa? <a href="mailto:miguelsilvalab1@gmail.com" style="color:var(--secondary-blue);font-weight:600;">Contacte directamente.</a>
+                        Dúvidas ou inscrição de equipa? <a href="https://wa.me/351914912126?text=Ol%C3%A1%20Miguel%2C%20gostaria%20de%20saber%20mais%20sobre%20a%20forma%C3%A3o%20ChatGPT%20para%20Neg%C3%B3cios%20e%20Produtividade%20%285%2C%2012%20e%2019%20de%20Maio%29." target="_blank" rel="noopener noreferrer" style="color:var(--secondary-blue);font-weight:600;"><i class="fab fa-whatsapp" style="margin-right:0.3rem;"></i>Contacte diretamente.</a>
                     </p>
                 </div>
             </div>
@@ -430,6 +450,48 @@
     </footer>
 
     <script>
+    // Supabase
+    var SUPABASE_URL = 'https://nicgjddphjevcvsfdtmr.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pY2dqZGRwaGpldmN2c2ZkdG1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0OTg2MTAsImV4cCI6MjA4NjA3NDYxMH0.Bcn8vJ9S6cTdPl1J2XfWf-2YrswYonM73FBBimQLIC8';
+    function supabaseFn(fn, opts) {
+        var url = SUPABASE_URL + '/functions/v1/' + fn;
+        var cfg = Object.assign({}, opts || {});
+        cfg.headers = Object.assign({ 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, cfg.headers || {});
+        return fetch(url, cfg);
+    }
+
+    // Formulário de inscrição
+    document.getElementById('formInscricao').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nome = document.getElementById('insc-nome').value.trim();
+        var email = document.getElementById('insc-email').value.trim();
+        var tel = document.getElementById('insc-tel').value.trim();
+        if (!nome || !email) return;
+        var btn = document.getElementById('btnSubmitInscricao');
+        btn.innerHTML = 'A enviar... <i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        var payload = {
+            name: nome,
+            email: email,
+            phone: tel,
+            service: 'chatgpt-negocios-produtividade',
+            message: 'Inscrição na formação ChatGPT para Negócios e Produtividade (5, 12 e 19 de Maio).\nNome: ' + nome + '\nEmail: ' + email + (tel ? '\nTelefone: ' + tel : '')
+        };
+        supabaseFn('send-contact-email', { method: 'POST', body: JSON.stringify(payload) })
+        .then(function(r) {
+            if (r.ok) {
+                document.getElementById('formInscricao').style.display = 'none';
+                document.getElementById('inscricaoSucesso').style.display = 'block';
+            } else { throw new Error(); }
+        })
+        .catch(function() {
+            var ml = 'mailto:miguelsilvalab1@gmail.com?subject=Inscri%C3%A7%C3%A3o%20ChatGPT%20para%20Neg%C3%B3cios%20e%20Produtividade&body=' + encodeURIComponent('Nome: ' + nome + '\nEmail: ' + email + (tel ? '\nTelefone: ' + tel : ''));
+            window.location.href = ml;
+            btn.innerHTML = 'Reservar o meu lugar <i class="fas fa-arrow-right"></i>';
+            btn.disabled = false;
+        });
+    });
+
     function toggleSession(header) {
         var body = header.nextElementSibling;
         var isOpen = header.classList.contains('open');

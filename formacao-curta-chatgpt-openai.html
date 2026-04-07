@@ -109,18 +109,37 @@
         .price-cta a.cta-button:hover { background:#f0f9ff; }
         .price-spots { margin-top:1rem; font-size:0.82rem; opacity:0.7; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
 
-        /* Formulário de inscrição inline */
-        .insc-form { display:flex; flex-direction:column; gap:0.65rem; margin-top:1.5rem; }
-        .insc-form input { width:100%; box-sizing:border-box; background:#ffffff; border:none; border-radius:8px; padding:0.75rem 1rem; font-size:0.92rem; color:#1e293b; font-family:inherit; outline:none; }
+        /* Modal de inscrição */
+        .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:9000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; visibility:hidden; transition:opacity 0.25s, visibility 0.25s; }
+        .modal-overlay.open { opacity:1; visibility:visible; }
+        .modal-box { background:#fff; border-radius:16px; padding:2rem; width:100%; max-width:440px; position:relative; box-shadow:0 24px 60px rgba(0,0,0,0.25); transform:translateY(16px); transition:transform 0.25s; }
+        .modal-overlay.open .modal-box { transform:translateY(0); }
+        .modal-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.2rem; color:#94a3b8; cursor:pointer; line-height:1; padding:0.25rem; }
+        .modal-close:hover { color:#1e293b; }
+        .modal-title { font-size:1.15rem; font-weight:700; color:#1e293b; margin-bottom:0.25rem; }
+        .modal-subtitle { font-size:0.85rem; color:#64748b; margin-bottom:1.5rem; }
+        /* Formulário de inscrição (modal e inline) */
+        .insc-form { display:flex; flex-direction:column; gap:0.65rem; }
+        .insc-form input { width:100%; box-sizing:border-box; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:8px; padding:0.75rem 1rem; font-size:0.92rem; color:#1e293b; font-family:inherit; outline:none; transition:border-color 0.2s; }
         .insc-form input::placeholder { color:#94a3b8; }
-        .insc-form input:focus { box-shadow:0 0 0 3px rgba(255,255,255,0.4); }
-        .insc-btn-submit { background:white; color:var(--primary-blue); border:none; border-radius:8px; padding:0.85rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:background 0.2s; width:100%; }
-        .insc-btn-submit:hover { background:#f0f9ff; }
+        .insc-form input:focus { border-color:#3b82f6; background:#fff; }
+        .insc-btn-submit { background:var(--primary-blue); color:#fff; border:none; border-radius:8px; padding:0.9rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:background 0.2s; width:100%; margin-top:0.25rem; }
+        .insc-btn-submit:hover { background:#1e3a8a; }
         .insc-btn-submit:disabled { opacity:0.6; cursor:not-allowed; }
-        .insc-sucesso { background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.4); border-radius:12px; padding:1.25rem 1.5rem; text-align:center; display:none; }
-        .insc-sucesso i { font-size:2rem; color:#86efac; display:block; margin-bottom:0.5rem; }
-        .insc-sucesso p { font-size:0.92rem; opacity:0.95; margin:0; }
-        .insc-nota { margin-top:0.85rem; font-size:0.8rem; opacity:0.72; line-height:1.5; }
+        .insc-sucesso { text-align:center; padding:1rem 0; display:none; }
+        .insc-sucesso i { font-size:2.5rem; color:#16a34a; display:block; margin-bottom:0.75rem; }
+        .insc-sucesso h3 { font-size:1.1rem; font-weight:700; color:#1e293b; margin-bottom:0.4rem; }
+        .insc-sucesso p { font-size:0.88rem; color:#64748b; margin:0; }
+        .insc-nota { margin-top:0.75rem; font-size:0.78rem; color:#94a3b8; line-height:1.5; text-align:center; }
+        /* Preço block simplificado */
+        .insc-form-price input { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:#fff; }
+        .insc-form-price input::placeholder { color:rgba(255,255,255,0.5); }
+        .insc-form-price input:focus { border-color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.2); }
+        .insc-form-price .insc-btn-submit { background:#fff; color:var(--primary-blue); }
+        .insc-form-price .insc-btn-submit:hover { background:#f0f9ff; }
+        .insc-form-price .insc-nota { color:rgba(255,255,255,0.65); }
+        .insc-form-price .insc-sucesso i { color:#86efac; }
+        .insc-form-price .insc-sucesso h3, .insc-form-price .insc-sucesso p { color:#fff; }
     </style>
 </head>
 <body>
@@ -171,7 +190,7 @@
                 </div>
 
                 <div class="course-hero-cta">
-                    <a href="#inscricao" class="cta-button">Reservar o meu lugar <i class="fas fa-arrow-right"></i></a>
+                    <button onclick="abrirModal()" class="cta-button" style="border:none;cursor:pointer;">Reservar o meu lugar <i class="fas fa-arrow-right"></i></button>
                     <a href="#programa" class="cta-outline">Ver programa completo <i class="fas fa-list-ul"></i></a>
                 </div>
             </div>
@@ -411,7 +430,7 @@
                             <li><i class="fas fa-check-circle"></i>Certificado de participação</li>
                             <li><i class="fas fa-check-circle"></i>Formação prática orientada a resultados</li>
                         </ul>
-                        <form id="formInscricao" class="insc-form" novalidate>
+                        <form id="formInscricao" class="insc-form insc-form-price" novalidate>
                             <input type="text" id="insc-nome" placeholder="Nome completo *" required autocomplete="name">
                             <input type="email" id="insc-email" placeholder="Email *" required autocomplete="email">
                             <input type="tel" id="insc-tel" placeholder="Telefone (opcional)" autocomplete="tel">
@@ -437,6 +456,29 @@
 
     </main>
 
+    <!-- MODAL DE INSCRIÇÃO -->
+    <div id="modalInscricao" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+        <div class="modal-box">
+            <button class="modal-close" onclick="fecharModal()" aria-label="Fechar"><i class="fas fa-times"></i></button>
+            <p class="modal-title" id="modalTitulo">Reservar lugar — ChatGPT para Negócios</p>
+            <p class="modal-subtitle">Preencha os seus dados e entraremos em contacto com a confirmação e dados de pagamento.</p>
+            <form id="formInscricaoModal" class="insc-form" novalidate>
+                <input type="text" id="modal-nome" placeholder="Nome completo *" required autocomplete="name">
+                <input type="email" id="modal-email" placeholder="Email *" required autocomplete="email">
+                <input type="tel" id="modal-tel" placeholder="Telefone (opcional)" autocomplete="tel">
+                <button type="submit" id="btnSubmitModal" class="insc-btn-submit">
+                    Confirmar inscrição <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+            <div id="modalSucesso" class="insc-sucesso">
+                <i class="fas fa-check-circle"></i>
+                <h3>Inscrição recebida!</h3>
+                <p>Receberá em breve um email com os dados para confirmação e pagamento.</p>
+            </div>
+            <p class="insc-nota"><i class="fas fa-lock" style="margin-right:0.3rem;"></i>Os seus dados são usados apenas para processar a inscrição.</p>
+        </div>
+    </div>
+
     <footer role="contentinfo">
         <div class="footer-container">
             <div class="footer-logo">Miguel Silva Lab</div>
@@ -460,36 +502,73 @@
         return fetch(url, cfg);
     }
 
-    // Formulário de inscrição
-    document.getElementById('formInscricao').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var nome = document.getElementById('insc-nome').value.trim();
-        var email = document.getElementById('insc-email').value.trim();
-        var tel = document.getElementById('insc-tel').value.trim();
-        if (!nome || !email) return;
-        var btn = document.getElementById('btnSubmitInscricao');
-        btn.innerHTML = 'A enviar... <i class="fas fa-spinner fa-spin"></i>';
-        btn.disabled = true;
+    // Modal
+    function abrirModal() {
+        document.getElementById('modalInscricao').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('modal-nome').focus();
+    }
+    function fecharModal() {
+        document.getElementById('modalInscricao').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('modalInscricao').addEventListener('click', function(e) {
+        if (e.target === this) fecharModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') fecharModal();
+    });
+    // Abrir modal automaticamente se URL tiver #inscricao
+    if (window.location.hash === '#inscricao') { setTimeout(abrirModal, 300); }
+
+    // Função genérica para submeter inscrição
+    function submeterInscricao(nome, email, tel, btnEl, formEl, sucessoEl) {
+        btnEl.innerHTML = 'A enviar... <i class="fas fa-spinner fa-spin"></i>';
+        btnEl.disabled = true;
         var payload = {
-            name: nome,
-            email: email,
-            phone: tel,
+            name: nome, email: email, phone: tel,
             service: 'chatgpt-negocios-produtividade',
             message: 'Inscrição na formação ChatGPT para Negócios e Produtividade (5, 12 e 19 de Maio).\nNome: ' + nome + '\nEmail: ' + email + (tel ? '\nTelefone: ' + tel : '')
         };
         supabaseFn('send-contact-email', { method: 'POST', body: JSON.stringify(payload) })
         .then(function(r) {
             if (r.ok) {
-                document.getElementById('formInscricao').style.display = 'none';
-                document.getElementById('inscricaoSucesso').style.display = 'block';
+                formEl.style.display = 'none';
+                sucessoEl.style.display = 'block';
             } else { throw new Error(); }
         })
         .catch(function() {
             var ml = 'mailto:miguelsilvalab1@gmail.com?subject=Inscri%C3%A7%C3%A3o%20ChatGPT%20para%20Neg%C3%B3cios%20e%20Produtividade&body=' + encodeURIComponent('Nome: ' + nome + '\nEmail: ' + email + (tel ? '\nTelefone: ' + tel : ''));
             window.location.href = ml;
-            btn.innerHTML = 'Reservar o meu lugar <i class="fas fa-arrow-right"></i>';
-            btn.disabled = false;
+            btnEl.innerHTML = btnEl.dataset.label || 'Reservar o meu lugar <i class="fas fa-arrow-right"></i>';
+            btnEl.disabled = false;
         });
+    }
+
+    // Formulário modal
+    document.getElementById('formInscricaoModal').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nome = document.getElementById('modal-nome').value.trim();
+        var email = document.getElementById('modal-email').value.trim();
+        var tel = document.getElementById('modal-tel').value.trim();
+        if (!nome || !email) return;
+        submeterInscricao(nome, email, tel,
+            document.getElementById('btnSubmitModal'),
+            document.getElementById('formInscricaoModal'),
+            document.getElementById('modalSucesso'));
+    });
+
+    // Formulário inline (price block)
+    document.getElementById('formInscricao').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var nome = document.getElementById('insc-nome').value.trim();
+        var email = document.getElementById('insc-email').value.trim();
+        var tel = document.getElementById('insc-tel').value.trim();
+        if (!nome || !email) return;
+        submeterInscricao(nome, email, tel,
+            document.getElementById('btnSubmitInscricao'),
+            document.getElementById('formInscricao'),
+            document.getElementById('inscricaoSucesso'));
     });
 
     function toggleSession(header) {

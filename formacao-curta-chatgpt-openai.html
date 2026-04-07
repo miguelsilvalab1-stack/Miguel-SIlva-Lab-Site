@@ -51,13 +51,13 @@
 
     <style>
         .course-meta-bar { display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem; justify-content:center; }
-        .course-meta-item { display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:0.6rem 1rem; font-size:0.92rem; font-weight:500; color:white; }
-        .course-meta-item i { font-size:0.85rem; opacity:0.85; }
-        .spots-warning { display:inline-flex; align-items:center; gap:0.4rem; background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.4); border-radius:20px; padding:0.35rem 0.85rem; font-size:0.82rem; font-weight:600; color:#fbbf24; margin-top:1.5rem; }
+        .course-meta-item { display:flex; align-items:center; gap:0.5rem; background:white; border:1px solid var(--border-color); border-radius:8px; padding:0.6rem 1rem; font-size:0.92rem; font-weight:500; color:var(--text-dark); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        .course-meta-item i { font-size:0.85rem; color:var(--secondary-blue); }
+        .spots-warning { display:inline-flex; align-items:center; gap:0.4rem; background:#fef9ec; border:1px solid #f59e0b; border-radius:20px; padding:0.35rem 0.85rem; font-size:0.82rem; font-weight:600; color:#b45309; margin-top:1.5rem; }
         .course-hero-cta { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-top:2.5rem; }
         .course-hero-cta .cta-button { font-size:1rem; padding:0.9rem 2rem; }
-        .cta-outline { background:transparent; border:2px solid rgba(255,255,255,0.6); color:white; border-radius:8px; padding:0.9rem 2rem; font-size:1rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.2s; }
-        .cta-outline:hover { background:rgba(255,255,255,0.1); border-color:white; }
+        .cta-outline { background:white; border:2px solid var(--primary-blue); color:var(--primary-blue); border-radius:8px; padding:0.9rem 2rem; font-size:1rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.2s; }
+        .cta-outline:hover { background:var(--light-blue); }
 
         .learn-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-top:1.5rem; }
         @media(max-width:640px){ .learn-grid{ grid-template-columns:1fr; } }
@@ -147,6 +147,7 @@
                 <div class="course-meta-bar">
                     <div class="course-meta-item"><i class="fas fa-clock"></i> <strong>9 horas</strong> &nbsp;· 3 sessões de 3h</div>
                     <div class="course-meta-item"><i class="fas fa-laptop"></i> <strong>100% Online</strong> &nbsp;· ao vivo</div>
+                    <div class="course-meta-item"><i class="fas fa-moon"></i> Pós-laboral · 19h00–22h00</div>
                     <div class="course-meta-item"><i class="fas fa-calendar-alt"></i> 5, 12 e 19 de Maio</div>
                     <div class="course-meta-item"><i class="fas fa-euro-sign"></i> <strong>250 €</strong></div>
                 </div>
@@ -191,17 +192,17 @@
                     <div class="date-pill">
                         <span class="dp-label">Sessão 1</span>
                         <span class="dp-date">5 de Maio</span>
-                        <span class="dp-time">Introdução à IA</span>
+                        <span class="dp-time">19h00–22h00 · Introdução à IA</span>
                     </div>
                     <div class="date-pill">
                         <span class="dp-label">Sessão 2</span>
                         <span class="dp-date">12 de Maio</span>
-                        <span class="dp-time">ChatGPT</span>
+                        <span class="dp-time">19h00–22h00 · ChatGPT</span>
                     </div>
                     <div class="date-pill">
                         <span class="dp-label">Sessão 3</span>
                         <span class="dp-date">19 de Maio</span>
-                        <span class="dp-time">Aplicações práticas</span>
+                        <span class="dp-time">19h00–22h00 · Aplicações práticas</span>
                     </div>
                 </div>
             </div>
@@ -401,6 +402,9 @@
                                 Reservar o meu lugar <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
+                        <p style="margin-top:1rem;font-size:0.83rem;opacity:0.8;line-height:1.5;">
+                            <i class="fas fa-envelope" style="margin-right:0.3rem;"></i> Após a reserva receberá um email com todos os dados para confirmação e pagamento.
+                        </p>
                         <div class="price-spots"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
                     </div>
                     <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-light);">

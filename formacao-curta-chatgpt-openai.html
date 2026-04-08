@@ -43,6 +43,12 @@
     }
     </script>
 
+    <script>
+    // Corre antes do browser processar o hash — impede scroll automático para #programa
+    if (window.location.hash === '#programa') {
+        history.replaceState(null, null, window.location.pathname);
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

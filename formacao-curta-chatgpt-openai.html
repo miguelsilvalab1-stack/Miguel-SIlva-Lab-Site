@@ -590,8 +590,14 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') fecharModal();
     });
-    // Abrir modal automaticamente se URL tiver #inscricao
-    if (window.location.hash === '#inscricao') { setTimeout(abrirModal, 300); }
+    // Se URL tiver #inscricao → abrir modal
+    // Se URL tiver #programa → carregar do topo (não saltar para a secção)
+    if (window.location.hash === '#inscricao') {
+        setTimeout(abrirModal, 300);
+    } else if (window.location.hash === '#programa') {
+        history.replaceState(null, '', window.location.pathname);
+        window.scrollTo(0, 0);
+    }
 
     // Função genérica para submeter inscrição
     function submeterInscricao(nome, email, tel, btnEl, formEl, sucessoEl) {

@@ -109,6 +109,20 @@
         .price-cta a.cta-button:hover { background:#f0f9ff; }
         .price-spots { margin-top:1rem; font-size:0.82rem; opacity:0.7; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
 
+        /* Countdown de lugares */
+        .spots-counter { display:flex; flex-direction:column; align-items:center; gap:0.6rem; margin-top:1.75rem; }
+        .spots-bar-wrap { width:100%; max-width:360px; background:rgba(255,255,255,0.25); border-radius:999px; height:10px; overflow:hidden; }
+        .spots-bar-fill { height:100%; border-radius:999px; background:#f59e0b; transition:width 0.6s ease; }
+        .spots-bar-fill.urgente { background:#ef4444; }
+        .spots-text { font-size:0.88rem; font-weight:600; color:#1e293b; display:flex; align-items:center; gap:0.5rem; }
+        .spots-num { font-size:1.35rem; font-weight:800; color:#1e293b; line-height:1; }
+        .spots-num.urgente { color:#dc2626; }
+        .spots-label { font-size:0.8rem; color:#475569; }
+        .spots-dots { display:flex; gap:0.35rem; flex-wrap:wrap; justify-content:center; max-width:320px; }
+        .spots-dot { width:14px; height:14px; border-radius:50%; border:2px solid #cbd5e1; background:#f1f5f9; transition:background 0.3s; }
+        .spots-dot.taken { background:#1e3a8a; border-color:#1e3a8a; }
+        .spots-dot.taken.recent { background:#16a34a; border-color:#16a34a; }
+
         /* Modal de inscrição */
         .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:9000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; visibility:hidden; transition:opacity 0.25s, visibility 0.25s; }
         .modal-overlay.open { opacity:1; visibility:visible; }
@@ -185,8 +199,15 @@
                     <div class="course-meta-item"><i class="fas fa-euro-sign"></i> <strong>250 €</strong></div>
                 </div>
 
-                <div class="spots-warning">
-                    <i class="fas fa-fire"></i> Máximo 15 lugares — turma reduzida
+                <div class="spots-counter" id="spotsCounter">
+                    <div class="spots-dots" id="spotsDots"></div>
+                    <div class="spots-text">
+                        <span class="spots-num" id="spotsNum"></span>
+                        <span class="spots-label" id="spotsLabel"></span>
+                    </div>
+                    <div class="spots-bar-wrap">
+                        <div class="spots-bar-fill" id="spotsBar"></div>
+                    </div>
                 </div>
 
                 <div class="course-hero-cta">
@@ -445,7 +466,7 @@
                         <p class="insc-nota">
                             <i class="fas fa-lock" style="margin-right:0.3rem;"></i> Os seus dados são usados apenas para processar a inscrição.
                         </p>
-                        <div class="price-spots"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
+                        <div class="price-spots" id="priceSpotsText"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
                     </div>
                     <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-light);">
                         Dúvidas ou inscrição de equipa? <a href="https://wa.me/351914912126?text=Ol%C3%A1%20Miguel%2C%20gostaria%20de%20saber%20mais%20sobre%20a%20forma%C3%A3o%20ChatGPT%20para%20Neg%C3%B3cios%20e%20Produtividade%20%285%2C%2012%20e%2019%20de%20Maio%29." target="_blank" rel="noopener noreferrer" style="color:var(--secondary-blue);font-weight:600;"><i class="fab fa-whatsapp" style="margin-right:0.3rem;"></i>Contacte diretamente.</a>
@@ -492,6 +513,57 @@
     </footer>
 
     <script>
+    // ── ATUALIZAR AQUI quando houver nova inscrição confirmada ──
+    var LUGARES_OCUPADOS = 2;   // ← alterar este número
+    var LUGARES_TOTAL    = 15;
+    // ────────────────────────────────────────────────────────────
+
+    (function renderSpots() {
+        var restantes = LUGARES_TOTAL - LUGARES_OCUPADOS;
+        var pct       = (LUGARES_OCUPADOS / LUGARES_TOTAL) * 100;
+        var urgente   = restantes <= 5;
+
+        // Dots
+        var dotsEl = document.getElementById('spotsDots');
+        if (dotsEl) {
+            var html = '';
+            for (var i = 0; i < LUGARES_TOTAL; i++) {
+                if (i < LUGARES_OCUPADOS) {
+                    html += '<div class="spots-dot taken"></div>';
+                } else {
+                    html += '<div class="spots-dot"></div>';
+                }
+            }
+            dotsEl.innerHTML = html;
+        }
+
+        // Número e label
+        var numEl = document.getElementById('spotsNum');
+        var lblEl = document.getElementById('spotsLabel');
+        if (numEl) {
+            numEl.textContent = restantes;
+            if (urgente) numEl.classList.add('urgente');
+        }
+        if (lblEl) {
+            lblEl.textContent = restantes === 1
+                ? 'lugar disponível de ' + LUGARES_TOTAL
+                : 'lugares disponíveis de ' + LUGARES_TOTAL;
+        }
+
+        // Barra
+        var barEl = document.getElementById('spotsBar');
+        if (barEl) {
+            barEl.style.width = pct + '%';
+            if (urgente) barEl.classList.add('urgente');
+        }
+
+        // Price block text
+        var priceSpots = document.getElementById('priceSpotsText');
+        if (priceSpots) {
+            priceSpots.innerHTML = '<i class="fas fa-users"></i> ' + restantes + ' de ' + LUGARES_TOTAL + ' lugares disponíveis';
+        }
+    })();
+
     // Supabase
     var SUPABASE_URL = 'https://nicgjddphjevcvsfdtmr.supabase.co';
     var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pY2dqZGRwaGpldmN2c2ZkdG1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0OTg2MTAsImV4cCI6MjA4NjA3NDYxMH0.Bcn8vJ9S6cTdPl1J2XfWf-2YrswYonM73FBBimQLIC8';

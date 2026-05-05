@@ -193,7 +193,7 @@
                 <a href="formacoes-curtas.html" class="lp-breadcrumb">
                     <i class="fas fa-arrow-left" aria-hidden="true"></i> Cursos Curtos Online
                 </a>
-                <span class="service-badge" style="background:#16a34a;color:white;">Inscrições abertas</span>
+                <span class="service-badge" style="background:#1e3a8a;color:white;">Em curso · Maio 2025</span>
                 <h1>ChatGPT para Negócios e Produtividade</h1>
                 <p class="lp-hero-subtitle">Aprenda a utilizar o ChatGPT de forma prática, crítica e orientada a resultados. Em 9 horas, compreende os fundamentos da inteligência artificial, explora as funcionalidades do ChatGPT e aplica estas ferramentas em tarefas concretas do dia a dia profissional — com enquadramento legal essencial e exemplos reais.</p>
 
@@ -216,9 +216,23 @@
                     </div>
                 </div>
 
-                <div class="course-hero-cta">
-                    <button onclick="abrirModal()" class="cta-button" style="border:none;cursor:pointer;">Reservar o meu lugar <i class="fas fa-arrow-right"></i></button>
-                    <a href="#programa" class="cta-outline">Ver programa completo <i class="fas fa-list-ul"></i></a>
+                <!-- Inscrições fechadas -->
+                <div style="margin-top:2rem;background:#fff3cd;border:1.5px solid #fbbf24;border-radius:10px;padding:1.25rem 1.5rem;text-align:center;max-width:520px;margin-left:auto;margin-right:auto;">
+                    <p style="font-weight:700;color:#92400e;font-size:1rem;margin-bottom:0.35rem;"><i class="fas fa-lock" style="margin-right:0.4rem;"></i>Inscrições fechadas — turma completa</p>
+                    <p style="font-size:0.88rem;color:#78350f;line-height:1.6;margin-bottom:1rem;">Esta edição está em curso. Novo curso em preparação — deixe o seu email para ser notificado em primeiro lugar.</p>
+                    <form id="formNotificacao" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;">
+                        <input type="email" id="notif-email" placeholder="O seu email" required autocomplete="email"
+                            style="flex:1;min-width:200px;padding:0.65rem 1rem;border:1.5px solid #fbbf24;border-radius:8px;font-size:0.9rem;font-family:inherit;outline:none;">
+                        <button type="submit" style="padding:0.65rem 1.25rem;background:#1e3a8a;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;font-family:inherit;cursor:pointer;white-space:nowrap;">
+                            Notificar-me <i class="fas fa-bell"></i>
+                        </button>
+                    </form>
+                    <div id="notifSucesso" style="display:none;margin-top:0.75rem;color:#15803d;font-weight:600;font-size:0.88rem;">
+                        <i class="fas fa-check-circle"></i> Registado! Será notificado assim que o próximo curso abrir.
+                    </div>
+                </div>
+                <div style="text-align:center;margin-top:1rem;">
+                    <a href="#programa" class="cta-outline">Ver programa desta edição <i class="fas fa-list-ul"></i></a>
                 </div>
             </div>
         </section>
@@ -444,38 +458,41 @@
             </div>
         </section>
 
-        <!-- PREÇO E INSCRIÇÃO -->
+        <!-- PRÓXIMO CURSO -->
         <section class="lp-section" id="inscricao">
             <div class="section-container">
-                <div style="max-width:500px;margin:0 auto;">
-                    <div class="price-block">
-                        <div class="price-amount"><sup>€</sup>250</div>
-                        <div class="price-label">por participante · IVA incluído</div>
-                        <ul class="price-includes">
-                            <li><i class="fas fa-check-circle"></i>9 horas de formação ao vivo (3 sessões)</li>
-                            <li><i class="fas fa-check-circle"></i>Templates e materiais de apoio</li>
-                            <li><i class="fas fa-check-circle"></i>Certificado de participação</li>
-                            <li><i class="fas fa-check-circle"></i>Formação prática orientada a resultados</li>
-                        </ul>
-                        <form id="formInscricao" class="insc-form insc-form-price" novalidate>
-                            <input type="text" id="insc-nome" placeholder="Nome completo *" required autocomplete="name">
-                            <input type="email" id="insc-email" placeholder="Email *" required autocomplete="email">
-                            <input type="tel" id="insc-tel" placeholder="Telefone (opcional)" autocomplete="tel">
-                            <button type="submit" id="btnSubmitInscricao" class="insc-btn-submit">
-                                Reservar o meu lugar <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </form>
-                        <div id="inscricaoSucesso" class="insc-sucesso">
-                            <i class="fas fa-check-circle"></i>
-                            <p><strong>Inscrição recebida!</strong><br>Receberá em breve um email com os dados para confirmação e pagamento.</p>
+                <div style="max-width:540px;margin:0 auto;text-align:center;">
+                    <div class="price-block" style="border-top:4px solid #fbbf24;">
+                        <div style="margin-bottom:1.25rem;">
+                            <span style="display:inline-flex;align-items:center;gap:0.5rem;background:#fef3c7;color:#92400e;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:0.3rem 0.85rem;border-radius:999px;">
+                                <i class="fas fa-lock"></i> Inscrições fechadas
+                            </span>
                         </div>
-                        <p class="insc-nota">
-                            <i class="fas fa-lock" style="margin-right:0.3rem;"></i> Os seus dados são usados apenas para processar a inscrição.
+                        <h3 style="font-size:1.3rem;font-weight:700;color:var(--dark-blue);margin-bottom:0.5rem;">Esta edição está em curso</h3>
+                        <p style="font-size:0.95rem;color:var(--text-light);line-height:1.65;margin-bottom:1.75rem;">
+                            A turma de Maio está completa. Estamos a preparar uma nova edição — deixe o seu email para ser notificado em primeiro lugar, assim que as inscrições abrirem.
                         </p>
-                        <div class="price-spots" id="priceSpotsText"><i class="fas fa-users"></i> Máximo 15 lugares — turma reduzida</div>
+                        <form id="formNotificacaoInscricao" novalidate>
+                            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                                <input type="text" id="notif2-nome" placeholder="Nome" autocomplete="name"
+                                    style="padding:0.8rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.95rem;font-family:inherit;width:100%;outline:none;">
+                                <input type="email" id="notif2-email" placeholder="Email *" required autocomplete="email"
+                                    style="padding:0.8rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.95rem;font-family:inherit;width:100%;outline:none;">
+                                <button type="submit" id="btnNotif2" class="insc-btn-submit">
+                                    Notificar-me para o próximo curso <i class="fas fa-bell"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div id="notif2Sucesso" class="insc-sucesso" style="display:none;">
+                            <i class="fas fa-check-circle"></i>
+                            <p><strong>Ficou na lista!</strong><br>Será notificado assim que a nova edição abrir inscrições.</p>
+                        </div>
+                        <p class="insc-nota" style="margin-top:1rem;">
+                            <i class="fas fa-shield-alt" style="margin-right:0.3rem;"></i> Os seus dados são usados apenas para o notificar sobre a próxima edição.
+                        </p>
                     </div>
                     <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-light);">
-                        Dúvidas ou inscrição de equipa? <a href="https://wa.me/351914912126?text=Ol%C3%A1%20Miguel%2C%20gostaria%20de%20saber%20mais%20sobre%20a%20forma%C3%A3o%20ChatGPT%20para%20Neg%C3%B3cios%20e%20Produtividade%20%285%2C%2012%20e%2019%20de%20Maio%29." target="_blank" rel="noopener noreferrer" style="color:var(--secondary-blue);font-weight:600;"><i class="fab fa-whatsapp" style="margin-right:0.3rem;"></i>Contacte diretamente.</a>
+                        Prefere falar diretamente? <a href="https://wa.me/351914912126?text=Ol%C3%A1%20Miguel%2C%20gostaria%20de%20saber%20quando%20abre%20a%20pr%C3%B3xima%20edi%C3%A7%C3%A3o%20do%20curso%20ChatGPT%20para%20Neg%C3%B3cios." target="_blank" rel="noopener noreferrer" style="color:var(--secondary-blue);font-weight:600;"><i class="fab fa-whatsapp" style="margin-right:0.3rem;"></i>WhatsApp</a>
                     </p>
                 </div>
             </div>
@@ -520,7 +537,7 @@
 
     <script>
     // ── ATUALIZAR AQUI quando houver nova inscrição confirmada ──
-    var LUGARES_OCUPADOS = 7;   // ← alterar este número
+    var LUGARES_OCUPADOS = 15;   // ← alterar este número
     var LUGARES_TOTAL    = 15;
     // ────────────────────────────────────────────────────────────
 
@@ -596,10 +613,14 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') fecharModal();
     });
-    // Se URL tiver #inscricao → abrir modal
+    // Inscrições fechadas — #inscricao já não abre o modal, apenas faz scroll suave para a secção
     // Se URL tiver #programa → carregar do topo (não saltar para a secção)
     if (window.location.hash === '#inscricao') {
-        setTimeout(abrirModal, 300);
+        history.replaceState(null, '', window.location.pathname + '#inscricao');
+        setTimeout(function() {
+            var sec = document.getElementById('inscricao');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
     } else if (window.location.hash === '#programa') {
         history.replaceState(null, '', window.location.pathname);
         window.scrollTo(0, 0);
@@ -654,6 +675,60 @@
             document.getElementById('formInscricao'),
             document.getElementById('inscricaoSucesso'));
     });
+
+    // Função genérica para submeter notificação (próxima edição)
+    function submeterNotificacao(nome, email, btnEl, formEl, sucessoEl) {
+        btnEl.innerHTML = 'A guardar... <i class="fas fa-spinner fa-spin"></i>';
+        btnEl.disabled = true;
+        var payload = {
+            name: nome || '', email: email,
+            service: 'chatgpt-proxima-edicao',
+            message: 'Pedido de notificação para próxima edição do curso ChatGPT.' + (nome ? '\nNome: ' + nome : '') + '\nEmail: ' + email
+        };
+        supabaseFn('send-contact-email', { method: 'POST', body: JSON.stringify(payload) })
+        .then(function(r) {
+            if (r.ok) {
+                if (formEl) formEl.style.display = 'none';
+                if (sucessoEl) sucessoEl.style.display = 'block';
+            } else { throw new Error(); }
+        })
+        .catch(function() {
+            // fallback: email direto
+            var ml = 'mailto:miguelsilvalab1@gmail.com?subject=Notifica%C3%A7%C3%A3o%20ChatGPT%20-%20Pr%C3%B3xima%20edi%C3%A7%C3%A3o&body=' + encodeURIComponent((nome ? 'Nome: ' + nome + '\n' : '') + 'Email: ' + email);
+            window.location.href = ml;
+            btnEl.innerHTML = btnEl.dataset.label || 'Notificar-me <i class="fas fa-bell"></i>';
+            btnEl.disabled = false;
+        });
+    }
+
+    // Formulário de notificação no hero
+    var formNotif = document.getElementById('formNotificacao');
+    if (formNotif) {
+        formNotif.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var emailEl = document.getElementById('notif-email');
+            var email = emailEl ? emailEl.value.trim() : '';
+            if (!email) return;
+            var btn = formNotif.querySelector('button[type="submit"]');
+            var sucEl = document.getElementById('notifSucesso');
+            submeterNotificacao('', email, btn, formNotif, sucEl);
+        });
+    }
+
+    // Formulário de notificação na secção #inscricao
+    var formNotif2 = document.getElementById('formNotificacaoInscricao');
+    if (formNotif2) {
+        formNotif2.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var nome = (document.getElementById('notif2-nome') || {}).value || '';
+            var emailEl2 = document.getElementById('notif2-email');
+            var email2 = emailEl2 ? emailEl2.value.trim() : '';
+            if (!email2) return;
+            var btn2 = document.getElementById('btnNotif2');
+            var suc2 = document.getElementById('notif2Sucesso');
+            submeterNotificacao(nome.trim(), email2, btn2, formNotif2, suc2);
+        });
+    }
 
     function toggleSession(header) {
         var body = header.nextElementSibling;

@@ -8,7 +8,11 @@ import { generateBusinessPlan, type BusinessPlanInput } from '@/lib/ai/orchestra
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
-export const maxDuration = 60
+// Pipeline corre via after() depois da resposta — precisa de runtime Node
+// e de tempo suficiente (alinhado com vercel.json: maxDuration 300).
+// IMPORTANTE: 60s NAO chega — o pipeline leva ~170s e ficava preso a meio.
+export const runtime = 'nodejs'
+export const maxDuration = 300
 
 export async function POST(req: NextRequest) {
   const supabase = createClient(
@@ -77,12 +81,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    /* Lanca pipeline em background com after() — mantém a funcao viva */
+    /* Lanca pipeline DEPOIS da resposta, mas mantendo a funcao viva.
+     * after() garante que a Vercel nao congela a funcao quando devolve
+     * a resposta — ao contrario de um fire-and-forget normal, que parava
+     * o pipeline a meio (plano preso em 'analysing'/'reviewing'). */
     const input: BusinessPlanInput = {
       job_id, ideia, sector, publico, localizacao,
       investimento, diferencial, objetivo, email, nome,
     }
-
     after(async () => {
       try {
         await generateBusinessPlan(input)

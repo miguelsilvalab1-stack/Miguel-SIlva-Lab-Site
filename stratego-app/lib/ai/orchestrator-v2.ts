@@ -111,7 +111,7 @@ async function runAnalista(contexto: string): Promise<string> {
           'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
       },
     ],
-  })
+  }, { timeout: 60_000 })
   return res.choices[0].message.content ?? ''
 }
 
@@ -145,7 +145,7 @@ async function runEstrategaA(contexto: string, analise: string): Promise<string>
           'Usa tabelas em markdown quando ajudar. Se conservador nas proieccoes.',
       },
     ],
-  })
+  }, { timeout: 120_000 })
   const block = msg.content[0]
   return block.type === 'text' ? block.text : ''
 }
@@ -178,7 +178,7 @@ async function runEstrategaB(contexto: string, analise: string): Promise<string>
           'Se pratico e accionavel. Foca-te em recursos limitados.',
       },
     ],
-  })
+  }, { timeout: 120_000 })
   const block = msg.content[0]
   return block.type === 'text' ? block.text : ''
 }
@@ -219,7 +219,7 @@ async function runRevisor(
           'Estrutura o output com seccoes claras em markdown.',
       },
     ],
-  })
+  }, { timeout: 60_000 })
   return res.choices[0].message.content ?? ''
 }
 
@@ -261,7 +261,7 @@ async function runFinalizadorSecoes(
           'TODAS as chaves devem ter conteudo substantivo. Apenas o JSON, sem mais nada.',
       },
     ],
-  })
+  }, { timeout: 90_000 })
 
   const block = msg.content[0]
   const text = block.type === 'text' ? block.text : '{}'
@@ -302,7 +302,7 @@ async function runFinalizadorSecoes2(
           'Apenas o JSON, sem mais nada.',
       },
     ],
-  })
+  }, { timeout: 90_000 })
 
   const block = msg.content[0]
   const text = block.type === 'text' ? block.text : '{}'

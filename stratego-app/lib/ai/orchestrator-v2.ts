@@ -4,18 +4,25 @@
  *
  * Pipeline:
  *   Etapa 1 - Preparacao do contexto
- *   Etapa 2 - GPT-4o: Analista
- *   Etapa 3 - Claude Sonnet x2 paralelo: Estrategas A + B
- *   Etapa 4 - GPT-4o: Revisor
- *   Etapa 5 - Claude Haiku x2 paralelo: Finalizadores
- *   Etapa 6 - Composicao do JSON final com 7 seccoes
+ *   Etapa 2 - GPT-5.5: Analista (analise de mercado)
+ *   Etapa 3 - Claude Sonnet 4.6 x2 paralelo: Estrategas A (comercial+financeiro) + B (operacional+marketing)
+ *   Etapa 4 - GPT-5.5: Revisor — produz as 7 seccoes finais com marcadores ===SECCAO:key===
+ *   Etapa 5 - Composicao do JSON final (parse dos marcadores + fallbacks robustos, nunca vazios)
  *
- * Sprint 2: sem envio de email. Sprint 3: adicionar Resend.
+ * Nota modelos (jun/2026):
+ *   - GPT-5.5 e modelo de raciocinio: usa `max_completion_tokens` (nao `max_tokens`)
+ *     e NAO aceita `temperature`. `reasoning_effort:'low'` mantem latencia/custo controlados.
  */
 
 import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+
+/* -- Modelos --------------------------------------------------------- */
+
+const MODEL_ANALYST    = 'gpt-5.5'
+const MODEL_REVIEWER   = 'gpt-5.5'
+const MODEL_STRATEGIST = 'claude-sonnet-4-6'
 
 /* -- Clientes AI (nao lancam erro em build time sem chaves) ---------- */
 
@@ -81,13 +88,13 @@ async function updatePlanStatus(
   await supabase.from('plans').update(update).eq('job_id', job_id)
 }
 
-/* -- Etapa 2: Analista (GPT-4o) ------------------------------------- */
+/* -- Etapa 2: Analista (GPT-5.5) ------------------------------------ */
 
 async function runAnalista(contexto: string): Promise<string> {
   const res = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    temperature: 0.4,
-    max_tokens: 1800,
+    model: MODEL_ANALYST,
+    max_completion_tokens: 4000,
+    reasoning_effort: 'low',
     messages: [
       {
         role: 'system',
@@ -111,16 +118,16 @@ async function runAnalista(contexto: string): Promise<string> {
           'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
       },
     ],
-  }, { timeout: 60_000 })
+  }, { timeout: 100_000 })
   return res.choices[0].message.content ?? ''
 }
 
-/* -- Etapa 3: Estrategas (Claude Sonnet x2) ------------------------- */
+/* -- Etapa 3: Estrategas (Claude Sonnet 4.6 x2) --------------------- */
 
 async function runEstrategaA(contexto: string, analise: string): Promise<string> {
   const msg = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 2000,
+    model: MODEL_STRATEGIST,
+    max_tokens: 2400,
     temperature: 0.6,
     messages: [
       {
@@ -139,10 +146,10 @@ async function runEstrategaA(contexto: string, analise: string): Promise<string>
           '## PLANO FINANCEIRO\n' +
           '- Investimento inicial discriminado\n' +
           '- Estrutura de custos fixos e variaveis mensais\n' +
-          '- Proieccao de receitas para 12 meses (conservador / realista / optimista)\n' +
+          '- Projeccao de receitas para 12 meses (conservador / realista / optimista)\n' +
           '- Ponto de equilibrio em meses\n' +
           '- Necessidades de financiamento (capital proprio, BPI, IAPMEI, etc.)\n\n' +
-          'Usa tabelas em markdown quando ajudar. Se conservador nas proieccoes.',
+          'Usa tabelas em markdown quando ajudar. Se conservador nas projeccoes.',
       },
     ],
   }, { timeout: 120_000 })
@@ -152,8 +159,8 @@ async function runEstrategaA(contexto: string, analise: string): Promise<string>
 
 async function runEstrategaB(contexto: string, analise: string): Promise<string> {
   const msg = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 2000,
+    model: MODEL_STRATEGIST,
+    max_tokens: 2400,
     temperature: 0.6,
     messages: [
       {
@@ -183,7 +190,7 @@ async function runEstrategaB(contexto: string, analise: string): Promise<string>
   return block.type === 'text' ? block.text : ''
 }
 
-/* -- Etapa 4: Revisor (GPT-4o) -------------------------------------- */
+/* -- Etapa 4: Revisor (GPT-5.5) — produz as 7 seccoes com marcadores - */
 
 async function runRevisor(
   contexto: string,
@@ -192,126 +199,90 @@ async function runRevisor(
   estrategiaB: string
 ): Promise<string> {
   const res = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    temperature: 0.3,
-    max_tokens: 2500,
+    model: MODEL_REVIEWER,
+    max_completion_tokens: 9000,
+    reasoning_effort: 'low',
     messages: [
       {
         role: 'system',
         content:
           'Es um revisor senior de planos de negocio com 20 anos de experiencia.\n' +
-          'Sintetizas dois contributos de estrategas, eliminando contradicoes e reforçando os melhores pontos.\n' +
+          'Sintetizas os contributos dos analistas e estrategas num plano final coerente e accionavel.\n' +
           'Respondes sempre em Portugues de Portugal.',
       },
       {
         role: 'user',
         content:
-          'Sintetiza os dois contributos num plano coerente.\n\n' +
+          'Com base nos materiais abaixo, produz o PLANO DE NEGOCIO FINAL completo.\n\n' +
+          'FORMATO OBRIGATORIO: divide o plano EXACTAMENTE nestas 7 seccoes, cada uma a comecar\n' +
+          'com o seu marcador numa linha isolada, exactamente assim (sem alterar os marcadores):\n\n' +
+          '===SECCAO:resumo===\n' +
+          '===SECCAO:mercado===\n' +
+          '===SECCAO:comercial===\n' +
+          '===SECCAO:financeiro===\n' +
+          '===SECCAO:operacional===\n' +
+          '===SECCAO:marketing===\n' +
+          '===SECCAO:proximos===\n\n' +
+          'REGRAS:\n' +
+          '- Escreve o conteudo de cada seccao LOGO A SEGUIR ao respectivo marcador.\n' +
+          '- NAO escrevas texto nenhum fora das seccoes (nem introducao nem conclusao).\n' +
+          '- Usa markdown dentro de cada seccao (titulos ##, listas, tabelas).\n' +
+          '- "resumo": 3-4 paragrafos de resumo executivo.\n' +
+          '- "mercado": sintese da analise de mercado.\n' +
+          '- "comercial" e "financeiro": a partir do Estratega A.\n' +
+          '- "operacional" e "marketing": a partir do Estratega B.\n' +
+          '- "proximos": lista numerada de 10 accoes concretas para os proximos 90 dias, com prazo.\n' +
+          '- Resolve contradicoes e usa o cenario mais conservador nos numeros.\n' +
+          '- Preenche TODAS as 7 seccoes com conteudo substantivo. Nenhuma pode ficar vazia.\n\n' +
           'CONTEXTO:\n' + contexto + '\n\n' +
-          'ANALISE (Etapa 2):\n' + analise + '\n\n' +
-          'ESTRATEGA A:\n' + estrategiaA + '\n\n' +
-          'ESTRATEGA B:\n' + estrategiaB + '\n\n' +
-          '1. Mantem os melhores elementos de cada estratega\n' +
-          '2. Resolve contradicoes (usa o mais conservador nos financeiros)\n' +
-          '3. Assegura consistencia entre todas as areas\n' +
-          '4. Adiciona RESUMO EXECUTIVO de 3-4 paragrafos no inicio\n' +
-          '5. Adiciona PROXIMOS PASSOS com 10 accoes concretas para os proximos 90 dias\n\n' +
-          'Estrutura o output com seccoes claras em markdown.',
+          'ANALISE (mercado):\n' + analise + '\n\n' +
+          'ESTRATEGA A (comercial + financeiro):\n' + estrategiaA + '\n\n' +
+          'ESTRATEGA B (operacional + marketing):\n' + estrategiaB,
       },
     ],
-  }, { timeout: 60_000 })
+  }, { timeout: 150_000 })
   return res.choices[0].message.content ?? ''
 }
 
-/* -- Etapa 5: Finalizadores (Claude Haiku x2) ----------------------- */
+/* -- Parse das seccoes marcadas ------------------------------------- */
 
-async function runFinalizadorSecoes(
-  sintese: string,
-  secoes: ('resumo' | 'mercado' | 'comercial' | 'financeiro')[]
-): Promise<Record<string, string>> {
-  const secaoLabels: Record<string, string> = {
-    resumo: 'Resumo Executivo',
-    mercado: 'Analise de Mercado',
-    comercial: 'Estrategia Comercial (apenas a parte comercial, SEM incluir o plano financeiro)',
-    financeiro: 'Plano Financeiro (investimento, custos, projecoes de receita, break-even, financiamento)',
-  }
-
-  const msg = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 3000,
-    messages: [
-      {
-        role: 'user',
-        content:
-          'Refina e formata as seguintes seccoes do plano de negocio.\n\n' +
-          'SINTESE:\n' + sintese + '\n\n' +
-          'Seccoes a extrair e melhorar:\n' +
-          secoes.map(function(s) { return '- "' + s + '": ' + secaoLabels[s] }).join('\n') + '\n\n' +
-          'REGRAS IMPORTANTES:\n' +
-          '- Cada chave JSON deve ter conteudo SEPARADO e DISTINTO\n' +
-          '- A chave "comercial" deve conter APENAS a estrategia comercial (posicionamento, modelo de receita, captacao de clientes, canais)\n' +
-          '- A chave "financeiro" deve conter APENAS o plano financeiro (investimento inicial, custos fixos/variaveis, projecoes de receita 12 meses, break-even, financiamento)\n' +
-          '- NAO juntes conteudo financeiro na chave "comercial" e vice-versa\n' +
-          '- Mantem toda a informacao substantiva\n' +
-          '- Melhora a fluidez e clareza do portugues\n' +
-          '- Usa markdown correctamente (headers ##, listas, tabelas)\n' +
-          '- Remove repeticoes\n' +
-          '- Tom profissional mas acessivel\n\n' +
-          'Devolve JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
-          'TODAS as chaves devem ter conteudo substantivo. Apenas o JSON, sem mais nada.',
-      },
-    ],
-  }, { timeout: 90_000 })
-
-  const block = msg.content[0]
-  const text = block.type === 'text' ? block.text : '{}'
-  try {
-    const match = text.match(/\{[\s\S]*\}/)
-    return match ? JSON.parse(match[0]) : {}
-  } catch {
-    return {}
-  }
+const MARKER_MAP: Record<string, keyof BusinessPlanOutput> = {
+  resumo:      'resumo_executivo',
+  mercado:     'analise_mercado',
+  comercial:   'estrategia_comercial',
+  financeiro:  'plano_financeiro',
+  operacional: 'plano_operacional',
+  marketing:   'marketing_comunicacao',
+  proximos:    'proximos_passos',
 }
 
-async function runFinalizadorSecoes2(
-  sintese: string,
-  secoes: ('operacional' | 'marketing' | 'proximos')[]
-): Promise<Record<string, string>> {
-  const secaoLabels: Record<string, string> = {
-    operacional: 'Plano Operacional',
-    marketing: 'Marketing e Comunicacao',
-    proximos: 'Proximos Passos',
+function parseSeccoesMarcadas(texto: string): Partial<BusinessPlanOutput> {
+  const out: Partial<BusinessPlanOutput> = {}
+  if (!texto) return out
+  // Divide em [pre, key1, body1, key2, body2, ...]
+  const parts = texto.split(/===\s*SECCAO\s*:\s*([a-z]+)\s*===/i)
+  for (let i = 1; i < parts.length; i += 2) {
+    const key = (parts[i] || '').toLowerCase().trim()
+    const body = (parts[i + 1] || '').trim()
+    const field = MARKER_MAP[key]
+    if (field && body) out[field] = body
   }
+  return out
+}
 
-  const msg = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2000,
-    messages: [
-      {
-        role: 'user',
-        content:
-          'Refina e formata as seguintes seccoes do plano de negocio.\n\n' +
-          'SINTESE:\n' + sintese + '\n\n' +
-          'Seccoes a extrair e melhorar: ' + secoes.map(function(s) { return secaoLabels[s] }).join(', ') + '\n\n' +
-          '- Mantem toda a informacao substantiva\n' +
-          '- Melhora a fluidez e clareza do portugues\n' +
-          '- Usa markdown correctamente\n' +
-          '- Remove repeticoes\n' +
-          '- Para "proximos": lista numerada de 10 accoes concretas com prazo\n\n' +
-          'Devolve JSON valido com as chaves: ' + secoes.map(function(s) { return '"' + s + '"' }).join(', ') + '\n' +
-          'Apenas o JSON, sem mais nada.',
-      },
-    ],
-  }, { timeout: 90_000 })
+/* -- Extracao de seccao por titulo (fallback robusto) --------------- */
 
-  const block = msg.content[0]
-  const text = block.type === 'text' ? block.text : '{}'
-  try {
-    const match = text.match(/\{[\s\S]*\}/)
-    return match ? JSON.parse(match[0]) : {}
-  } catch {
-    return {}
+function extrairSeccao(texto: string, termos: string[]): string {
+  if (!texto) return ''
+  for (const termo of termos) {
+    const re = new RegExp(
+      '(?:^|\\n)#{1,4}\\s*[^\\n]*' + termo + '[^\\n]*\\n([\\s\\S]*?)(?=\\n#{1,4}\\s|$)',
+      'i'
+    )
+    const m = texto.match(re)
+    if (m && m[1] && m[1].trim().length > 20) return m[1].trim()
   }
+  return ''
 }
 
 /* -- Pipeline principal --------------------------------------------- */
@@ -336,19 +307,40 @@ export async function generateBusinessPlan(
     const sintese = await runRevisor(contexto, analise, estrategiaA, estrategiaB)
 
     await updatePlanStatus(job_id, 'finalising')
-    const [grupo1, grupo2] = await Promise.all([
-      runFinalizadorSecoes(sintese, ['resumo', 'mercado', 'comercial', 'financeiro']),
-      runFinalizadorSecoes2(sintese, ['operacional', 'marketing', 'proximos']),
-    ])
+    const sec = parseSeccoesMarcadas(sintese)
 
+    // Composicao com fallbacks que NUNCA ficam vazios:
+    //   1) seccao marcada do revisor → 2) extracao por titulo da fonte → 3) texto bruto da fonte
     const output: BusinessPlanOutput = {
-      resumo_executivo:      grupo1['resumo']      || extrairSeccao(sintese, 'resumo'),
-      analise_mercado:       grupo1['mercado']      || analise,
-      estrategia_comercial:  grupo1['comercial']    || extrairSeccao(sintese, 'comercial'),
-      plano_financeiro:      grupo1['financeiro']   || extrairSeccao(sintese, 'financeiro') || extrairSeccao(estrategiaA, 'financeiro'),
-      plano_operacional:     grupo2['operacional']  || extrairSeccao(sintese, 'operacional') || estrategiaB,
-      marketing_comunicacao: grupo2['marketing']    || extrairSeccao(sintese, 'marketing'),
-      proximos_passos:       grupo2['proximos']     || extrairSeccao(sintese, 'proximos'),
+      resumo_executivo:
+        sec.resumo_executivo ||
+        extrairSeccao(sintese, ['resumo executivo', 'resumo', 'sumario']) ||
+        sintese.slice(0, 1200) ||
+        analise.slice(0, 800),
+      analise_mercado:
+        sec.analise_mercado ||
+        extrairSeccao(sintese, ['analise de mercado', 'mercado']) ||
+        analise,
+      estrategia_comercial:
+        sec.estrategia_comercial ||
+        extrairSeccao(estrategiaA, ['estrategia comercial', 'comercial']) ||
+        estrategiaA,
+      plano_financeiro:
+        sec.plano_financeiro ||
+        extrairSeccao(estrategiaA, ['plano financeiro', 'financeiro']) ||
+        estrategiaA,
+      plano_operacional:
+        sec.plano_operacional ||
+        extrairSeccao(estrategiaB, ['plano operacional', 'operacional']) ||
+        estrategiaB,
+      marketing_comunicacao:
+        sec.marketing_comunicacao ||
+        extrairSeccao(estrategiaB, ['marketing', 'comunicacao']) ||
+        estrategiaB,
+      proximos_passos:
+        sec.proximos_passos ||
+        extrairSeccao(sintese, ['proximos passos', 'proximas accoes', 'plano de accao', 'accoes']) ||
+        '',
     }
 
     await updatePlanStatus(job_id, 'done', JSON.stringify(output))
@@ -358,25 +350,4 @@ export async function generateBusinessPlan(
     await updatePlanStatus(job_id, 'error')
     throw err
   }
-}
-
-/* -- Utilitario: extrai seccao do markdown -------------------------- */
-
-function extrairSeccao(texto: string, chave: string): string {
-  const patterns: Record<string, RegExp[]> = {
-    resumo:      [/##\s*resumo executivo([\s\S]*?)(?=##|$)/i],
-    mercado:     [/##\s*an[aá]lise de mercado([\s\S]*?)(?=##|$)/i],
-    comercial:   [/##\s*estrat[eé]gia comercial([\s\S]*?)(?=##|$)/i],
-    financeiro:  [/##\s*plano financeiro([\s\S]*?)(?=##|$)/i, /##\s*proje[cç][oõ]es financeiras([\s\S]*?)(?=##|$)/i],
-    operacional: [/##\s*plano operacional([\s\S]*?)(?=##|$)/i],
-    marketing:   [/##\s*marketing([\s\S]*?)(?=##|$)/i],
-    proximos:    [/##\s*pr[oó]ximos passos([\s\S]*?)(?=##|$)/i],
-  }
-
-  const pats = patterns[chave] ?? []
-  for (const pat of pats) {
-    const match = texto.match(pat)
-    if (match?.[1]?.trim()) return match[1].trim()
-  }
-  return ''
 }

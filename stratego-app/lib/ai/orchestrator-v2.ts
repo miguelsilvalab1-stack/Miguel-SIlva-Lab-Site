@@ -4,14 +4,15 @@
  *
  * Pipeline:
  *   Etapa 1 - Preparacao do contexto
- *   Etapa 2 - GPT-5.5: Analista (analise de mercado)
+ *   Etapa 2 - GPT-5.4-mini: Analista (analise de mercado)
  *   Etapa 3 - Claude Sonnet 4.6 x2 paralelo: Estrategas A (comercial+financeiro) + B (operacional+marketing)
- *   Etapa 4 - GPT-5.5: Revisor — produz as 7 seccoes finais com marcadores ===SECCAO:key===
+ *   Etapa 4 - GPT-5.4-mini: Revisor — produz as 7 seccoes finais com marcadores ===SECCAO:key===
  *   Etapa 5 - Composicao do JSON final (parse dos marcadores + fallbacks robustos, nunca vazios)
  *
  * Nota modelos (jun/2026):
- *   - GPT-5.5 e modelo de raciocinio: usa `max_completion_tokens` (nao `max_tokens`)
- *     e NAO aceita `temperature`. `reasoning_effort:'low'` mantem latencia/custo controlados.
+ *   - GPT-5.4-mini e modelo de raciocinio de baixa latencia: usa `max_completion_tokens`
+ *     (nao `max_tokens`) e NAO aceita `temperature`. `reasoning_effort:'minimal'` + `maxRetries:0`
+ *     mantem o pipeline dentro do limite serverless (~3 min). O GPT-5.5 era demasiado lento aqui.
  */
 
 import OpenAI from 'openai'
@@ -20,8 +21,8 @@ import { createClient } from '@supabase/supabase-js'
 
 /* -- Modelos --------------------------------------------------------- */
 
-const MODEL_ANALYST    = 'gpt-5.5'
-const MODEL_REVIEWER   = 'gpt-5.5'
+const MODEL_ANALYST    = 'gpt-5.4-mini'
+const MODEL_REVIEWER   = 'gpt-5.4-mini'
 const MODEL_STRATEGIST = 'claude-sonnet-4-6'
 
 /* -- Clientes AI (nao lancam erro em build time sem chaves) ---------- */
@@ -94,7 +95,7 @@ async function runAnalista(contexto: string): Promise<string> {
   const res = await openai.chat.completions.create({
     model: MODEL_ANALYST,
     max_completion_tokens: 4000,
-    reasoning_effort: 'low',
+    reasoning_effort: 'minimal',
     messages: [
       {
         role: 'system',
@@ -118,7 +119,7 @@ async function runAnalista(contexto: string): Promise<string> {
           'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
       },
     ],
-  }, { timeout: 100_000 })
+  }, { timeout: 60_000, maxRetries: 0 })
   return res.choices[0].message.content ?? ''
 }
 
@@ -201,7 +202,7 @@ async function runRevisor(
   const res = await openai.chat.completions.create({
     model: MODEL_REVIEWER,
     max_completion_tokens: 9000,
-    reasoning_effort: 'low',
+    reasoning_effort: 'minimal',
     messages: [
       {
         role: 'system',
@@ -240,7 +241,7 @@ async function runRevisor(
           'ESTRATEGA B (operacional + marketing):\n' + estrategiaB,
       },
     ],
-  }, { timeout: 150_000 })
+  }, { timeout: 110_000, maxRetries: 0 })
   return res.choices[0].message.content ?? ''
 }
 

@@ -5,222 +5,770 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Miguel Silva — Head of AI Consulting Unit · Crowe</title>
     <meta name="description" content="Miguel Silva — Head of AI Consulting Unit na Crowe Portugal. Economista, Executive MBA Porto Business School, especialista em IA aplicada ao negócio.">
-    <meta name="keywords" content="Miguel Silva, Crowe, inteligência artificial, IA, consultoria IA, Portugal, formador IA">
+    <meta name="keywords" content="Miguel Silva, Crowe, inteligência artificial, IA, consultoria IA, Portugal">
     <meta name="author" content="Miguel Silva">
     <link rel="canonical" href="https://miguelsilvalab.com/">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 
-    <!-- Open Graph -->
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://miguelsilvalab.com/">
     <meta property="og:title" content="Miguel Silva — Head of AI Consulting Unit · Crowe">
-    <meta property="og:description" content="Economista. Executive MBA Porto Business School. Head of AI Consulting Unit na Crowe Portugal. Formador certificado em IA generativa.">
-    <meta property="og:image" content="https://miguelsilvalab.com/img/team-miguel.jpeg">
+    <meta property="og:description" content="Economista. Executive MBA Porto Business School. Head of AI Consulting Unit na Crowe Portugal.">
+    <meta property="og:image" content="https://miguelsilvalab.com/img/miguel-silva-profile.png">
     <meta property="og:locale" content="pt_PT">
-    <meta property="og:site_name" content="Miguel Silva">
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Miguel Silva — Head of AI Consulting Unit · Crowe">
-    <meta name="twitter:description" content="Economista. MBA Porto Business School. Head of AI Consulting Unit na Crowe Portugal.">
-    <meta name="twitter:image" content="https://miguelsilvalab.com/img/team-miguel.jpeg">
+    <meta name="twitter:image" content="https://miguelsilvalab.com/img/miguel-silva-profile.png">
 
-    <!-- Schema.org — Person -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Miguel Silva",
         "jobTitle": "Head of AI Consulting Unit",
-        "worksFor": {
-            "@type": "Organization",
-            "name": "Crowe Portugal"
-        },
+        "worksFor": { "@type": "Organization", "name": "Crowe Portugal" },
         "url": "https://miguelsilvalab.com",
-        "image": "https://miguelsilvalab.com/img/team-miguel.jpeg",
+        "image": "https://miguelsilvalab.com/img/miguel-silva-profile.png",
         "email": "miguelsilvalab1@gmail.com",
-        "sameAs": [
-            "https://www.linkedin.com/in/miguelfreiresilva"
-        ],
-        "description": "Economista com Executive MBA pela Porto Business School e pós-graduação em IA. Head of AI Consulting Unit na Crowe Portugal. Formador certificado em IA generativa.",
-        "alumniOf": [
-            { "@type": "EducationalOrganization", "name": "Porto Business School" }
-        ],
-        "knowsAbout": ["Inteligência Artificial", "IA Generativa", "Consultoria Estratégica", "Transformação Digital", "Gestão Empresarial"]
+        "sameAs": ["https://www.linkedin.com/in/miguelfreiresilva"]
     }
     </script>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+        --navy:      #011E41;
+        --navy-mid:  #0a2d5c;
+        --gold:      #F5A800;
+        --gold-pale: #FEF3C7;
+        --bg:        #FAFAF8;
+        --bg-alt:    #F4F5F7;
+        --white:     #FFFFFF;
+        --text-dark: #0F172A;
+        --text-body: #374151;
+        --text-muted:#6B7280;
+        --border:    #E5E7EB;
+        --radius:    6px;
+        --serif:     'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        --sans:      'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--sans);
+        background: var(--bg);
+        color: var(--text-body);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── Skip link ─── */
+    .skip-link {
+        position: absolute; left: -9999px; top: auto;
+        &:focus { position: fixed; top: 1rem; left: 1rem; z-index: 9999;
+            background: var(--gold); color: var(--navy); padding: .5rem 1rem; border-radius: var(--radius); }
+    }
+
+    /* ─── Nav ─── */
+    header {
+        position: sticky; top: 0; z-index: 100;
+        background: var(--navy);
+        border-bottom: 1px solid rgba(245,168,0,0.15);
+    }
+    nav {
+        max-width: 1100px; margin: 0 auto;
+        padding: 0 2rem;
+        height: 64px;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--gold);
+        letter-spacing: 0.01em;
+    }
+    .nav-links {
+        display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-links a {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: rgba(255,255,255,0.75);
+        letter-spacing: 0.03em;
+        transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.nav-li { /* LinkedIn pill */
+        color: var(--gold);
+        border: 1px solid rgba(245,168,0,0.4);
+        padding: 0.3rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a.nav-li:hover { background: var(--gold); color: var(--navy); }
+    .mobile-btn {
+        display: none;
+        background: none; border: none; cursor: pointer;
+        color: rgba(255,255,255,0.8); font-size: 1.25rem; padding: 0.25rem;
+    }
+    @media (max-width: 680px) {
+        .mobile-btn { display: block; }
+        .nav-links {
+            display: none; flex-direction: column; align-items: flex-start;
+            position: absolute; top: 64px; left: 0; right: 0;
+            background: var(--navy); padding: 1.25rem 2rem 1.75rem;
+            border-top: 1px solid rgba(245,168,0,0.15);
+            gap: 1.25rem;
+        }
+        .nav-links.open { display: flex; }
+        .nav-links a { font-size: 1rem; }
+    }
+
+    /* ─── Hero / Bio ─── */
+    #bio {
+        background: var(--white);
+        padding: 5rem 2rem 4.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .bio-inner {
+        max-width: 1100px; margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 4rem;
+        align-items: center;
+    }
+    .bio-text {}
+    .bio-name {
+        font-family: var(--serif);
+        font-size: clamp(2.75rem, 5vw, 3.75rem);
+        font-weight: 600;
+        color: var(--navy);
+        line-height: 1.05;
+        letter-spacing: -0.5px;
+    }
+    .bio-rule {
+        width: 44px; height: 3px;
+        background: var(--gold);
+        border-radius: 2px;
+        margin: 1.1rem 0 1.25rem;
+    }
+    .bio-role {
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--text-muted);
+        letter-spacing: 0.025em;
+        margin-bottom: 1.75rem;
+    }
+    .bio-role strong {
+        color: var(--navy);
+        font-weight: 500;
+    }
+    .bio-role a {
+        color: var(--navy);
+        font-weight: 500;
+        border-bottom: 1px solid var(--gold);
+        padding-bottom: 1px;
+        transition: color 0.2s;
+    }
+    .bio-role a:hover { color: var(--gold); }
+    .bio-para {
+        font-size: 1.0rem;
+        line-height: 1.8;
+        color: var(--text-body);
+        max-width: 580px;
+        margin-bottom: 1rem;
+    }
+    .bio-creds {
+        margin: 1.75rem 0;
+        display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .bio-cred {
+        display: inline-block;
+        font-size: 0.775rem;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: var(--navy);
+        border: 1px solid rgba(1,30,65,0.3);
+        padding: 0.3rem 0.85rem;
+        border-radius: 20px;
+    }
+    .bio-actions {
+        display: flex; gap: 0.875rem; flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+    .btn-primary {
+        display: inline-flex; align-items: center; gap: 0.45rem;
+        background: var(--navy); color: var(--white);
+        font-family: var(--sans); font-size: 0.875rem; font-weight: 500;
+        padding: 0.7rem 1.5rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--navy);
+        cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-primary:hover { background: var(--navy-mid); border-color: var(--navy-mid); color: var(--white); }
+    .btn-outline {
+        display: inline-flex; align-items: center; gap: 0.45rem;
+        background: transparent; color: var(--navy);
+        font-family: var(--sans); font-size: 0.875rem; font-weight: 400;
+        padding: 0.7rem 1.5rem;
+        border-radius: var(--radius);
+        border: 1px solid rgba(1,30,65,0.4);
+        cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--navy); background: rgba(1,30,65,0.04); }
+
+    /* Photo */
+    .bio-photo-wrap {
+        position: relative;
+    }
+    .bio-photo-wrap::before {
+        content: '';
+        position: absolute;
+        top: -12px; left: 12px; right: -12px; bottom: 12px;
+        border: 2px solid var(--gold);
+        border-radius: 8px;
+        opacity: 0.25;
+        z-index: 0;
+    }
+    .bio-photo {
+        position: relative; z-index: 1;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(1,30,65,0.12), 0 4px 16px rgba(1,30,65,0.08);
+    }
+    .bio-photo img {
+        width: 100%; height: auto;
+        display: block;
+    }
+    @media (max-width: 900px) {
+        .bio-inner {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+        .bio-photo-wrap {
+            max-width: 320px;
+            margin: 0 auto;
+        }
+    }
+    @media (max-width: 480px) {
+        #bio { padding: 3rem 1.25rem 3rem; }
+    }
+
+    /* ─── Section shared ─── */
+    .section {
+        padding: 4.5rem 2rem;
+    }
+    .section-alt { background: var(--bg-alt); }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-head { margin-bottom: 2.5rem; }
+    .section-title {
+        font-family: var(--serif);
+        font-size: clamp(1.75rem, 3vw, 2.25rem);
+        font-weight: 500;
+        color: var(--navy);
+        line-height: 1.1;
+    }
+    .section-rule {
+        width: 32px; height: 2px;
+        background: var(--gold);
+        border-radius: 2px;
+        margin: 0.75rem 0 0.5rem;
+    }
+    .section-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 300;
+    }
+    .section-head-row {
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .section-nav-btns {
+        display: flex; gap: 0.5rem; align-self: flex-end; padding-bottom: 0.2rem;
+    }
+    .section-nav-btn {
+        width: 34px; height: 34px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--white);
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        display: flex; align-items: center; justify-content: center;
+        transition: border-color 0.2s, color 0.2s;
+    }
+    .section-nav-btn:hover:not(:disabled) { border-color: var(--navy); color: var(--navy); }
+    .section-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ─── Blog cards ─── */
+    .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .blog-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem 1.625rem;
+        display: flex; flex-direction: column;
+        transition: box-shadow 0.25s, border-color 0.25s;
+    }
+    .blog-card:hover {
+        box-shadow: 0 8px 28px rgba(1,30,65,0.09);
+        border-color: rgba(1,30,65,0.2);
+    }
+    .blog-meta {
+        display: flex; align-items: center; gap: 0.4rem;
+        font-size: 0.78rem; color: var(--text-muted);
+        margin-bottom: 0.875rem;
+    }
+    .blog-content h3 {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--navy);
+        line-height: 1.35;
+        margin-bottom: 0.625rem;
+    }
+    .blog-content p {
+        font-size: 0.9rem;
+        color: var(--text-body);
+        line-height: 1.65;
+        flex: 1;
+        margin-bottom: 1.25rem;
+    }
+    .read-more {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        font-size: 0.825rem;
+        font-weight: 500;
+        color: var(--navy);
+        border-bottom: 1px solid var(--gold);
+        padding-bottom: 1px;
+        align-self: flex-start;
+        transition: color 0.2s;
+        margin-top: auto;
+    }
+    .read-more:hover { color: var(--gold); }
+
+    /* ─── News cards ─── */
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .news-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-top: 3px solid var(--navy);
+        border-radius: 8px;
+        padding: 1.375rem 1.5rem;
+        display: flex; flex-direction: column;
+        transition: box-shadow 0.25s;
+    }
+    .news-card:hover { box-shadow: 0 8px 28px rgba(1,30,65,0.09); }
+    .news-source {
+        display: flex; align-items: center; gap: 0.4rem;
+        font-size: 0.75rem; font-weight: 500;
+        color: var(--gold);
+        text-transform: uppercase; letter-spacing: 0.06em;
+        margin-bottom: 0.625rem;
+    }
+    .news-card h3 {
+        font-family: var(--serif);
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--navy);
+        line-height: 1.35;
+        margin-bottom: 0.5rem;
+    }
+    .news-card p {
+        font-size: 0.875rem;
+        color: var(--text-body);
+        line-height: 1.65;
+        margin-bottom: 0.875rem;
+        flex: 1;
+    }
+    .news-time {
+        font-size: 0.75rem; color: var(--text-muted);
+        margin-bottom: 0.75rem;
+    }
+    .refresh-btn {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        background: none; border: 1px solid var(--border);
+        color: var(--text-muted); font-family: var(--sans);
+        font-size: 0.8rem; padding: 0.4rem 0.85rem;
+        border-radius: var(--radius); cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+        margin-top: 0.5rem;
+    }
+    .refresh-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+    /* ─── Loading ─── */
+    .loading {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+    .spinner {
+        width: 28px; height: 28px;
+        border: 2px solid var(--border);
+        border-top-color: var(--navy);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin: 0 auto 0.75rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Footer ─── */
+    footer {
+        background: var(--navy);
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-name {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: var(--gold);
+        letter-spacing: 0.01em;
+        margin-bottom: 0.375rem;
+    }
+    .footer-role {
+        font-size: 0.825rem;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.03em;
+    }
+    .footer-links {
+        display: flex; justify-content: center; gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+    .footer-link {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: 1px solid rgba(245,168,0,0.3);
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.6); font-size: 0.9rem;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .footer-link:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+    .footer-copy {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.25);
+        letter-spacing: 0.03em;
+    }
+    </style>
 </head>
 <body>
 
-    <!-- Skip to main content -->
-    <a href="#main-content" class="skip-link">Saltar para o conteúdo principal</a>
+<a href="#main-content" class="skip-link">Saltar para o conteúdo principal</a>
 
-    <!-- Header / Nav -->
-    <header role="banner">
-        <nav class="nav-container" aria-label="Navegação principal">
-            <a href="/" class="nav-logo" aria-label="Miguel Silva — página principal">Miguel Silva</a>
-            <div class="nav-links" id="navLinks">
-                <a href="#bio">Bio</a>
-                <a href="#insights">Artigos</a>
-                <a href="mailto:miguelsilvalab1@gmail.com">Contacto</a>
-                <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
-                </a>
-            </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
-                <i class="fas fa-bars" aria-hidden="true"></i>
-            </button>
-        </nav>
-    </header>
+<!-- Nav -->
+<header>
+    <nav aria-label="Navegação principal">
+        <a href="/" class="nav-logo">Miguel Silva</a>
+        <div class="nav-links" id="navLinks">
+            <a href="#bio">Bio</a>
+            <a href="#insights">Artigos</a>
+            <a href="mailto:miguelsilvalab1@gmail.com">Contacto</a>
+            <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" class="nav-li">
+                <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
+            </a>
+        </div>
+        <button class="mobile-btn" id="mobileBtn" aria-label="Abrir menu" aria-expanded="false">
+            <i class="fas fa-bars" id="mobileBtnIcon" aria-hidden="true"></i>
+        </button>
+    </nav>
+</header>
 
-    <main id="main-content">
+<main id="main-content">
 
-        <!-- Bio Section -->
-        <section class="hero" id="bio">
-            <div class="hero-container">
-                <div class="hero-content">
-                    <h1 class="gradient-text-full">Miguel Silva</h1>
-                    <p class="about-role">
-                        Head of AI Consulting Unit &nbsp;·&nbsp;
-                        <a href="https://www.crowe.com/pt" target="_blank" rel="noopener noreferrer"
-                           style="color:var(--secondary-blue);text-decoration:none;font-weight:600;">
-                            Crowe <i class="fas fa-external-link-alt" style="font-size:0.7em;" aria-hidden="true"></i>
-                        </a>
-                    </p>
-
-                    <p style="max-width:560px;line-height:1.75;color:var(--text-medium);margin-top:1.25rem;">
-                        Mais de 15 anos de experiência em funções de direção e consultoria estratégica — negócio, operações, internacionalização e desenvolvimento organizacional.
-                    </p>
-                    <p style="max-width:560px;line-height:1.75;color:var(--text-medium);margin-top:0.9rem;">
-                        Hoje lidero a prática de consultoria em Inteligência Artificial na Crowe Portugal, ajudando empresas a integrar IA com método, responsabilidade e impacto mensurável. A competência técnica é necessária — mas perceber o negócio é o que faz a diferença.
-                    </p>
-
-                    <div class="about-credentials" style="margin-top:1.5rem;">
-                        <p>Licenciado em Economia &nbsp;·&nbsp; Executive MBA pela Porto Business School &nbsp;·&nbsp; Pós-Graduado em Inteligência Artificial &nbsp;·&nbsp; Certificado de Competências Pedagógicas (CCP)</p>
-                    </div>
-
-                    <ul class="about-highlights" style="margin-top:1.25rem;">
-                        <li>Formador certificado (CCP) — formações financiadas por fundos europeus (UFCD e programas co-financiados)</li>
-                        <li>Experiência em internacionalização, abertura de mercados e desenvolvimento de negócio</li>
-                        <li>Especialista em otimização de processos e governance operacional</li>
-                        <li>Integração de soluções de IA orientadas à eficiência e criação de valor real</li>
-                    </ul>
-
-                    <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
-                        <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer"
-                           class="cta-button" style="display:inline-flex;align-items:center;gap:0.5rem;">
-                            <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
-                        </a>
-                        <a href="mailto:miguelsilvalab1@gmail.com"
-                           class="cta-button-secondary" style="display:inline-flex;align-items:center;gap:0.5rem;">
-                            <i class="fas fa-envelope" aria-hidden="true"></i> Enviar email
-                        </a>
-                    </div>
+    <!-- Bio -->
+    <section id="bio">
+        <div class="bio-inner">
+            <div class="bio-text">
+                <h1 class="bio-name">Miguel Silva</h1>
+                <div class="bio-rule" aria-hidden="true"></div>
+                <p class="bio-role">
+                    <strong>Head of AI Consulting Unit</strong> &nbsp;·&nbsp;
+                    <a href="https://www.crowe.com/pt" target="_blank" rel="noopener noreferrer">
+                        Crowe Portugal <i class="fas fa-external-link-alt" style="font-size:0.7em;" aria-hidden="true"></i>
+                    </a>
+                </p>
+                <p class="bio-para">
+                    Mais de 15 anos de experiência em funções de direção e consultoria estratégica — negócio, operações, internacionalização e desenvolvimento organizacional.
+                </p>
+                <p class="bio-para">
+                    Hoje lidero a prática de consultoria em Inteligência Artificial na Crowe Portugal, ajudando empresas a integrar IA com método, responsabilidade e impacto mensurável. A competência técnica é necessária — mas perceber o negócio é o que faz a diferença.
+                </p>
+                <div class="bio-creds" role="list" aria-label="Formação e certificações">
+                    <span class="bio-cred" role="listitem">Licenciado em Economia</span>
+                    <span class="bio-cred" role="listitem">Executive MBA · Porto Business School</span>
+                    <span class="bio-cred" role="listitem">Pós-Graduado em Inteligência Artificial</span>
+                    <span class="bio-cred" role="listitem">Certificado de Competências Pedagógicas</span>
                 </div>
-
-                <div class="hero-image">
-                    <div class="hero-image-wrapper">
-                        <img src="img/team-miguel.jpeg"
-                             alt="Fotografia de Miguel Silva, Head of AI Consulting Unit na Crowe"
-                             width="400" height="400" loading="eager">
-                    </div>
+                <div class="bio-actions">
+                    <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                        <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
+                    </a>
+                    <a href="mailto:miguelsilvalab1@gmail.com" class="btn-outline">
+                        <i class="fas fa-envelope" aria-hidden="true"></i> Enviar email
+                    </a>
                 </div>
             </div>
-        </section>
+            <div class="bio-photo-wrap">
+                <div class="bio-photo">
+                    <img src="img/miguel-silva-profile.png"
+                         alt="Fotografia de Miguel Silva, Head of AI Consulting Unit na Crowe Portugal"
+                         width="380" height="460" loading="eager">
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <!-- Insights / Blog Section -->
-        <section id="insights">
-            <div class="section-container">
-                <div class="section-header section-header-with-nav">
-                    <div class="section-header-text">
+    <!-- Insights / Blog -->
+    <section class="section" id="insights">
+        <div class="section-inner">
+            <div class="section-head">
+                <div class="section-head-row">
+                    <div>
                         <h2 class="section-title">Insights</h2>
+                        <div class="section-rule" aria-hidden="true"></div>
                         <p class="section-subtitle">Conteúdos sobre IA, gestão e estratégia empresarial</p>
                     </div>
-                    <div class="section-header-actions">
-                        <button class="section-nav-btn" id="blogPrevBtn" aria-label="Ver artigos anteriores" disabled>
+                    <div class="section-nav-btns">
+                        <button class="section-nav-btn" id="blogPrevBtn" aria-label="Artigos anteriores" disabled>
                             <i class="fas fa-arrow-left" aria-hidden="true"></i>
                         </button>
-                        <button class="section-nav-btn" id="blogNextBtn" aria-label="Ver mais artigos">
+                        <button class="section-nav-btn" id="blogNextBtn" aria-label="Artigos seguintes">
                             <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <div id="blogContainer" class="blog-grid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>A carregar artigos...</p>
-                    </div>
+            </div>
+            <div id="blogContainer" class="blog-grid" aria-live="polite">
+                <div class="loading">
+                    <div class="spinner" role="status" aria-label="A carregar artigos"></div>
+                    <p>A carregar artigos...</p>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- AI News Section -->
-        <section id="noticias">
-            <div class="section-container">
-                <div class="section-header">
-                    <h2 class="section-title">Notícias de IA</h2>
-                    <p class="section-subtitle">Atualidade em Inteligência Artificial</p>
-                    <button id="refreshNewsBtn" class="refresh-news-btn">
+    <!-- AI News -->
+    <section class="section section-alt" id="noticias">
+        <div class="section-inner">
+            <div class="section-head">
+                <div class="section-head-row">
+                    <div>
+                        <h2 class="section-title">Notícias de IA</h2>
+                        <div class="section-rule" aria-hidden="true"></div>
+                        <p class="section-subtitle">Atualidade em Inteligência Artificial</p>
+                    </div>
+                    <button class="refresh-btn" id="refreshNewsBtn">
                         <i class="fas fa-sync-alt" aria-hidden="true"></i> Atualizar
                     </button>
                 </div>
-                <div id="newsContainer" class="news-grid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>A carregar notícias...</p>
-                    </div>
+            </div>
+            <div id="newsContainer" class="news-grid" aria-live="polite">
+                <div class="loading">
+                    <div class="spinner" role="status" aria-label="A carregar notícias"></div>
+                    <p>A carregar notícias...</p>
                 </div>
             </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer role="contentinfo">
-        <div class="footer-container">
-            <div class="footer-logo">Miguel Silva</div>
-            <p class="footer-tagline">Head of AI Consulting Unit · Crowe Portugal</p>
-            <div class="footer-social">
-                <a href="mailto:miguelsilvalab1@gmail.com" class="footer-social-link" aria-label="Enviar email" title="Email">
-                    <i class="fas fa-envelope" aria-hidden="true"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer"
-                   class="footer-social-link" aria-label="LinkedIn" title="LinkedIn">
-                    <i class="fab fa-linkedin" aria-hidden="true"></i>
-                </a>
-            </div>
-            <div class="footer-bottom">
-                &copy; <span id="currentYear">2026</span> Miguel Silva. Todos os direitos reservados.
-            </div>
         </div>
-    </footer>
+    </section>
 
-    <!-- JavaScript -->
-    <script src="js/main.js" defer></script>
-    <script>
-    // Mobile menu toggle
-    var mobileBtn = document.getElementById('mobileMenuBtn');
-    var navLinks  = document.getElementById('navLinks');
-    if (mobileBtn && navLinks) {
-        mobileBtn.addEventListener('click', function () {
-            var expanded = mobileBtn.getAttribute('aria-expanded') === 'true';
-            mobileBtn.setAttribute('aria-expanded', String(!expanded));
-            navLinks.classList.toggle('active');
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-name">Miguel Silva</div>
+        <div class="footer-role">Head of AI Consulting Unit &nbsp;·&nbsp; Crowe Portugal</div>
+        <div class="footer-links">
+            <a href="mailto:miguelsilvalab1@gmail.com" class="footer-link" aria-label="Email">
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="footer-copy">&copy; <span id="currentYear"></span> Miguel Silva. Todos os direitos reservados.</div>
+    </div>
+</footer>
+
+<script>
+// ── Utilities ──────────────────────────────────────────────
+var SUPABASE_URL = 'https://nicgjddphjevcvsfdtmr.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pY2dqZGRwaGpldmN2c2ZkdG1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0OTg2MTAsImV4cCI6MjA4NjA3NDYxMH0.Bcn8vJ9S6cTdPl1J2XfWf-2YrswYonM73FBBimQLIC8';
+var SB_HDR = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
+
+function sbFn(fn, opts) {
+    var cfg = Object.assign({}, opts || {});
+    cfg.headers = Object.assign({}, SB_HDR, cfg.headers || {});
+    return fetch(SUPABASE_URL + '/functions/v1/' + fn, cfg);
+}
+function sbQuery(table, qs) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + qs, { headers: SB_HDR });
+}
+function esc(s) {
+    if (!s) return '';
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(s));
+    return d.innerHTML;
+}
+function decEnt(s) {
+    if (!s) return '';
+    var t = document.createElement('textarea');
+    t.innerHTML = s;
+    return t.value;
+}
+function safeUrl(u) {
+    if (!u) return '#';
+    var t = u.trim();
+    return (t.indexOf('https://') === 0 || t.indexOf('http://') === 0) ? esc(t) : '#';
+}
+function relTime(ds) {
+    if (!ds) return '';
+    try {
+        var d = new Date(ds), now = new Date(), h = Math.floor((now - d) / 3600000);
+        if (h < 1) return 'Agora mesmo';
+        if (h < 24) return 'Há ' + h + (h === 1 ? ' hora' : ' horas');
+        var dy = Math.floor(h / 24);
+        if (dy < 7) return 'Há ' + dy + (dy === 1 ? ' dia' : ' dias');
+        return d.toLocaleDateString('pt-PT', { day: 'numeric', month: 'short' });
+    } catch(e) { return ds; }
+}
+
+// ── Blog ───────────────────────────────────────────────────
+function loadBlog(page) {
+    var c = document.getElementById('blogContainer');
+    var prev = document.getElementById('blogPrevBtn');
+    var next = document.getElementById('blogNextBtn');
+    var p = typeof page === 'number' ? page : 0;
+    var size = 3;
+    sbFn('fetch-substack', { method: 'POST' }).catch(function(){});
+    if (c) c.innerHTML = '<div class="loading"><div class="spinner"></div><p>A carregar artigos...</p></div>';
+    if (prev) prev.disabled = p === 0;
+    if (next) next.disabled = true;
+    sbQuery('substack_articles', 'select=title,excerpt,link,read_time,published_at&order=published_at.desc&limit=' + size + '&offset=' + (p * size))
+    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(posts) {
+        if (!posts || posts.length === 0) {
+            c.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem 0;">Sem artigos de momento.</p>';
+            if (next) next.disabled = true;
+            return;
+        }
+        c.innerHTML = posts.map(function(post) {
+            var dt = post.published_at
+                ? (function(){ try { return new Date(post.published_at).toLocaleDateString('pt-PT',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return ''; } })()
+                : (esc(post.read_time) || '3 min') + ' de leitura';
+            return '<div class="blog-card">' +
+                '<div class="blog-meta"><i class="far fa-clock" aria-hidden="true"></i><span>' + esc(dt) + '</span></div>' +
+                '<div class="blog-content">' +
+                    '<h3>' + esc(decEnt(post.title)) + '</h3>' +
+                    '<p>' + esc(decEnt(post.excerpt)) + '</p>' +
+                    '<a href="' + safeUrl(post.link) + '" class="read-more" target="_blank" rel="noopener noreferrer">Ler artigo <i class="fas fa-arrow-right" aria-hidden="true"></i></a>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+        if (prev) prev.disabled = p === 0;
+        if (next) next.disabled = posts.length < size;
+        window.__blogPage = p;
+    })
+    .catch(function() {
+        if (c) c.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem 0;">Erro ao carregar artigos. <a href="#" onclick="loadBlog(0);return false;" style="color:var(--navy);">Tentar novamente</a></p>';
+        if (prev) prev.disabled = p === 0;
+        if (next) next.disabled = true;
+    });
+}
+
+// ── News ───────────────────────────────────────────────────
+function loadNews(refresh) {
+    var c = document.getElementById('newsContainer');
+    var btn = document.getElementById('refreshNewsBtn');
+    if (refresh && btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> A atualizar...'; btn.disabled = true; }
+    var p = refresh
+        ? sbFn('fetch-ai-news', { method: 'POST' }).then(function(){ return true; }).catch(function(){ return true; })
+        : Promise.resolve(true);
+    p.then(function() {
+        return sbQuery('ai_news', 'select=title,excerpt,link,source,published_at&order=published_at.desc&limit=3');
+    })
+    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(arts) {
+        if (!arts || arts.length === 0) {
+            c.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem 0;">Sem notícias de momento.</p>';
+        } else {
+            c.innerHTML = arts.map(function(a) {
+                return '<div class="news-card">' +
+                    '<div class="news-source"><i class="far fa-newspaper" aria-hidden="true"></i><span>' + esc(decEnt(a.source || 'IA')) + '</span></div>' +
+                    '<h3>' + esc(decEnt(a.title)) + '</h3>' +
+                    '<p>' + esc(decEnt(a.excerpt)) + '</p>' +
+                    '<div class="news-time">' + relTime(a.published_at) + '</div>' +
+                    '<a href="' + safeUrl(a.link) + '" class="read-more" target="_blank" rel="noopener noreferrer">Ler mais <i class="fas fa-external-link-alt" aria-hidden="true"></i></a>' +
+                '</div>';
+            }).join('');
+        }
+        if (btn) { btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar'; btn.disabled = false; }
+    })
+    .catch(function() {
+        if (c) c.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem 0;">Não foi possível carregar notícias. <a href="#" onclick="loadNews(true);return false;" style="color:var(--navy);">Tentar novamente</a></p>';
+        if (btn) { btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar'; btn.disabled = false; }
+    });
+}
+
+// ── Init ───────────────────────────────────────────────────
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+// Mobile nav
+var mBtn = document.getElementById('mobileBtn');
+var nLinks = document.getElementById('navLinks');
+var mIcon = document.getElementById('mobileBtnIcon');
+if (mBtn) {
+    mBtn.addEventListener('click', function() {
+        var open = nLinks.classList.toggle('open');
+        mBtn.setAttribute('aria-expanded', String(open));
+        mIcon.className = open ? 'fas fa-times' : 'fas fa-bars';
+    });
+    nLinks.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+            nLinks.classList.remove('open');
+            mBtn.setAttribute('aria-expanded', 'false');
+            mIcon.className = 'fas fa-bars';
         });
-    }
-    // Footer year
-    var yearEl = document.getElementById('currentYear');
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
-    </script>
+    });
+}
+
+// Blog pagination
+var prevBtn = document.getElementById('blogPrevBtn');
+var nextBtn = document.getElementById('blogNextBtn');
+if (prevBtn) prevBtn.addEventListener('click', function() { loadBlog((window.__blogPage || 0) - 1); });
+if (nextBtn) nextBtn.addEventListener('click', function() { loadBlog((window.__blogPage || 0) + 1); });
+
+// Refresh news
+var refBtn = document.getElementById('refreshNewsBtn');
+if (refBtn) refBtn.addEventListener('click', function() { loadNews(true); });
+
+// Load on page ready
+window.addEventListener('load', function() {
+    loadBlog(0);
+    loadNews(false);
+});
+</script>
 
 </body>
 </html>

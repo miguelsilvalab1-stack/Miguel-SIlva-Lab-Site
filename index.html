@@ -470,6 +470,22 @@
         color: rgba(255,255,255,0.25);
         letter-spacing: 0.03em;
     }
+    /* ─── Email toast ─── */
+    .email-toast {
+        position: fixed; bottom: 1.75rem; left: 50%; transform: translateX(-50%) translateY(12px);
+        background: var(--navy); color: var(--white);
+        font-family: var(--sans); font-size: 0.85rem; font-weight: 400;
+        padding: 0.6rem 1.25rem;
+        border-radius: 24px;
+        box-shadow: 0 8px 24px rgba(1,30,65,0.25);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        z-index: 9999;
+        white-space: nowrap;
+    }
+    .email-toast.show {
+        opacity: 1; transform: translateX(-50%) translateY(0);
+    }
     </style>
 </head>
 <body>
@@ -483,7 +499,7 @@
         <div class="nav-links" id="navLinks">
             <a href="#bio">Bio</a>
             <a href="#insights">Artigos</a>
-            <a href="mailto:miguel.silva@crowe.pt">Contacto</a>
+            <a href="mailto:miguel.silva@crowe.pt" class="nav-contact" data-email="miguel.silva@crowe.pt">Contacto</a>
             <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" class="nav-li">
                 <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
             </a>
@@ -524,7 +540,7 @@
                     <a href="https://www.linkedin.com/in/miguelfreiresilva/" target="_blank" rel="noopener noreferrer" class="btn-primary">
                         <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
                     </a>
-                    <a href="mailto:miguel.silva@crowe.pt" class="btn-outline">
+                    <a href="mailto:miguel.silva@crowe.pt" class="btn-outline" data-email="miguel.silva@crowe.pt">
                         <i class="fas fa-envelope" aria-hidden="true"></i> Enviar email
                     </a>
                 </div>
@@ -730,6 +746,47 @@ function loadNews(refresh) {
         if (btn) { btn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar'; btn.disabled = false; }
     });
 }
+
+// ── Email copy + mailto ────────────────────────────────────
+(function() {
+    var toast = document.createElement('div');
+    toast.className = 'email-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+
+    var toastTimer;
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2800);
+    }
+
+    document.querySelectorAll('[data-email]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            var email = el.getAttribute('data-email');
+            // Try clipboard copy as fallback (runs in parallel with mailto)
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(function() {
+                    showToast('✓ ' + email + ' copiado');
+                }).catch(function() {
+                    showToast(email);
+                });
+            } else {
+                // Fallback: select a temp input
+                var tmp = document.createElement('input');
+                tmp.value = email;
+                document.body.appendChild(tmp);
+                tmp.select();
+                try { document.execCommand('copy'); showToast('✓ ' + email + ' copiado'); }
+                catch(e) { showToast(email); }
+                document.body.removeChild(tmp);
+            }
+            // mailto still fires normally (e not prevented)
+        });
+    });
+})();
 
 // ── Init ───────────────────────────────────────────────────
 document.getElementById('currentYear').textContent = new Date().getFullYear();

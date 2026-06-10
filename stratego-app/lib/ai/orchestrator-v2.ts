@@ -93,33 +93,60 @@ async function updatePlanStatus(
 
 /* -- Etapa 2: Analista (GPT-5.5) ------------------------------------ */
 
+const ANALISTA_SYSTEM =
+  'Es um analista de negocios experiente especializado no mercado portugues e europeu.\n' +
+  'Analisas ideias de negocio com rigor, identificando oportunidades, riscos e benchmarks reais.\n' +
+  'Respondes sempre em Portugues de Portugal (com acentuacao correcta), com linguagem clara e profissional.\n' +
+  'O teu output e usado por estrategas de negocio - se preciso, denso em informacao, sem floreados.'
+
+function analistaUserPrompt(contexto: string): string {
+  return (
+    'Analisa a seguinte ideia de negocio e fornece:\n' +
+    '1. Panorama do mercado em Portugal (dimensao, tendencias, crescimento previsto)\n' +
+    '2. Principais concorrentes directos e indirectos\n' +
+    '3. Perfil detalhado do cliente-alvo (comportamento, necessidades, poder de compra)\n' +
+    '4. Oportunidades nao exploradas neste sector\n' +
+    '5. Principais riscos e barreiras a entrada\n' +
+    '6. Benchmarks financeiros tipicos do sector (margens, ticket medio, break-even tipico)\n\n' +
+    'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
+    'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.'
+  )
+}
+
 async function runAnalista(contexto: string): Promise<string> {
+  /* Tentativa 1: Responses API com pesquisa web — dados reais e fontes citadas */
+  try {
+    const res = await openai.responses.create({
+      model: MODEL_ANALYST,
+      tools: [{ type: 'web_search' }],
+      reasoning: { effort: 'none' },
+      max_output_tokens: 5500,
+      instructions:
+        ANALISTA_SYSTEM + '\n' +
+        'Usa a pesquisa web para confirmar dados reais do mercado portugues (dimensao, precos praticados, ' +
+        'rendas, salarios, tendencias). Baseia os numeros em fontes verificaveis.\n' +
+        'No FIM da analise inclui uma seccao "### Fontes consultadas" com 3 a 6 fontes reais, ' +
+        'cada uma numa linha no formato "- Nome da fonte — URL".',
+      input: analistaUserPrompt(contexto),
+    }, { timeout: 150_000, maxRetries: 1 })
+    const texto = res.output_text?.trim()
+    if (texto) return texto
+    console.warn('[orchestrator-v2] analista com pesquisa devolveu vazio — fallback sem pesquisa')
+  } catch (err) {
+    console.warn(
+      '[orchestrator-v2] pesquisa web indisponivel — fallback sem pesquisa:',
+      err instanceof Error ? err.message : err
+    )
+  }
+
+  /* Fallback: chat completions sem pesquisa (comportamento anterior) */
   const res = await openai.chat.completions.create({
     model: MODEL_ANALYST,
     max_completion_tokens: 4000,
     reasoning_effort: 'none',
     messages: [
-      {
-        role: 'system',
-        content:
-          'Es um analista de negocios experiente especializado no mercado portugues e europeu.\n' +
-          'Analisas ideias de negocio com rigor, identificando oportunidades, riscos e benchmarks reais.\n' +
-          'Respondes sempre em Portugues de Portugal, com linguagem clara e profissional.\n' +
-          'O teu output e usado por estrategas de negocio - se preciso, denso em informacao, sem floreados.',
-      },
-      {
-        role: 'user',
-        content:
-          'Analisa a seguinte ideia de negocio e fornece:\n' +
-          '1. Panorama do mercado em Portugal (dimensao, tendencias, crescimento previsto)\n' +
-          '2. Principais concorrentes directos e indirectos\n' +
-          '3. Perfil detalhado do cliente-alvo (comportamento, necessidades, poder de compra)\n' +
-          '4. Oportunidades nao exploradas neste sector\n' +
-          '5. Principais riscos e barreiras a entrada\n' +
-          '6. Benchmarks financeiros tipicos do sector (margens, ticket medio, break-even tipico)\n\n' +
-          'CONTEXTO DO NEGOCIO:\n' + contexto + '\n\n' +
-          'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
-      },
+      { role: 'system', content: ANALISTA_SYSTEM },
+      { role: 'user', content: analistaUserPrompt(contexto) },
     ],
   }, { timeout: 60_000, maxRetries: 1 })
   return res.choices[0].message.content ?? ''
@@ -232,7 +259,7 @@ async function runRevisor(
           '- NAO escrevas texto nenhum fora das seccoes (nem introducao nem conclusao).\n' +
           '- Usa markdown dentro de cada seccao (titulos ##, listas, tabelas).\n' +
           '- "resumo": 3-4 paragrafos de resumo executivo.\n' +
-          '- "mercado": sintese da analise de mercado.\n' +
+          '- "mercado": sintese da analise de mercado. Se a analise incluir uma seccao de fontes consultadas, preserva-a integralmente (com os URLs) no fim desta seccao, sob o subtitulo "### Fontes consultadas".\n' +
           '- "comercial" e "financeiro": a partir do Estratega A. No "financeiro" inclui sempre uma tabela de sensibilidade do break-even ao ticket medio (-20%, cenario base, +20%).\n' +
           '- "operacional" e "marketing": a partir do Estratega B.\n' +
           '- "proximos": lista numerada de 10 accoes concretas para os proximos 90 dias, com prazo. Numera sequencialmente (1. a 10.) e escreve cada accao num UNICO paragrafo (titulo, prazo e descricao na mesma linha), sem linhas em branco entre itens.\n' +
@@ -343,6 +370,81 @@ function polirSeccao(body: string, key: keyof BusinessPlanOutput): string {
   return sanitizarLatim(tirarTituloRepetido(body, SINONIMOS_TITULO[key]))
 }
 
+
+/* -- Validador aritmético (QA automático pós-geração) ---------------- */
+
+async function validarAritmetica(output: BusinessPlanOutput): Promise<BusinessPlanOutput> {
+  try {
+    const res = await openai.chat.completions.create({
+      model: MODEL_REVIEWER,
+      max_completion_tokens: 1500,
+      reasoning_effort: 'none',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Es um auditor financeiro meticuloso. Verificas calculos e consistencia entre texto e tabelas. ' +
+            'Respondes APENAS com JSON valido.',
+        },
+        {
+          role: 'user',
+          content:
+            'Audita o plano financeiro abaixo. Verifica:\n' +
+            '1. Somas de tabelas (totais correctos)\n' +
+            '2. Calculos de break-even (divisoes e percentagens)\n' +
+            '3. Coerencia entre numeros citados no texto e os das tabelas\n' +
+            '4. Coerencia entre o resumo executivo e o plano financeiro\n\n' +
+            'Devolve JSON no formato {"erros": ["descricao precisa do erro e correccao", ...]}. ' +
+            'Array vazia se estiver tudo correcto. Ignora arredondamentos ate 1%.\n\n' +
+            'RESUMO EXECUTIVO:\n' + output.resumo_executivo + '\n\n' +
+            'PLANO FINANCEIRO:\n' + output.plano_financeiro,
+        },
+      ],
+    }, { timeout: 60_000, maxRetries: 1 })
+
+    const parsed = JSON.parse(res.choices[0].message.content ?? '{}')
+    const erros: string[] = Array.isArray(parsed.erros) ? parsed.erros : []
+    if (erros.length === 0) {
+      console.log('[orchestrator-v2] validador aritmetico: OK, sem inconsistencias')
+      return output
+    }
+
+    console.warn('[orchestrator-v2] validador aritmetico: ' + erros.length + ' problema(s) — a corrigir:', erros)
+    const fix = await openai.chat.completions.create({
+      model: MODEL_REVIEWER,
+      max_completion_tokens: 6000,
+      reasoning_effort: 'none',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'Es um editor financeiro rigoroso. Corriges apenas o que e pedido, mantendo todo o resto do texto ' +
+            'e a formatacao markdown exactamente iguais. Escreves em Portugues de Portugal com acentuacao correcta.',
+        },
+        {
+          role: 'user',
+          content:
+            'Corrige APENAS os seguintes problemas na seccao abaixo. Nao alteres mais nada.\n\n' +
+            'PROBLEMAS:\n- ' + erros.join('\n- ') + '\n\n' +
+            'SECCAO A CORRIGIR:\n' + output.plano_financeiro,
+        },
+      ],
+    }, { timeout: 90_000, maxRetries: 1 })
+
+    const corrigido = fix.choices[0].message.content?.trim()
+    if (corrigido && corrigido.length > 200) {
+      output.plano_financeiro = sanitizarLatim(corrigido)
+      console.log('[orchestrator-v2] validador aritmetico: seccao financeira corrigida')
+    }
+    return output
+  } catch (err) {
+    console.warn('[orchestrator-v2] validador aritmetico falhou — a continuar sem correccao:',
+      err instanceof Error ? err.message : err)
+    return output
+  }
+}
+
 /* -- Pipeline principal --------------------------------------------- */
 
 export async function generateBusinessPlan(
@@ -411,8 +513,12 @@ export async function generateBusinessPlan(
       output[k] = polirSeccao(output[k], k)
     }
 
-    await updatePlanStatus(job_id, 'done', JSON.stringify(output))
-    return output
+    t = Date.now()
+    const validado = await validarAritmetica(output)
+    console.log(`[orchestrator-v2] validador aritmetico concluido em ${Date.now() - t}ms`)
+
+    await updatePlanStatus(job_id, 'done', JSON.stringify(validado))
+    return validado
   } catch (err) {
     console.error('[orchestrator-v2] Erro no pipeline:', err)
     await updatePlanStatus(job_id, 'error')

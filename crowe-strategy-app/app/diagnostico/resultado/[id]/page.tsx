@@ -105,7 +105,7 @@ function extractIdeia(resumo: string): string {
 export async function generateMetadata({ params }: PageProps) {
   const { id: jobId } = await params
   return {
-    title: `Plano de negócio — Crowe Strategy Studio`,
+    title: `Diagnóstico — Crowe Strategy Studio`,
     robots: { index: false },
   }
 }

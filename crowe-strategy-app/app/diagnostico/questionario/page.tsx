@@ -7,7 +7,7 @@ import StarfieldCanvas from '@/components/ui/StarfieldCanvas'
 import QuestionnaireV1 from '@/components/stratego/QuestionnaireV1'
 
 export const metadata = {
-  title: 'Crowe Strategy Studio — O teu negócio',
+  title: 'Crowe Strategy Studio — A sua empresa',
   robots: { index: false },
 }
 

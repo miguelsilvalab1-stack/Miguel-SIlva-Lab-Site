@@ -137,7 +137,7 @@ export default function DashboardPRO({
             lineHeight: 1.2,
           }}
         >
-          {ideia ?? 'Diagnóstico Estratégico Preliminar'}
+          Diagnóstico Estratégico Preliminar
         </h1>
 
         {/* Acções */}

@@ -8,7 +8,7 @@
 :root {
   /* — Originais (mantidas para compatibilidade) — */
   --background: #FFFFFF;
-  --foreground: #002D62;
+  --foreground: #181818;
   --muted: #1a1a1a;
   --muted-foreground: #a1a1aa;
   --border: #27272a;
@@ -24,11 +24,11 @@
   --accent2: #2D5DA7;            /* azul Crowe — hover/links */
   --gold:    #FDB913;            /* amarelo Crowe — acentos pontuais */
   --font-syne: 'Helvetica Neue', Helvetica, 'Arial Black', Arial, sans-serif;
-  --font-dm-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --white:   #002D62;            /* texto principal = navy do site */
-  --w80:     rgba(0,45,98,0.85);
-  --w50:     rgba(65,65,65,0.95); /* cinza de texto secundário do site */
-  --w30:     rgba(90,90,90,0.85);
+  --font-dm-sans: var(--font-inter), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --white:   #181818;            /* texto principal preto, como o site */
+  --w80:     rgba(24,24,24,0.88);
+  --w50:     #414141;            /* cinza de texto do site */
+  --w30:     #5A5A5A;
   --w15:     rgba(0,45,98,0.18);
   --w08:     rgba(0,45,98,0.07);
   --w05:     rgba(0,45,98,0.045);
@@ -67,8 +67,8 @@ body {
 
 /* ── Prose (diagnóstico em Markdown — tema claro Crowe) ── */
 .prose-dark { color: #414141; }
-.prose-dark h1, .prose-dark h2 { color: #002D62; border-bottom: 2px solid #FDB913; padding-bottom: 0.5rem; margin-top: 2rem; }
-.prose-dark h3 { color: #002D62; }
+.prose-dark h1, .prose-dark h2 { color: #181818; border-bottom: 2px solid #FDB913; padding-bottom: 0.5rem; margin-top: 2rem; }
+.prose-dark h3 { color: #181818; }
 .prose-dark table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
 .prose-dark th { background: #002D62; color: #ffffff; text-align: left; padding: 0.5rem 0.75rem; border: 1px solid #E0E5EE; font-weight: 600; }
 .prose-dark td { padding: 0.5rem 0.75rem; border: 1px solid #E0E5EE; vertical-align: top; }

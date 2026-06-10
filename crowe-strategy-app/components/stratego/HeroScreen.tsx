@@ -67,6 +67,9 @@ export default function HeroScreen() {
         Diagnóstico preliminar por IA · Crowe AI Consulting Unit
       </div>
 
+      {/* Traço amarelo Crowe */}
+      <div style={{ width: 56, height: 5, background: 'var(--gold)', marginBottom: 22 }} />
+
       {/* Título principal */}
       <h1
         className="mb-4 leading-tight"
@@ -79,16 +82,7 @@ export default function HeroScreen() {
         }}
       >
         decisões{' '}
-        <span
-          style={{
-            background: 'linear-gradient(135deg, var(--accent), var(--accent2))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
-        >
-          inteligentes
-        </span>
+        <span style={{ color: 'var(--accent)' }}>inteligentes</span>
       </h1>
 
       {/* Subtítulo */}

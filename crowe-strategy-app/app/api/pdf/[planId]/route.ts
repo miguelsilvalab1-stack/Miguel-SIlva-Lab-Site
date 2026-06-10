@@ -43,9 +43,19 @@ export async function GET(
   let ideia = ''
   try {
     const parsed = JSON.parse(plan.content) as BusinessPlanOutput
-    ideia = (parsed.resumo_executivo || '')
+    // Primeira FRASE completa do resumo (nunca cortar a meio de uma frase)
+    const primeiraLinha = (parsed.resumo_executivo || '')
       .replace(/[#*>`]/g, '')
-      .split('\n').map(l => l.trim()).filter(Boolean)[0]?.slice(0, 90) ?? ''
+      .split('\n').map(l => l.trim()).filter(Boolean)[0] ?? ''
+    const fimFrase = primeiraLinha.indexOf('. ')
+    if (fimFrase > 0 && fimFrase < 300) {
+      ideia = primeiraLinha.slice(0, fimFrase + 1)
+    } else if (primeiraLinha.length > 260) {
+      // sem ponto final utilizável: cortar na última palavra completa
+      ideia = primeiraLinha.slice(0, primeiraLinha.lastIndexOf(' ', 260)) + '…'
+    } else {
+      ideia = primeiraLinha
+    }
     markdown = SECTION_TITLES
       .filter(([key]) => parsed[key]?.trim())
       .map(([key, title]) => `# ${title}\n\n${parsed[key].trim()}`)

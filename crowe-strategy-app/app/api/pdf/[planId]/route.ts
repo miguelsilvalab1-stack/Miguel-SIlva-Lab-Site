@@ -73,7 +73,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plano de Negócio — Stratego.AI</title>
+  <title>Diagnóstico Estratégico Preliminar — Crowe Strategy Studio</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; color: #1a1a1a; background: white; line-height: 1.7; }
@@ -132,7 +132,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     <div class="cover-divider"></div>
     <div class="cover-meta">
       Gerado a ${data}<br>
-      por Stratego.AI · Miguel Silva Lab<br>
+      Crowe Strategy Studio · Crowe Advisory PT<br>
       Ref: ${planId.slice(0, 8).toUpperCase()}
     </div>
   </div>
@@ -141,8 +141,8 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     ${conteudo}
 
     <div class="footer">
-      Plano de Negócio gerado por Stratego.AI — Miguel Silva Lab · stratego.miguelsilvalab.pt<br>
-      Este documento foi criado automaticamente por inteligência artificial. Ref: ${planId.slice(0, 8).toUpperCase()}
+      © 2026 Crowe Advisory PT · Audit / Tax / Advisory / Outsourcing · Smart decisions. Lasting value.<br>
+      Documento preliminar gerado por inteligência artificial — não dispensa validação por um consultor Crowe. Ref: ${planId.slice(0, 8).toUpperCase()}
     </div>
   </div>
   <script>

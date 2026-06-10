@@ -1,5 +1,5 @@
 /**
- * Stratego.AI — Status do job v2
+ * Crowe Strategy Studio — Status do job v2
  * GET /api/orchestrator-v2/status?job_id=xxx
  * Devolve { state, content? } para polling do ecran de loading.
  */

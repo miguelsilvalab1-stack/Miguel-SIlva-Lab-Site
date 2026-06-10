@@ -1,5 +1,5 @@
 /**
- * Stratego.AI — API Route v2
+ * Crowe Strategy Studio — API Route v2
  * POST /api/orchestrator-v2
  */
 import { NextRequest, NextResponse, after } from 'next/server'

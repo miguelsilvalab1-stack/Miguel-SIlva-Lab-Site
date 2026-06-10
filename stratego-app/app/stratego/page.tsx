@@ -7,7 +7,7 @@ import StarfieldCanvas from '@/components/ui/StarfieldCanvas'
 import HeroScreen from '@/components/stratego/HeroScreen'
 
 export const metadata = {
-  title: 'Stratego.AI — De ideia a negócio em 2 minutos',
+  title: 'Stratego.AI — De ideia a plano de negócio em minutos',
   description:
     'Responde a 7 perguntas e recebe um plano de negócio completo e profissional, gerado por IA. Gratuito, sem subscrição.',
 }

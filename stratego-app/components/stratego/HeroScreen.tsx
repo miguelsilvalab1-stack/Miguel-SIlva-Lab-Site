@@ -71,7 +71,7 @@ export default function HeroScreen() {
           className="w-1.5 h-1.5 rounded-full animate-pulse-slow"
           style={{ background: 'var(--accent)' }}
         />
-        Plano de negócio gerado por IA em 2 minutos
+        Plano de negócio gerado por IA em minutos
       </div>
 
       {/* Título principal */}
@@ -109,7 +109,7 @@ export default function HeroScreen() {
           lineHeight: 1.6,
         }}
       >
-        Descreve a tua ideia. Em menos de 2 minutos tens um plano
+        Descreve a tua ideia. Em poucos minutos tens um plano
         de negócio completo e profissional.
       </p>
 

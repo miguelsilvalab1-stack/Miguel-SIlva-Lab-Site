@@ -11,14 +11,15 @@
  *
  * Nota modelos (jun/2026):
  *   - GPT-5.4-mini e modelo de raciocinio de baixa latencia: usa `max_completion_tokens`
- *     (nao `max_tokens`) e NAO aceita `temperature`. `reasoning_effort:'none'` (o mini nao aceita
- *     'minimal') + `maxRetries:0` mantem o pipeline rapido e dentro do limite serverless (~3 min).
+ *     (nao `max_tokens`) e NAO aceita `temperature`. `reasoning_effort:'none'` + maxRetries:1 (o mini nao aceita
+ *     'minimal') mantem o pipeline rapido e dentro do limite serverless (~3 min).
  *     O GPT-5.5 com raciocinio era demasiado lento aqui.
  */
 
 import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { sendPipelineAlert } from '@/lib/email/alert'
 
 /* -- Modelos --------------------------------------------------------- */
 
@@ -120,7 +121,7 @@ async function runAnalista(contexto: string): Promise<string> {
           'Se especifico para Portugal. Inclui dados e referencias concretas onde possivel.',
       },
     ],
-  }, { timeout: 60_000, maxRetries: 0 })
+  }, { timeout: 60_000, maxRetries: 1 })
   return res.choices[0].message.content ?? ''
 }
 
@@ -242,7 +243,7 @@ async function runRevisor(
           'ESTRATEGA B (operacional + marketing):\n' + estrategiaB,
       },
     ],
-  }, { timeout: 110_000, maxRetries: 0 })
+  }, { timeout: 110_000, maxRetries: 1 })
   return res.choices[0].message.content ?? ''
 }
 
@@ -350,6 +351,7 @@ export async function generateBusinessPlan(
   } catch (err) {
     console.error('[orchestrator-v2] Erro no pipeline:', err)
     await updatePlanStatus(job_id, 'error')
+    await sendPipelineAlert(job_id, err)
     throw err
   }
 }

@@ -16,10 +16,10 @@ interface Step {
 }
 
 const STEPS: Step[] = [
-  { id: 1, label: 'Análise de mercado', sublabel: 'GPT-4o a estudar o sector' },
+  { id: 1, label: 'Análise de mercado', sublabel: 'A IA a estudar o sector' },
   { id: 2, label: 'Estratégia de negócio', sublabel: 'Claude a definir a visão' },
   { id: 3, label: 'Plano financeiro', sublabel: 'Claude a calcular projecções' },
-  { id: 4, label: 'Validação e refinamento', sublabel: 'GPT-4o a rever e melhorar' },
+  { id: 4, label: 'Validação e refinamento', sublabel: 'A IA a rever e melhorar' },
   { id: 5, label: 'Relatório final', sublabel: 'A compilar o teu plano…' },
 ]
 
@@ -241,7 +241,7 @@ export default function LoadingV2({ progress, currentStep, ideia }: Props) {
             color: 'var(--w30)',
           }}
         >
-          Pode demorar até 90 segundos · Não feches esta janela
+          Pode demorar até 3 minutos · Não feches esta janela
         </p>
       </div>
     </div>

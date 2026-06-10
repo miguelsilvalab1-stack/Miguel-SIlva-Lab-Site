@@ -19,7 +19,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: 'Stratego.AI — Transforma a tua ideia num plano de negócio',
-  description: 'Responde a 7 perguntas e recebe um plano de negócio completo e profissional em menos de 2 minutos, gerado por IA.',
+  description: 'Responde a 7 perguntas e recebe em poucos minutos um plano de negócio completo e profissional, gerado por IA.',
   openGraph: {
     title: 'Stratego.AI — Tu imaginas, nós criamos',
     description: 'Plataforma portuguesa de geração de planos de negócio com IA. Gratuito, sem subscrição.',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Stratego.AI',
-    description: 'Plano de negócio profissional gerado por IA em 2 minutos.',
+    description: 'Plano de negócio profissional gerado por IA em minutos.',
   },
   robots: {
     index: true,

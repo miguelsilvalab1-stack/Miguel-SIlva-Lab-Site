@@ -54,7 +54,7 @@ export default function TermosServico() {
               2. Descrição do Serviço
             </h2>
             <p className="text-[#a1a1aa] text-sm leading-relaxed">
-              O Stratego.AI é uma aplicação web que, com base nas respostas a um questionário sobre o negócio do utilizador, utiliza sistemas de inteligência artificial (OpenAI GPT-4o e Anthropic Claude) para gerar automaticamente um plano de marketing personalizado, entregue em formato PDF por e-mail e consultável online. O serviço é prestado de forma gratuita, sem garantia de disponibilidade permanente.
+              O Stratego.AI é uma aplicação web que, com base nas respostas a um questionário sobre o negócio do utilizador, utiliza sistemas de inteligência artificial (modelos da OpenAI e da Anthropic (Claude)) para gerar automaticamente um plano de negócio personalizado, entregue em formato PDF por e-mail e consultável online. O serviço é prestado de forma gratuita, sem garantia de disponibilidade permanente.
             </p>
           </section>
 
@@ -98,7 +98,7 @@ export default function TermosServico() {
             <div className="bg-[#111111] border border-[#c1694f]/20 rounded-xl p-5 text-sm text-[#a1a1aa] leading-relaxed space-y-3">
               <p className="text-[#f4f4f5] font-medium">⚠️ Declaração obrigatória — AI Act da UE (Regulamento UE 2024/1689)</p>
               <p>
-                O plano de marketing entregue pelo Stratego.AI é <strong className="text-[#f4f4f5]">gerado automaticamente por sistemas de inteligência artificial</strong> e deve ser tratado como um instrumento de apoio à decisão, não como aconselhamento profissional vinculativo.
+                O plano de negócio entregue pelo Stratego.AI é <strong className="text-[#f4f4f5]">gerado automaticamente por sistemas de inteligência artificial</strong> e deve ser tratado como um instrumento de apoio à decisão, não como aconselhamento profissional vinculativo.
               </p>
               <p>
                 O Miguel Silva Lab não garante a exatidão, completude ou adequação do conteúdo gerado à situação específica de cada negócio. Recomendamos que os planos gerados sejam validados por um profissional de gestão ou marketing antes de qualquer implementação.
@@ -119,7 +119,7 @@ export default function TermosServico() {
                 O código-fonte, design, marca e elementos visuais do Stratego.AI são propriedade do Miguel Silva Lab e estão protegidos por direitos de autor.
               </p>
               <p>
-                O plano de marketing gerado a partir das respostas do utilizador pertence ao utilizador. O Miguel Silva Lab pode utilizar dados anonimizados e agregados (sem identificação pessoal) para melhoria do serviço.
+                O plano de negócio gerado a partir das respostas do utilizador pertence ao utilizador. O Miguel Silva Lab pode utilizar dados anonimizados e agregados (sem identificação pessoal) para melhoria do serviço.
               </p>
             </div>
           </section>

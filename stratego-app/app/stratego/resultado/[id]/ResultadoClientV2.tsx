@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+
 import DashboardPRO from '@/components/stratego/DashboardPRO'
 import LeadForm from '@/components/stratego/LeadForm'
 import StarfieldCanvas from '@/components/ui/StarfieldCanvas'
@@ -21,41 +21,38 @@ interface Props {
 }
 
 export default function ResultadoClientV2({ plan, jobId, ideia, leadEmail }: Props) {
-  const router = useRouter()
   // Se já temos email do Supabase, não mostra o form
   const [emailCapturado, setEmailCapturado] = useState(!!leadEmail)
   const [showForm, setShowForm] = useState(!leadEmail)
 
-  async function handleLeadSubmit(email: string, nome: string) {
+  async function handleLeadSubmit(email: string, nome: string, consent: boolean) {
     try {
-      // Actualiza o lead no Supabase via API
+      // Actualiza o lead no Supabase via API e envia cópia por email
       await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, nome, job_id: jobId }),
+        body: JSON.stringify({ email, nome, consent, job_id: jobId }),
       })
     } catch {
-      // Não bloqueia — email é opcional
+      // Não bloqueia o acesso ao plano se a API falhar
     } finally {
       setEmailCapturado(true)
       setShowForm(false)
     }
   }
 
-  function handleSkip() {
-    setEmailCapturado(true)
-    setShowForm(false)
-  }
-
   function handleDownload() {
-    // Sprint 3: PDF real com Puppeteer
-    // Por agora: print da página
-    window.print()
+    // Abre a versão de impressão do plano (Guardar como PDF)
+    window.open(`/api/pdf/${jobId}`, '_blank')
   }
 
   function handleUpgrade() {
-    // Sprint 3: checkout Stripe / EasyPay
-    router.push('/stratego/upgrade')
+    // Lead magnet: CTA de consultoria em vez de checkout
+    window.location.href =
+      'mailto:miguel.silva@crowe.pt?subject=' +
+      encodeURIComponent('Stratego.AI — Apoio na implementação do meu plano') +
+      '&body=' +
+      encodeURIComponent('Olá Miguel,\n\nGerei um plano na Stratego.AI e gostava de apoio na implementação.\n\nLink do plano: https://stratego.miguelsilvalab.pt/stratego/resultado/' + jobId)
   }
 
   return (
@@ -69,7 +66,6 @@ export default function ResultadoClientV2({ plan, jobId, ideia, leadEmail }: Pro
         <LeadForm
           ideia={ideia}
           onSubmit={handleLeadSubmit}
-          onSkip={handleSkip}
         />
       )}
 

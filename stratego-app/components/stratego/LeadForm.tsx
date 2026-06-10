@@ -10,13 +10,13 @@ import { useState } from 'react'
 
 interface Props {
   ideia?: string
-  onSubmit: (email: string, nome: string) => void
-  onSkip: () => void
+  onSubmit: (email: string, nome: string, consent: boolean) => void
 }
 
-export default function LeadForm({ ideia, onSubmit, onSkip }: Props) {
+export default function LeadForm({ ideia, onSubmit }: Props) {
   const [email, setEmail] = useState('')
   const [nome, setNome] = useState('')
+  const [consent, setConsent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -31,7 +31,7 @@ export default function LeadForm({ ideia, onSubmit, onSkip }: Props) {
     setLoading(true)
     setError('')
     try {
-      await onSubmit(email.trim(), nome.trim())
+      await onSubmit(email.trim(), nome.trim(), consent)
     } catch {
       setError('Algo correu mal. Tenta novamente.')
       setLoading(false)
@@ -143,13 +143,32 @@ export default function LeadForm({ ideia, onSubmit, onSkip }: Props) {
             </p>
           )}
 
+          {/* Consentimento opcional de marketing */}
+          <label
+            className="flex items-start gap-2 mt-1 cursor-pointer select-none"
+            style={{ color: 'var(--w30)', fontFamily: 'var(--font-dm-sans)', lineHeight: 1.5 }}
+          >
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={e => setConsent(e.target.checked)}
+              className="mt-0.5 accent-orange-600"
+            />
+            <span className="text-xs">
+              Quero receber conteúdos e contactos sobre estratégia e IA aplicada a negócios (opcional).
+            </span>
+          </label>
+
           {/* Nota de privacidade */}
           <p
             className="text-xs mt-1"
             style={{ color: 'var(--w30)', fontFamily: 'var(--font-dm-sans)', lineHeight: 1.5 }}
           >
-            Usamos o teu email para enviar uma cópia do plano.
-            Sem spam, sem subscrições automáticas.
+            Usamos o teu email apenas para te enviar a cópia do plano.
+            Sem spam. Consulta a{' '}
+            <a href="/privacidade" target="_blank" style={{ color: 'var(--w50)', textDecoration: 'underline' }}>
+              política de privacidade
+            </a>.
           </p>
 
           {/* Botões */}
@@ -167,15 +186,6 @@ export default function LeadForm({ ideia, onSubmit, onSkip }: Props) {
             }}
           >
             {loading ? 'A guardar…' : 'Ver o meu plano →'}
-          </button>
-
-          <button
-            type="button"
-            onClick={onSkip}
-            className="text-xs py-2 transition-opacity hover:opacity-80"
-            style={{ color: 'var(--w30)', fontFamily: 'var(--font-dm-sans)' }}
-          >
-            Continuar sem email
           </button>
         </form>
       </div>

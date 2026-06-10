@@ -14,21 +14,23 @@ export async function POST(req: NextRequest) {
   )
 
   try {
-    const { email, nome, job_id } = await req.json()
+    const { email, nome, consent, job_id } = await req.json()
 
     if (!email?.trim()) {
       return NextResponse.json({ error: 'Email obrigatorio' }, { status: 400 })
     }
 
-    /* Upsert lead */
-    await supabase.from('leads').upsert(
+    /* Upsert lead — source distingue opt-in de marketing (RGPD) */
+    const { error: leadError } = await supabase.from('leads').upsert(
       {
         email: email.trim(),
         name: nome?.trim() ?? null,
+        source: consent ? 'stratego_app_optin' : 'stratego_app',
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'email' }
     )
+    if (leadError) console.warn('[api/lead] upsert warning:', leadError.message)
 
     /* Associa ao plano */
     if (job_id) {

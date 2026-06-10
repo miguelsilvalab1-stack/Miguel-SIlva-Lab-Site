@@ -1,12 +1,6 @@
 {
   "functions": {
-    "app/api/orchestrator/route.ts": {
-      "maxDuration": 300
-    },
     "app/api/orchestrator-v2/route.ts": {
-      "maxDuration": 300
-    },
-    "app/api/stream/[jobId]/route.ts": {
       "maxDuration": 300
     },
     "app/api/pdf/[planId]/route.ts": {

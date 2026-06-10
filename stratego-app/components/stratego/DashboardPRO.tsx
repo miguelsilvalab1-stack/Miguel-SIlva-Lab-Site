@@ -310,13 +310,13 @@ export default function DashboardPRO({
               className="font-semibold mb-1"
               style={{ fontFamily: 'var(--font-syne)', color: 'var(--white)', fontSize: '1rem' }}
             >
-              Versão PRO — Plano completo com 15 perguntas
+              Queres pôr este plano em prática?
             </p>
             <p
               className="text-sm"
               style={{ color: 'var(--w50)', fontFamily: 'var(--font-dm-sans)' }}
             >
-              Exportação em PDF, PPT e Word · Sem limite de planos · Acesso priority
+              Sessão de trabalho com um consultor para validar e implementar o teu plano
             </p>
           </div>
           <button
@@ -329,7 +329,7 @@ export default function DashboardPRO({
               whiteSpace: 'nowrap',
             }}
           >
-            Upgrade PRO — 49€
+            Falar com um consultor
           </button>
         </div>
       </div>

@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/db/supabase'
+import { createClient } from '@supabase/supabase-js'
+import type { BusinessPlanOutput } from '@/lib/ai/orchestrator-v2'
+
+export const runtime = 'nodejs'
+
+const SECTION_TITLES: Array<[keyof BusinessPlanOutput, string]> = [
+  ['resumo_executivo',      'Resumo Executivo'],
+  ['analise_mercado',       'Análise de Mercado'],
+  ['estrategia_comercial',  'Estratégia Comercial'],
+  ['plano_financeiro',      'Plano Financeiro'],
+  ['plano_operacional',     'Plano Operacional'],
+  ['marketing_comunicacao', 'Marketing e Comunicação'],
+  ['proximos_passos',       'Próximos Passos — 90 dias'],
+]
 
 export async function GET(
   _request: NextRequest,
@@ -7,22 +20,43 @@ export async function GET(
 ) {
   const { planId } = await params
 
+  // Instanciado na função (a service key só existe em runtime)
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   const { data: plan, error } = await supabaseAdmin
     .from('plans')
-    .select('final_markdown, status, questionnaire_json, created_at')
-    .eq('id', planId)
+    .select('content, status, created_at')
+    .eq('job_id', planId)
     .single()
 
-  if (error || !plan || plan.status !== 'completed') {
+  if (error || !plan || plan.status !== 'done' || !plan.content) {
     return NextResponse.json({ error: 'Plano não encontrado ou ainda não concluído.' }, { status: 404 })
   }
 
-  const nomeNegocio = plan.questionnaire_json?.respostas?.['1_nome'] || 'Negócio'
+  /* Compor markdown a partir das 7 secções do plano v2 */
+  let markdown = ''
+  let ideia = ''
+  try {
+    const parsed = JSON.parse(plan.content) as BusinessPlanOutput
+    ideia = (parsed.resumo_executivo || '')
+      .replace(/[#*>`]/g, '')
+      .split('\n').map(l => l.trim()).filter(Boolean)[0]?.slice(0, 90) ?? ''
+    markdown = SECTION_TITLES
+      .filter(([key]) => parsed[key]?.trim())
+      .map(([key, title]) => `# ${title}\n\n${parsed[key].trim()}`)
+      .join('\n\n')
+  } catch {
+    markdown = plan.content
+  }
+
   const dataFormatada = new Date(plan.created_at).toLocaleDateString('pt-PT', {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 
-  const html = buildPDFHTML(plan.final_markdown, nomeNegocio, dataFormatada, planId)
+  const html = buildPDFHTML(markdown, ideia, dataFormatada, planId)
 
   return new Response(html, {
     headers: {
@@ -39,7 +73,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plano de Marketing — ${nomeNegocio}</title>
+  <title>Plano de Negócio — Stratego.AI</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; color: #1a1a1a; background: white; line-height: 1.7; }
@@ -92,7 +126,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
   <div class="cover">
     <div class="cover-logo">Stratego</div>
     <div class="cover-tag">AI</div>
-    <div class="cover-title">Plano de Marketing</div>
+    <div class="cover-title">Plano de Negócio</div>
     <div class="cover-negocio">${nomeNegocio}</div>
     <div class="cover-divider"></div>
     <div class="cover-meta">
@@ -106,10 +140,16 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     ${conteudo}
 
     <div class="footer">
-      Plano de Marketing gerado por Stratego.AI — Miguel Silva Lab · stratego.miguelsilvalab.pt<br>
+      Plano de Negócio gerado por Stratego.AI — Miguel Silva Lab · stratego.miguelsilvalab.pt<br>
       Este documento foi criado automaticamente por inteligência artificial. Ref: ${planId.slice(0, 8).toUpperCase()}
     </div>
   </div>
+  <script>
+    // Abre o diálogo de impressão (Guardar como PDF) assim que a página carrega
+    window.addEventListener('load', function () {
+      setTimeout(function () { window.print() }, 400)
+    })
+  </script>
 </body>
 </html>`
 }

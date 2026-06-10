@@ -65,7 +65,7 @@ export default function PoliticaPrivacidade() {
                 </div>
                 <div className="flex gap-3">
                   <span className="text-[#c1694f] mt-0.5">•</span>
-                  <span><strong className="text-[#f4f4f5]">Dados do negócio</strong> — nome, setor, produtos, mercado, orçamento e objetivos fornecidos no questionário. Estes dados são usados exclusivamente para gerar o plano de marketing.</span>
+                  <span><strong className="text-[#f4f4f5]">Dados do negócio</strong> — nome, setor, produtos, mercado, orçamento e objetivos fornecidos no questionário. Estes dados são usados exclusivamente para gerar o plano de negócio.</span>
                 </div>
                 <div className="flex gap-3">
                   <span className="text-[#c1694f] mt-0.5">•</span>
@@ -93,7 +93,7 @@ export default function PoliticaPrivacidade() {
                   </thead>
                   <tbody className="divide-y divide-[#27272a]">
                     <tr>
-                      <td className="py-3 pr-4">Geração do plano de marketing</td>
+                      <td className="py-3 pr-4">Geração do plano de negócio</td>
                       <td className="py-3 pr-4">E-mail, nome, dados do negócio</td>
                       <td className="py-3">Art.º 6.º(1)(b) — execução de contrato / serviço solicitado</td>
                     </tr>
@@ -128,7 +128,7 @@ export default function PoliticaPrivacidade() {
               <div className="bg-[#111111] border border-[#27272a] rounded-xl p-4 space-y-3">
                 <div>
                   <p className="text-[#f4f4f5] font-medium mb-0.5">OpenAI, L.L.C. (EUA)</p>
-                  <p>Fornece os modelos GPT-4o utilizados na análise e revisão do plano. Os dados são processados nos servidores da OpenAI. A OpenAI garante adequação ao RGPD através de cláusulas contratuais-tipo (SCCs).</p>
+                  <p>Fornece os modelos da OpenAI utilizados na análise e revisão do plano. Os dados são processados nos servidores da OpenAI. A OpenAI garante adequação ao RGPD através de cláusulas contratuais-tipo (SCCs).</p>
                 </div>
                 <div className="border-t border-[#27272a] pt-3">
                   <p className="text-[#f4f4f5] font-medium mb-0.5">Anthropic, PBC (EUA)</p>
@@ -231,7 +231,7 @@ export default function PoliticaPrivacidade() {
             </h2>
             <div className="text-[#a1a1aa] text-sm leading-relaxed space-y-2">
               <p>
-                O Stratego.AI utiliza sistemas de IA (OpenAI GPT-4o e Anthropic Claude) para gerar planos de marketing de forma automatizada com base nas respostas ao questionário. Este processamento automático não produz efeitos jurídicos vinculativos nem o afeta de forma significativamente negativa na aceção do Art.º 22.º do RGPD.
+                O Stratego.AI utiliza sistemas de IA (modelos da OpenAI e da Anthropic (Claude)) para gerar planos de negócio de forma automatizada com base nas respostas ao questionário. Este processamento automático não produz efeitos jurídicos vinculativos nem o afeta de forma significativamente negativa na aceção do Art.º 22.º do RGPD.
               </p>
               <p>
                 Em conformidade com o AI Act da União Europeia (Regulamento UE 2024/1689), os planos gerados incluem uma indicação clara de que foram produzidos por inteligência artificial. O plano gerado é um instrumento de apoio à decisão — não substitui aconselhamento profissional de gestão ou marketing.

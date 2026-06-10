@@ -151,7 +151,8 @@ async function runEstrategaA(contexto: string, analise: string): Promise<string>
           '- Estrutura de custos fixos e variaveis mensais\n' +
           '- Projeccao de receitas para 12 meses (conservador / realista / optimista)\n' +
           '- Ponto de equilibrio em meses\n' +
-          '- Necessidades de financiamento (capital proprio, BPI, IAPMEI, etc.)\n\n' +
+          '- Necessidades de financiamento (capital proprio, BPI, IAPMEI, etc.)\n' +
+          '- Analise de sensibilidade: impacto no break-even se o ticket medio variar -20% e +20%\n\n' +
           'Usa tabelas em markdown quando ajudar. Se conservador nas projeccoes.',
       },
     ],
@@ -234,8 +235,11 @@ async function runRevisor(
           '- "mercado": sintese da analise de mercado.\n' +
           '- "comercial" e "financeiro": a partir do Estratega A.\n' +
           '- "operacional" e "marketing": a partir do Estratega B.\n' +
-          '- "proximos": lista numerada de 10 accoes concretas para os proximos 90 dias, com prazo.\n' +
+          '- "proximos": lista numerada de 10 accoes concretas para os proximos 90 dias, com prazo. Numera sequencialmente (1. a 10.) e escreve cada accao num UNICO paragrafo (titulo, prazo e descricao na mesma linha), sem linhas em branco entre itens.\n' +
           '- Resolve contradicoes e usa o cenario mais conservador nos numeros.\n' +
+          '- NAO repitas o titulo da seccao como cabecalho dentro do conteudo; comeca directamente no texto ou em subtitulos mais especificos.\n' +
+          '- Usa EXCLUSIVAMENTE caracteres latinos. Nunca uses caracteres cirilicos ou de outros alfabetos.\n' +
+          '- Verifica que todos os totais e intervalos citados no texto coincidem exactamente com os valores das tabelas.\n' +
           '- Preenche TODAS as 7 seccoes com conteudo substantivo. Nenhuma pode ficar vazia.\n\n' +
           'CONTEXTO:\n' + contexto + '\n\n' +
           'ANALISE (mercado):\n' + analise + '\n\n' +
@@ -288,6 +292,55 @@ function extrairSeccao(texto: string, termos: string[]): string {
   return ''
 }
 
+
+/* -- Saneamento do output ------------------------------------------- */
+
+// Mapa de caracteres cirilicos (e homoglifos) para equivalentes latinos.
+const CIRILICO: Record<string, string> = {
+  'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'i',
+  'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
+  'х':'x','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'ju','я':'ya',
+  'і':'i','ї':'i','є':'e','ѕ':'s','ј':'j',
+  'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ж':'Zh','З':'Z','И':'I','Й':'I',
+  'К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F',
+  'Х':'X','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Shch','Ы':'Y','Э':'E','Ю':'Ju','Я':'Ya',
+}
+
+function sanitizarLatim(texto: string): string {
+  if (!/[\u0400-\u04FF]/.test(texto)) return texto
+  console.warn('[orchestrator-v2] caracteres cirilicos detectados no output — a corrigir')
+  return texto.replace(/[\u0400-\u04FF]/g, ch => CIRILICO[ch] ?? '')
+}
+
+// Remove o primeiro cabecalho do corpo se repetir o titulo da seccao
+function tirarTituloRepetido(body: string, sinonimos: string[]): string {
+  const norm = (t: string) =>
+    t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim()
+  const lines = body.split('\n')
+  let i = 0
+  while (i < lines.length && !lines[i].trim()) i++
+  const m = lines[i]?.trim().match(/^#{1,4}\s+(.+)$/)
+  if (m && sinonimos.some(sin => norm(m[1]) === norm(sin))) {
+    lines.splice(i, 1)
+    return lines.join('\n').trim()
+  }
+  return body
+}
+
+const SINONIMOS_TITULO: Record<keyof BusinessPlanOutput, string[]> = {
+  resumo_executivo:      ['resumo executivo', 'resumo'],
+  analise_mercado:       ['analise de mercado', 'mercado'],
+  estrategia_comercial:  ['estrategia comercial'],
+  plano_financeiro:      ['plano financeiro'],
+  plano_operacional:     ['plano operacional'],
+  marketing_comunicacao: ['marketing e comunicacao', 'plano de marketing', 'marketing'],
+  proximos_passos:       ['proximos passos', 'proximos 90 dias', 'proximos passos 90 dias'],
+}
+
+function polirSeccao(body: string, key: keyof BusinessPlanOutput): string {
+  return sanitizarLatim(tirarTituloRepetido(body, SINONIMOS_TITULO[key]))
+}
+
 /* -- Pipeline principal --------------------------------------------- */
 
 export async function generateBusinessPlan(
@@ -298,16 +351,22 @@ export async function generateBusinessPlan(
 
   try {
     await updatePlanStatus(job_id, 'analysing')
+    let t = Date.now()
     const analise = await runAnalista(contexto)
+    console.log(`[orchestrator-v2] analista (${MODEL_ANALYST}) ok em ${Date.now() - t}ms`)
 
     await updatePlanStatus(job_id, 'strategising')
+    t = Date.now()
     const [estrategiaA, estrategiaB] = await Promise.all([
       runEstrategaA(contexto, analise),
       runEstrategaB(contexto, analise),
     ])
+    console.log(`[orchestrator-v2] estrategas (${MODEL_STRATEGIST} x2) ok em ${Date.now() - t}ms`)
 
     await updatePlanStatus(job_id, 'reviewing')
+    t = Date.now()
     const sintese = await runRevisor(contexto, analise, estrategiaA, estrategiaB)
+    console.log(`[orchestrator-v2] revisor (${MODEL_REVIEWER}) ok em ${Date.now() - t}ms`)
 
     await updatePlanStatus(job_id, 'finalising')
     const sec = parseSeccoesMarcadas(sintese)
@@ -344,6 +403,10 @@ export async function generateBusinessPlan(
         sec.proximos_passos ||
         extrairSeccao(sintese, ['proximos passos', 'proximas accoes', 'plano de accao', 'accoes']) ||
         '',
+    }
+
+    for (const k of Object.keys(output) as Array<keyof BusinessPlanOutput>) {
+      output[k] = polirSeccao(output[k], k)
     }
 
     await updatePlanStatus(job_id, 'done', JSON.stringify(output))

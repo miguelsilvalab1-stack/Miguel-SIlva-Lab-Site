@@ -315,15 +315,17 @@ function markdownToHtml(md: string): string {
       continue
     }
 
-    // Lista ordenada
-    const ol = trimmed.match(/^\d+\. (.+)$/)
+    // Lista ordenada — preserva a numeração original do markdown,
+    // mesmo quando os itens estão separados por parágrafos (start="N")
+    const ol = trimmed.match(/^(\d+)\. (.+)$/)
     if (ol) {
       if (inList !== 'ol') {
         if (inList) htmlLines.push('</ul>')
-        htmlLines.push('<ol>')
+        const start = parseInt(ol[1], 10) || 1
+        htmlLines.push(start > 1 ? `<ol start="${start}">` : '<ol>')
         inList = 'ol'
       }
-      htmlLines.push(`<li>${applyInline(ol[1])}</li>`)
+      htmlLines.push(`<li>${applyInline(ol[2])}</li>`)
       continue
     }
 

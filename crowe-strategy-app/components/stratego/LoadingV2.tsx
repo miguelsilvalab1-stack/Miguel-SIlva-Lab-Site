@@ -79,10 +79,10 @@ export default function LoadingV2({ progress, currentStep, ideia }: Props) {
       {/* Logo */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 z-20">
         <span
-          className="text-sm font-semibold tracking-widest uppercase"
+          className="text-sm font-semibold"
           style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
         >
-          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
+          <img src="/crowe-logo.svg" alt="Crowe" style={{ height: 22, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} /><span style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #D5DBE7', color: '#002D62', verticalAlign: 'middle' }}>Strategy Studio</span>
         </span>
       </div>
 

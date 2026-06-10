@@ -4,6 +4,8 @@ import type { BusinessPlanOutput } from '@/lib/ai/orchestrator-v2'
 
 export const runtime = 'nodejs'
 
+const CROWE_LOGO = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWluWU1pZCBtZWV0IiB3aWR0aD0iMTA2IiBoZWlnaHQ9IjMwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDYgMzAiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEwNiAzMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJDcm93ZSBMb2dvIj48ZyBmaWxsPSIjMDAyZDYyIj48cGF0aCBkPSJtNTcuMiA5LjljLTEuMy0uOS0yLjktMS40LTQuNS0xLjQtNC4zIDAtNi44IDIuOS02LjggNi43IDAgNC4xIDMgNi45IDYuOCA2LjkgMS41IDAgMy4xLS40IDQuNC0xLjJsLjkgMS40Yy0xLjYgMS0zLjUgMS41LTUuNCAxLjUtNi4yIDAtOS4zLTQtOS4zLTguNSAwLTQuMSAzLjQtOC40IDkuNi04LjQgMS45IDAgMy44LjUgNS4zIDEuN2wtMSAxLjMiLz48cGF0aCBkPSJtNjEuNCAxMy4ybC45LS45Yy41LS41IDEuMS0uOCAxLjgtLjkuOC4xIDEuNS41IDIgMS4xbC0xIDEuNGMtLjUtLjMtMS4xLS41LTEuNy0uNS0xLjEgMC0yLjEgMS4xLTIuMSAzLjd2Ni4zaC0yLjJ2LTExLjZoMi4ybC4xIDEuNCIvPjxwYXRoIGQ9Im02NS40IDE3LjVjLS4xLTMuMiAyLjUtNiA1LjgtNi4xIDMuMy0uMSA2LjIgMi40IDYuMyA1LjcgMCAuMSAwIC4zIDAgLjQgMCAzLjYtMi40IDYuMi02LjEgNi4ycy02LTIuNi02LTYuMm0yLjQgMGMwIDIuMi44IDQuOCAzLjcgNC44IDIuOSAwIDMuNy0yLjYgMy43LTQuOHMtMS00LjUtMy44LTQuNWMtMi44IDAtMy43IDIuNC0zLjYgNC41Ii8+PHBhdGggZD0ibTg3LjIgMTEuOGMxLjIgMi44IDIuNCA1LjYgMy42IDguOSAxLTMuNCAyLTYuMyAzLTkuMWwyIC4zLTQuMyAxMS42aC0xLjVjLTEuMi0yLjktMi41LTUuOC0zLjctOS4xLTEuMiAzLjMtMi4zIDYuMi0zLjYgOS4xaC0xLjRsLTQuMy0xMS40IDIuMi0uNWMxIDIuOSAyIDUuNyAzIDkuMSAxLjItMy4zIDIuNC02LjEgMy42LTguOSIvPjxwYXRoIGQ9Im05Ny43IDE3LjdjLS4xIDIuMyAxLjcgNC4zIDQuMiA0LjUgMS4yIDAgMi40LS40IDMuNC0xbC42IDEuMWMtMS4yLjgtMi42IDEuMy00LjEgMS40LTMuOCAwLTYuNC0yLjItNi40LTYuMy0uMi0zLjEgMi4yLTUuNyA1LjQtNS45LjIgMCAuMyAwIC41IDAgMy43IDAgNSAzLjIgNC44IDYuM2gtOC40em02LjItMS40YzAtMS44LS44LTMuNC0yLjctMy40LTEuOSAwLTMuNCAxLjQtMy40IDMuMiAwIDAgMCAuMSAwIC4xaDYuMXoiLz48L2c+PHBhdGggZD0ibTE4LjguMmMwLS4xLS4xLS4xLS4yLS4yLS4xIDAtLjIuMS0uMi4xbC0xOC4zIDI5LjdjLS4xLjEtLjEuMi0uMS4ycy4xIDAgLjEtLjFsMTguMi0yMS4xYy4xLS4xLjEtLjEuMS0uMXMwIC4xLS4xLjJsLTEyLjYgMjFjMCAwIDAgLjEgMCAuMSAwIDAgLjEgMCAuMS0uMWwxNC44LTE3LjNjLjEtLjEuMS0uMS4xLS4xczAgLjEtLjEuMmwtOS42IDE3LjFjMCAuMSAwIC4yIDAgLjIgMCAwIC4xIDAgLjEtLjFsMTEuOC0xMy43Yy4xLS4yLjItLjIuMy0uMi4xIDAgLjIuMS4zLjFsMTEuNSAxMy44YzAgLjEuMS4xLjEuMSAwIDAgMC0uMS0uMS0uMmwtMTYuMi0yOS42IiBmaWxsPSIjZmRiOTEzIi8+PC9zdmc+'
+
 const SECTION_TITLES: Array<[keyof BusinessPlanOutput, string]> = [
   ['resumo_executivo',      'Sumário Executivo'],
   ['analise_mercado',       'Análise Setorial'],
@@ -75,8 +77,8 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diagnóstico Estratégico Preliminar — Crowe Strategy Studio</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; color: #1a1a1a; background: white; line-height: 1.7; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-family: Arial, 'Helvetica Neue', sans-serif; font-size: 11pt; color: #1a1a1a; background: white; line-height: 1.7; }
 
     .cover { page-break-after: always; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 60px; text-align: center; background: #fafafa; }
     .cover-logo { font-size: 28pt; font-weight: bold; color: #FDB913; margin-bottom: 8px; font-family: -apple-system, sans-serif; }
@@ -124,16 +126,24 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
   </style>
 </head>
 <body>
-  <div class="cover">
-    <div class="cover-logo" style="color:#002D62;">Crowe</div>
-    <div class="cover-tag">Strategy Studio</div>
-    <div class="cover-title">Diagnóstico Estratégico Preliminar</div>
-    <div class="cover-negocio">${nomeNegocio}</div>
-    <div class="cover-divider"></div>
-    <div class="cover-meta">
-      Gerado a ${data}<br>
-      Crowe Strategy Studio · Crowe Advisory PT<br>
-      Ref: ${planId.slice(0, 8).toUpperCase()}
+  <div class="cover" style="background:#FFFFFF; align-items:flex-start; text-align:left; justify-content:space-between; padding:50px 60px;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <img src="${CROWE_LOGO}" style="height:34px;" alt="Crowe">
+      <span style="border-left:1px solid #D5DBE7; padding-left:14px; font-family:Arial,sans-serif; font-size:13pt; color:#002D62; font-weight:bold;">Strategy Studio</span>
+    </div>
+    <div>
+      <div style="width:64px; height:5px; background:#FDB913; margin-bottom:26px;"></div>
+      <div style="font-family:Arial,sans-serif; font-weight:bold; font-size:30pt; color:#002D62; line-height:1.15;">Diagnóstico Estratégico<br>Preliminar</div>
+      <div style="font-family:Arial,sans-serif; font-size:12pt; color:#5C6680; margin-top:18px; max-width:540px;">${nomeNegocio}</div>
+    </div>
+    <div style="width:100%;">
+      <div style="font-family:Arial,sans-serif; font-size:9pt; color:#5C6680; margin-bottom:18px;">
+        Gerado a ${data} · Crowe AI Consulting Unit · Ref: ${planId.slice(0, 8).toUpperCase()}
+      </div>
+      <div style="background:#002D62; margin:0 -60px -50px; padding:16px 60px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-family:Arial,sans-serif; font-size:9pt; color:#FFFFFF; font-weight:bold;">Audit / Tax / Advisory / Outsourcing</span>
+        <span style="font-family:Arial,sans-serif; font-size:9pt; color:#FDB913; font-weight:bold;">Smart decisions. Lasting value.</span>
+      </div>
     </div>
   </div>
 
@@ -141,6 +151,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     ${conteudo}
 
     <div class="footer">
+      <img src="${CROWE_LOGO}" style="height:18px; margin-bottom:8px;" alt="Crowe"><br>
       © 2026 Crowe Advisory PT · Audit / Tax / Advisory / Outsourcing · Smart decisions. Lasting value.<br>
       Documento preliminar gerado por inteligência artificial — não dispensa validação por um consultor Crowe. Ref: ${planId.slice(0, 8).toUpperCase()}
     </div>

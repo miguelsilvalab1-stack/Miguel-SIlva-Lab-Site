@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import CroweHeader from '@/components/ui/CroweHeader'
 
 const CHIPS = [
   'PME industrial',
@@ -47,15 +48,7 @@ export default function HeroScreen() {
         transition: 'opacity 0.5s ease, transform 0.5s ease',
       }}
     >
-      {/* Logo */}
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-20">
-        <span
-          className="text-sm font-semibold tracking-widest uppercase"
-          style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
-        >
-          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
-        </span>
-      </div>
+      <CroweHeader />
 
       {/* Eyebrow badge */}
       <div

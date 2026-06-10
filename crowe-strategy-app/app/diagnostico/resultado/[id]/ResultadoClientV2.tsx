@@ -81,10 +81,10 @@ export default function ResultadoClientV2({ plan, jobId, ideia, leadEmail }: Pro
         <div className="text-center mb-2">
           <a
             href="/diagnostico"
-            className="text-sm font-semibold tracking-widest uppercase"
+            className="text-sm font-semibold"
             style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
           >
-            Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
+            <img src="/crowe-logo.svg" alt="Crowe" style={{ height: 22, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} /><span style={{ marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #D5DBE7', color: '#002D62', verticalAlign: 'middle' }}>Strategy Studio</span>
           </a>
         </div>
 

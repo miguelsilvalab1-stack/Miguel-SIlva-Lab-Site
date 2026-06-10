@@ -244,7 +244,7 @@ export default function QuestionnaireV1() {
           className="text-sm font-semibold tracking-widest uppercase"
           style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
         >
-          Crowe <span style={{ color: 'var(--accent)' }}>Strategy Studio</span>
+          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
         </span>
         <span
           className="text-xs tabular-nums"
@@ -321,7 +321,7 @@ export default function QuestionnaireV1() {
                 color: 'var(--white)',
                 fontFamily: 'var(--font-dm-sans)',
                 lineHeight: 1.6,
-                boxShadow: textVal ? '0 0 0 3px rgba(232,67,45,0.08)' : 'none',
+                boxShadow: textVal ? '0 0 0 3px rgba(0,45,98,0.08)' : 'none',
               }}
             />
             <BtnNext disabled={!canContinue} onClick={handleTextNext} />

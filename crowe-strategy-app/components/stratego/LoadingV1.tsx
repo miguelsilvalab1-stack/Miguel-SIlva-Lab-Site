@@ -45,7 +45,7 @@ export default function LoadingV1({ ideia }: Props) {
           className="text-sm font-semibold tracking-widest uppercase"
           style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
         >
-          Crowe <span style={{ color: 'var(--accent)' }}>Strategy Studio</span>
+          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
         </span>
       </div>
 
@@ -95,7 +95,7 @@ export default function LoadingV1({ ideia }: Props) {
               stroke="currentColor"
               strokeWidth="1.5"
               strokeLinejoin="round"
-              fill="rgba(232,67,45,0.15)"
+              fill="rgba(0,45,98,0.15)"
             />
           </svg>
         </div>

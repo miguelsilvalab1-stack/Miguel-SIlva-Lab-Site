@@ -119,7 +119,7 @@ function LoadingInner() {
     return (
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-5 text-center">
         <div className="rounded-3xl p-8 max-w-sm w-full"
-          style={{ background: 'rgba(232,67,45,0.08)', border: '1px solid rgba(232,67,45,0.2)' }}>
+          style={{ background: 'rgba(0,45,98,0.08)', border: '1px solid rgba(0,45,98,0.2)' }}>
           <p className="text-lg font-semibold mb-2"
             style={{ color: 'var(--white)', fontFamily: 'var(--font-syne)' }}>
             Algo correu mal

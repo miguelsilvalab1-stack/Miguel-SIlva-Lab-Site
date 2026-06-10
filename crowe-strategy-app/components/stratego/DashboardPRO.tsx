@@ -118,7 +118,7 @@ export default function DashboardPRO({
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
           style={{
             background: 'var(--r-accent)',
-            border: '1px solid rgba(232,67,45,0.3)',
+            border: '1px solid rgba(0,45,98,0.3)',
             color: 'var(--accent2)',
             fontFamily: 'var(--font-dm-sans)',
           }}
@@ -187,7 +187,7 @@ export default function DashboardPRO({
             onClick={() => scrollTabs('left')}
             className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-1"
             style={{
-              background: 'linear-gradient(to right, var(--bg, #0a0a0a) 60%, transparent)',
+              background: 'linear-gradient(to right, #FFFFFF 60%, transparent)',
             }}
             aria-label="Scroll para a esquerda"
           >
@@ -212,7 +212,7 @@ export default function DashboardPRO({
             onClick={() => scrollTabs('right')}
             className="absolute right-0 top-0 bottom-0 z-10 flex items-center px-1"
             style={{
-              background: 'linear-gradient(to left, var(--bg, #0a0a0a) 60%, transparent)',
+              background: 'linear-gradient(to left, #FFFFFF 60%, transparent)',
             }}
             aria-label="Scroll para a direita"
           >
@@ -247,7 +247,7 @@ export default function DashboardPRO({
                 data-active={isActive}
                 style={isActive ? {
                   background: 'var(--r-accent)',
-                  border: '1px solid rgba(232,67,45,0.4)',
+                  border: '1px solid rgba(0,45,98,0.4)',
                   color: 'var(--white)',
                 } : {}}
               >
@@ -316,7 +316,7 @@ export default function DashboardPRO({
               className="text-sm"
               style={{ color: 'var(--w50)', fontFamily: 'var(--font-dm-sans)' }}
             >
-              Sessão de trabalho com a AI Consulting Unit da Crowe para validar e aprofundar o diagnóstico
+              Sessão de trabalho com a Crowe AI Consulting Unit para validar e aprofundar este diagnóstico
             </p>
           </div>
           <button
@@ -329,7 +329,7 @@ export default function DashboardPRO({
               whiteSpace: 'nowrap',
             }}
           >
-            Agendar sessão com a Crowe
+            Contacte-nos — agendar sessão
           </button>
         </div>
       </div>

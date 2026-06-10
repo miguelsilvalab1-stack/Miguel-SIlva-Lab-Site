@@ -79,16 +79,16 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     body { font-family: Georgia, 'Times New Roman', serif; font-size: 11pt; color: #1a1a1a; background: white; line-height: 1.7; }
 
     .cover { page-break-after: always; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 60px; text-align: center; background: #fafafa; }
-    .cover-logo { font-size: 28pt; font-weight: bold; color: #F5A800; margin-bottom: 8px; font-family: -apple-system, sans-serif; }
-    .cover-tag { font-size: 9pt; color: #F5A800; border: 1px solid #F5A800; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 40px; font-family: -apple-system, sans-serif; }
+    .cover-logo { font-size: 28pt; font-weight: bold; color: #FDB913; margin-bottom: 8px; font-family: -apple-system, sans-serif; }
+    .cover-tag { font-size: 9pt; color: #FDB913; border: 1px solid #FDB913; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 40px; font-family: -apple-system, sans-serif; }
     .cover-title { font-size: 22pt; color: #1a1a1a; margin-bottom: 12px; font-weight: bold; }
-    .cover-negocio { font-size: 16pt; color: #F5A800; margin-bottom: 40px; font-style: italic; }
+    .cover-negocio { font-size: 16pt; color: #FDB913; margin-bottom: 40px; font-style: italic; }
     .cover-meta { font-size: 9pt; color: #888; font-family: -apple-system, sans-serif; }
-    .cover-divider { width: 60px; height: 2px; background: #F5A800; margin: 30px auto; }
+    .cover-divider { width: 60px; height: 2px; background: #FDB913; margin: 30px auto; }
 
     .content { max-width: 720px; margin: 0 auto; padding: 50px 40px; }
 
-    h1 { font-size: 18pt; color: #011E41; margin-top: 40px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 3px solid #F5A800; }
+    h1 { font-size: 18pt; color: #002D62; margin-top: 40px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 3px solid #FDB913; }
     h2 { font-size: 14pt; color: #1a1a1a; margin-top: 28px; margin-bottom: 8px; }
     h3 { font-size: 12pt; color: #333; margin-top: 20px; margin-bottom: 6px; }
     h4 { font-size: 11pt; color: #555; margin-top: 16px; margin-bottom: 5px; text-transform: none; }
@@ -104,7 +104,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     td { padding: 5px 8px; border: 1px solid #ddd; vertical-align: top; word-break: break-word; }
     tr:nth-child(even) td { background: #fafafa; }
 
-    blockquote { border-left: 3px solid #F5A800; padding-left: 16px; color: #011E41; margin: 16px 0; font-style: italic; }
+    blockquote { border-left: 3px solid #FDB913; padding-left: 16px; color: #002D62; margin: 16px 0; font-style: italic; }
     code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 9pt; font-family: monospace; }
     strong { font-weight: bold; color: #111; }
 
@@ -125,7 +125,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
 </head>
 <body>
   <div class="cover">
-    <div class="cover-logo" style="color:#011E41;">Crowe</div>
+    <div class="cover-logo" style="color:#002D62;">Crowe</div>
     <div class="cover-tag">Strategy Studio</div>
     <div class="cover-title">Diagnóstico Estratégico Preliminar</div>
     <div class="cover-negocio">${nomeNegocio}</div>

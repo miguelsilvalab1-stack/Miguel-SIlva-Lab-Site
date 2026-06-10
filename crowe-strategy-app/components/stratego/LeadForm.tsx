@@ -22,7 +22,7 @@ interface Props {
 
 const inputStyle = (error?: boolean) => ({
   background: 'var(--w05)',
-  border: `1px solid ${error ? 'rgba(245,168,0,0.6)' : 'var(--w15)'}`,
+  border: `1px solid ${error ? '#c0392b' : 'var(--w15)'}`,
   color: 'var(--white)',
   fontFamily: 'var(--font-dm-sans)',
 })
@@ -59,21 +59,21 @@ export default function LeadForm({ ideia, onSubmit }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-5 overflow-y-auto"
-      style={{ background: 'rgba(1,30,65,0.88)', backdropFilter: 'blur(12px)' }}
+      style={{ background: 'rgba(0,45,98,0.45)', backdropFilter: 'blur(8px)' }}
     >
       <div
         className="w-full max-w-md rounded-2xl p-8 text-center animate-screen-enter my-8"
         style={{
-          background: 'linear-gradient(135deg, rgba(3,42,87,0.97), rgba(1,30,65,0.99))',
-          border: '1px solid rgba(245,168,0,0.25)',
-          boxShadow: '0 0 60px rgba(245,168,0,0.08)',
+          background: '#FFFFFF',
+          border: '1px solid #E0E5EE',
+          boxShadow: '0 12px 48px rgba(0,45,98,0.18)',
         }}
       >
         <div
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-5"
           style={{
             background: 'var(--r-accent)',
-            border: '1px solid rgba(245,168,0,0.3)',
+            border: '1px solid rgba(253,185,19,0.5)',
             color: 'var(--accent2)',
             fontFamily: 'var(--font-dm-sans)',
           }}
@@ -130,7 +130,7 @@ export default function LeadForm({ ideia, onSubmit }: Props) {
 
           <label className="flex items-start gap-2 mt-1 cursor-pointer select-none"
             style={{ color: 'var(--w30)', fontFamily: 'var(--font-dm-sans)', lineHeight: 1.5 }}>
-            <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-0.5 accent-yellow-500" />
+            <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-0.5 accent-blue-900" />
             <span className="text-xs">
               Autorizo a Crowe Advisory PT a contactar-me sobre serviços e conteúdos relevantes para a minha empresa (opcional).
             </span>
@@ -146,7 +146,7 @@ export default function LeadForm({ ideia, onSubmit }: Props) {
             className="mt-2 w-full py-4 rounded-xl text-sm font-semibold transition-all"
             style={{
               background: loading || !podeSubmeter ? 'var(--w08)' : 'linear-gradient(135deg, var(--accent), var(--accent2))',
-              color: loading || !podeSubmeter ? 'var(--w50)' : '#011E41',
+              color: '#FFFFFF',
               fontFamily: 'var(--font-dm-sans)',
               cursor: loading || !podeSubmeter ? 'not-allowed' : 'pointer',
             }}>

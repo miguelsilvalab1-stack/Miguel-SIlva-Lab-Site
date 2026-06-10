@@ -60,8 +60,8 @@ export default function StarfieldCanvas() {
         canvas.width / 2, canvas.height / 2, 0,
         canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2
       )
-      grad.addColorStop(0, '#0d1530')
-      grad.addColorStop(1, '#050810')
+      grad.addColorStop(0, '#FFFFFF')
+      grad.addColorStop(1, '#F4F6F9')
       ctx.fillStyle = grad
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -70,7 +70,7 @@ export default function StarfieldCanvas() {
         const pulse = Math.sin(t * s.speed + s.phase) * 0.35 + 0.65
         ctx.beginPath()
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255,255,255,${s.alpha * pulse})`
+        ctx.fillStyle = `rgba(0,45,98,${s.alpha * pulse * 0.35})`
         ctx.fill()
       }
 

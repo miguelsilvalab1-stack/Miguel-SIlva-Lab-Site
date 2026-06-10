@@ -53,7 +53,7 @@ export default function HeroScreen() {
           className="text-sm font-semibold tracking-widest uppercase"
           style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
         >
-          Crowe <span style={{ color: 'var(--accent)' }}>Strategy Studio</span>
+          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
         </span>
       </div>
 
@@ -62,7 +62,7 @@ export default function HeroScreen() {
         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-xs font-medium tracking-wide"
         style={{
           background: 'var(--r-accent)',
-          border: '1px solid rgba(232,67,45,0.3)',
+          border: '1px solid rgba(0,45,98,0.3)',
           color: 'var(--accent2)',
           fontFamily: 'var(--font-dm-sans)',
         }}
@@ -71,7 +71,7 @@ export default function HeroScreen() {
           className="w-1.5 h-1.5 rounded-full animate-pulse-slow"
           style={{ background: 'var(--accent)' }}
         />
-        Diagnóstico preliminar por IA · validado por consultores Crowe
+        Diagnóstico preliminar por IA · Crowe AI Consulting Unit
       </div>
 
       {/* Título principal */}
@@ -179,7 +179,7 @@ export default function HeroScreen() {
           color: 'var(--w30)',
         }}
       >
-        Confidencial · Sem compromisso · Crowe Advisory PT — Smart decisions. Lasting value.
+        Uma iniciativa da Crowe AI Consulting Unit · Crowe Advisory PT — Smart decisions. Lasting value.
       </p>
     </div>
   )

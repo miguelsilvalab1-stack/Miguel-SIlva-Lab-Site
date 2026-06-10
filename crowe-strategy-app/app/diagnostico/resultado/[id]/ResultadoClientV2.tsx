@@ -49,12 +49,8 @@ export default function ResultadoClientV2({ plan, jobId, ideia, leadEmail }: Pro
   }
 
   function handleUpgrade() {
-    // CTA institucional: agendar sessão de diagnóstico com a Crowe
-    window.location.href =
-      'mailto:miguel.silva@crowe.pt?subject=' +
-      encodeURIComponent('Crowe Strategy Studio — Agendar sessão de diagnóstico') +
-      '&body=' +
-      encodeURIComponent('Boa tarde,\n\nConcluí o diagnóstico estratégico preliminar na plataforma Crowe Strategy Studio e gostaria de agendar uma sessão com a vossa equipa.\n\nLink do diagnóstico: ' + window.location.origin + '/diagnostico/resultado/' + jobId)
+    // CTA ao estilo do site da Crowe: formulário oficial Contacte-nos
+    window.open('https://www.crowe.com/pt/contacte-nos', '_blank', 'noopener')
   }
 
   return (
@@ -88,7 +84,7 @@ export default function ResultadoClientV2({ plan, jobId, ideia, leadEmail }: Pro
             className="text-sm font-semibold tracking-widest uppercase"
             style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
           >
-            Crowe <span style={{ color: 'var(--accent)' }}>Strategy Studio</span>
+            Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
           </a>
         </div>
 

@@ -82,7 +82,7 @@ export default function LoadingV2({ progress, currentStep, ideia }: Props) {
           className="text-sm font-semibold tracking-widest uppercase"
           style={{ fontFamily: 'var(--font-syne)', color: 'var(--w50)' }}
         >
-          Crowe <span style={{ color: 'var(--accent)' }}>Strategy Studio</span>
+          Crowe <span style={{ color: 'var(--gold)' }}>Strategy Studio</span>
         </span>
       </div>
 
@@ -158,7 +158,7 @@ export default function LoadingV2({ progress, currentStep, ideia }: Props) {
                       : 'transparent',
                   border:
                     status === 'active'
-                      ? '1px solid rgba(232,67,45,0.3)'
+                      ? '1px solid rgba(0,45,98,0.3)'
                       : '1px solid transparent',
                   opacity: status === 'pending' ? 0.35 : 1,
                 }}
@@ -171,7 +171,7 @@ export default function LoadingV2({ progress, currentStep, ideia }: Props) {
                       status === 'done'
                         ? 'rgba(34,197,94,0.15)'
                         : status === 'active'
-                        ? 'rgba(232,67,45,0.15)'
+                        ? 'rgba(0,45,98,0.15)'
                         : 'var(--w05)',
                   }}
                 >

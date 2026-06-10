@@ -11,8 +11,9 @@
  *
  * Nota modelos (jun/2026):
  *   - GPT-5.4-mini e modelo de raciocinio de baixa latencia: usa `max_completion_tokens`
- *     (nao `max_tokens`) e NAO aceita `temperature`. `reasoning_effort:'minimal'` + `maxRetries:0`
- *     mantem o pipeline dentro do limite serverless (~3 min). O GPT-5.5 era demasiado lento aqui.
+ *     (nao `max_tokens`) e NAO aceita `temperature`. `reasoning_effort:'none'` (o mini nao aceita
+ *     'minimal') + `maxRetries:0` mantem o pipeline rapido e dentro do limite serverless (~3 min).
+ *     O GPT-5.5 com raciocinio era demasiado lento aqui.
  */
 
 import OpenAI from 'openai'
@@ -95,7 +96,7 @@ async function runAnalista(contexto: string): Promise<string> {
   const res = await openai.chat.completions.create({
     model: MODEL_ANALYST,
     max_completion_tokens: 4000,
-    reasoning_effort: 'minimal',
+    reasoning_effort: 'none',
     messages: [
       {
         role: 'system',
@@ -202,7 +203,7 @@ async function runRevisor(
   const res = await openai.chat.completions.create({
     model: MODEL_REVIEWER,
     max_completion_tokens: 9000,
-    reasoning_effort: 'minimal',
+    reasoning_effort: 'none',
     messages: [
       {
         role: 'system',

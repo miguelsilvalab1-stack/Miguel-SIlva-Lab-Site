@@ -58,17 +58,25 @@ function LoadingInner() {
           { at: 70, step: 4 }, { at: 88, step: 5 },
         ]
 
+        const FAIL_MSG =
+          'A geração do plano falhou. Tenta novamente dentro de alguns minutos.'
+
         const interval = setInterval(async () => {
           const inc = prog < 50 ? Math.random() * 3 + 1 : Math.random() * 1.5 + 0.5
           prog = Math.min(prog + inc, 95)
           setProgress(Math.round(prog))
           for (const { at, step } of STEPS) { if (prog >= at) setCurrentStep(step) }
 
-          if (prog >= 80 && jobIdRef.current) {
+          if (jobIdRef.current) {
             try {
               const check = await fetch(`/api/orchestrator-v2/status?job_id=${jobIdRef.current}`)
               if (check.ok) {
-                const { ready } = await check.json()
+                const { ready, state } = await check.json()
+                if (state === 'error') {
+                  clearInterval(interval)
+                  setError(FAIL_MSG)
+                  return
+                }
                 if (ready) {
                   clearInterval(interval)
                   setProgress(100)
@@ -81,10 +89,22 @@ function LoadingInner() {
           }
         }, 1400)
 
-        setTimeout(() => {
+        setTimeout(async () => {
           clearInterval(interval)
-          if (jobIdRef.current) router.push(`/stratego/resultado/${jobIdRef.current}`)
-        }, 180_000)
+          if (!jobIdRef.current) return
+          // Só redirecciona se o plano estiver mesmo pronto; caso contrário mostra erro
+          try {
+            const check = await fetch(`/api/orchestrator-v2/status?job_id=${jobIdRef.current}`)
+            const { ready } = check.ok ? await check.json() : { ready: false }
+            if (ready) {
+              router.push(`/stratego/resultado/${jobIdRef.current}`)
+            } else {
+              setError(FAIL_MSG)
+            }
+          } catch {
+            setError(FAIL_MSG)
+          }
+        }, 240_000)
 
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Erro desconhecido')

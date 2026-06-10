@@ -7,9 +7,9 @@ import StarfieldCanvas from '@/components/ui/StarfieldCanvas'
 import HeroScreen from '@/components/stratego/HeroScreen'
 
 export const metadata = {
-  title: 'Crowe Strategy Studio — De ideia a plano de negócio em minutos',
+  title: 'Crowe Strategy Studio — Diagnóstico Estratégico Preliminar',
   description:
-    'Responde a 7 perguntas e recebe um plano de negócio completo e profissional, gerado por IA. Gratuito, sem subscrição.',
+    'Responda a 7 perguntas sobre a sua empresa e receba um diagnóstico estratégico preliminar, preparado por IA e validado por consultores Crowe.',
 }
 
 export default function StrategoPage() {

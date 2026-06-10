@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { sendPlanEmail } from '@/lib/email/send-plan'
 import { sendInternalLeadAlert } from '@/lib/email/internal-lead'
+import { createOdooLead } from '@/lib/crm/odoo'
 
 export async function POST(req: NextRequest) {
   const supabase = createClient(
@@ -62,6 +63,18 @@ export async function POST(req: NextRequest) {
       await sendPlanEmail({
         to: email.trim(),
         nome: nome?.trim() ?? null,
+        job_id,
+        resumo,
+      })
+
+      /* CRM Odoo — ativo apenas quando as env vars ODOO_* estiverem definidas */
+      await createOdooLead({
+        nome: nome?.trim() ?? '',
+        email: email.trim(),
+        empresa: empresa?.trim() ?? '',
+        cargo: cargo?.trim() ?? '',
+        telefone: telefone?.trim() ?? '',
+        consent: !!consent,
         job_id,
         resumo,
       })

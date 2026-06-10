@@ -91,6 +91,7 @@ function buildPDFHTML(markdown: string, nomeNegocio: string, data: string, planI
     h1 { font-size: 18pt; color: #c1694f; margin-top: 40px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #c1694f; }
     h2 { font-size: 14pt; color: #1a1a1a; margin-top: 28px; margin-bottom: 8px; }
     h3 { font-size: 12pt; color: #333; margin-top: 20px; margin-bottom: 6px; }
+    h4 { font-size: 11pt; color: #555; margin-top: 16px; margin-bottom: 5px; text-transform: none; }
 
     p { margin-bottom: 10px; }
     ul, ol { margin-left: 24px; margin-bottom: 10px; }
@@ -268,7 +269,13 @@ function markdownToHtml(md: string): string {
       continue
     }
 
-    // Cabeçalhos
+    // Cabeçalhos (h4 primeiro — o conversor tem de apanhar #### antes de ###)
+    const h4 = trimmed.match(/^#### (.+)$/)
+    if (h4) {
+      if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }
+      htmlLines.push(`<h4>${applyInline(h4[1])}</h4>`)
+      continue
+    }
     const h3 = trimmed.match(/^### (.+)$/)
     if (h3) {
       if (inList) { htmlLines.push(inList === 'ul' ? '</ul>' : '</ol>'); inList = null }

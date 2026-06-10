@@ -233,12 +233,14 @@ async function runRevisor(
           '- Usa markdown dentro de cada seccao (titulos ##, listas, tabelas).\n' +
           '- "resumo": 3-4 paragrafos de resumo executivo.\n' +
           '- "mercado": sintese da analise de mercado.\n' +
-          '- "comercial" e "financeiro": a partir do Estratega A.\n' +
+          '- "comercial" e "financeiro": a partir do Estratega A. No "financeiro" inclui sempre uma tabela de sensibilidade do break-even ao ticket medio (-20%, cenario base, +20%).\n' +
           '- "operacional" e "marketing": a partir do Estratega B.\n' +
           '- "proximos": lista numerada de 10 accoes concretas para os proximos 90 dias, com prazo. Numera sequencialmente (1. a 10.) e escreve cada accao num UNICO paragrafo (titulo, prazo e descricao na mesma linha), sem linhas em branco entre itens.\n' +
           '- Resolve contradicoes e usa o cenario mais conservador nos numeros.\n' +
           '- NAO repitas o titulo da seccao como cabecalho dentro do conteudo; comeca directamente no texto ou em subtitulos mais especificos.\n' +
-          '- Usa EXCLUSIVAMENTE caracteres latinos. Nunca uses caracteres cirilicos ou de outros alfabetos.\n' +
+          '- Escreve em portugues europeu com ortografia e acentuacao CORRECTAS (ex.: "análise", "recuperação", "clínico", "estratégia"). Nunca omitas acentos.\n' +
+          '- Usa apenas o alfabeto latino. Nunca uses caracteres cirilicos ou de outros alfabetos.\n' +
+          '- Usa titulos markdown no maximo ate ### (nunca uses ####).\n' +
           '- Verifica que todos os totais e intervalos citados no texto coincidem exactamente com os valores das tabelas.\n' +
           '- Preenche TODAS as 7 seccoes com conteudo substantivo. Nenhuma pode ficar vazia.\n\n' +
           'CONTEXTO:\n' + contexto + '\n\n' +

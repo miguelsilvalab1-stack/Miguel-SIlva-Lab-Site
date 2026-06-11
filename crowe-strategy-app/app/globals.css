@@ -24,7 +24,7 @@
   --accent2: #2D5DA7;            /* azul Crowe — hover/links */
   --gold:    #FDB913;            /* amarelo Crowe — acentos pontuais */
   --font-syne: 'Helvetica Neue', Helvetica, 'Arial Black', Arial, sans-serif;
-  --font-dm-sans: var(--font-inter), 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-dm-sans: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   --white:   #181818;            /* texto principal preto, como o site */
   --w80:     rgba(24,24,24,0.88);
   --w50:     #414141;            /* cinza de texto do site */
